@@ -1,0 +1,199 @@
+Whatsnew: Что нового
+Table of contents: Оглавление
+search: Поиск
+bookmarks: Закладки
+dictionary: Словарь
+login: Вход
+My account: Личный кабинет
+Latest updates: Последние обновления
+New comments: Новые комментарии
+Today: Сегодня
+DaysAgo: дн. назад
+My comments: Мои комментарии
+Sources: Источники переводов
+Logout: Выход из системы
+Top: Начало
+GoPTS: "Перейти к PTS тому:"
+GoPara: "Перейти к абзацу:"
+page: страница
+not found: не найдено
+more than one paragraph with this number: с этим номером больше одного абзаца
+GoButton: Вперёд
+SearchFieldLabel: "Поиск:"
+table of contents: Оглавление
+text: Текст
+ScopeLabel: "Где:"
+SearchButton: Искать
+View: Смотреть
+Bookmark: Закладка
+link to this bookmark set: ссылка на этот набор закладок
+Remove: Удалить
+no bookmarks: нет закладок
+DictionaryFieldLabel: "Словарь:"
+SearchTypeLabel: "Тип поиска:"
+IgnoreDiac: "Игнорировать диакритику:"
+results found: элементов 
+allDictionaries: -- все --
+auto: авто
+begins with: начинается с
+contains: содержит
+term names: названия терминов
+dictionary content: содержимое статей
+Pali: пали
+Edit: Правка
+Code: Код
+Translate: Перевести
+All comments: Все комментарии
+Add new comment: Добавить комментарий
+New source: Добавить источник
+User1 translation code: Код для перевода админа
+Split for translation: Разбить для перевода
+Show new source: Показать ввод нового источника
+Show code: "Показать ссылку 'код'"
+Comments: Комментарии
+Code for pali: Код для вставки пали
+Location: "Адрес: "
+page numbers: "номера страниц: "
+PageNumbersNone: никакие
+notes: "примечания: "
+print view: "вид для печати: "
+open: открыть
+on: вкл.
+off: выкл.
+Back: Назад
+Next: Далее
+Table view: Таблица
+SplitForTranslation: Разбить на предложения
+CodeNotice: "Этот код будет работать только на ваших собственных страницах или там, где разрешено вставлять javascript. Форумы и социальные сети обычно это не разрешают."
+new source link: "ссылка 'добавить источник':"
+code link: "ссылка 'код':"
+Shift down: Вниз
+Shift up: Вверх
+Import: Импорт
+hide: скрыть
+show: показать
+align tools: "инструменты сведения:"
+Join: Склеить
+Save: Сохранить
+Translation: "Перевод:"
+Cancel: Отмена
+SaveAndEditNext: Сохранить и редактировать следующий
+Parent translation id: "Код связанного перевода:"
+Source: "Источник:"
+paragraph: Абзац
+by: автором
+Comment: Комментарий
+Comment submitted: Комментарий оставлен
+Delete: Удалить
+ImportFileUpload: "Файл (обычный текст в кодировке utf8):"
+ImportText: или текст
+Name: Название
+Language: Язык
+Is hidden: Скрытый
+User: Пользователь
+Add new source: Добавить новый источник
+yes: да
+no: нет
+authorName: Автор
+Choose an option: Выберите вариант
+Edit names: Имена
+TranslationToc: Только переведённые
+FullToc: Все тексты
+Add new name: Добавить новое имя
+Return to node page: Вернуться на страницу узла
+NullOption: Не указано
+Return to node: Вернуться к узлу
+Translation source: "Источник с переводом:"
+Enable table view: Включить табличный режим
+translation: Перевод
+table: Таблица
+fragments: Фрагменты
+original: Палийский оригинал 
+Add: Добавить
+Create new tag: Создать новую метку
+Or: или
+Pali name: Палийское название
+Title: Название
+Applied on: Дата присвоения
+Applied by: Кто присвоил
+Edit node: Свойства узла
+Edit tags: Изменить метки
+Tags: Метки
+Nodes with tag: Тексты с меткой
+Translated by: Автор перевода
+Name in this language already exists: На этом языке уже есть имя
+Translation to this language already exists: Перевод на этот язык для этой строки уже есть
+Exclude from search: Исключить из поиска
+Contains formatting: Содержит форматирование
+Update: Обновить
+Notes: Примечание (показывается над таблицей и переводом)
+Disable view link: Отключить ссылку просмотра в дереве переводов
+Tag type: Тип метки
+Related texts: Связанные тексты
+translations: Переводы
+New search: Новый поиск
+No results: По вашему запросу ничего не найдено
+pali: пали
+Column view: Отображение колонок
+Quick Edit: Б.правка
+Save error: Ошибка сохранения!
+Log in!: Вход в систему
+Please sign in: Вход в систему
+Username: Имя пользователя
+Password: Пароль
+Sign in: Войти
+In translated: Искать в переведённом (для пали)
+Collections: Подборки
+New collection: Новая подборка
+View order: Порядок просмотра
+Add folder: Добавить папку
+Add item: Добавить ссылку
+Level: Уровень
+Limit rows: Только эти строки (sentenceid)
+ConfirmScript: "javascript: return confirm('Вы уверены');"
+Collection item names: Имена элементов подборок
+Return to collection: Вернуться в подборку
+Edit collection item name: Редактировать имена элемента подборки
+PrintViewTable: Таблица
+PrintViewPaper: Подстрочник
+PrintViewTranslation: Перевод
+Sentence text: Текст предложения
+preview: Предпросмотр
+Rows: Строк
+Tag names: Названия метки
+Return to tags list: Вернуться в список меток
+Print view: "Всё на одной странице:"
+Home: Главная
+Texts tagged with: Тексты, помеченные 
+Add entry: Добавить новый
+Explanation Translation IDs: Translation ID объяснения
+Usage example Translation ID: Translation ID примера употребления
+Usage example pali word: Палийское слово в примере употребления
+Usage example translation: Перевод в примере употребления
+Example usage: Пример употребления
+pali word: палийское слово
+Explanation: Объяснение
+Term: Термин
+Add use: Добавить пример употребления
+Prologue: Пролог
+Save аnd assign: Сохранить и присвоить
+User manual: Краткая инструкция по работе с системой
+Contact us: Связаться с нами
+Username already exists: Такое имя пользователя уже существует. Выберите другое.
+Register: Регистрация
+RegisterNote: Регистрация позволяет вам оставлять комментарии к переводам. Администратор также может предоставить вам и другие разрешения.
+RegisterAccount: зарегистрироваться
+Not registered: Если вы не зарегистрированы, вы можете 
+RegisterAccountButton: Зарегистрироваться
+NoUsername: Имя пользователя не найдено или оно отключено.
+Enabled: Включён
+Users: Пользователи
+Roles: Роли
+allowcommentshtml: Разрешить HTML в комментариях
+Users list: Список пользователей
+TagType1: Тематика
+TagType2: Связанные тексты
+TagType3: География
+TagType4: Действующие лица
+Publisher: Издание Московской общины буддистов Тхеравады <a href="http://www.theravada.su">www.theravada.su</a>
+Retrieved: Версия

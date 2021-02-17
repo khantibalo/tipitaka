@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+{% set showT=false %}
+{% block title %}{{ node.trname ?? node.title }}{% endblock %}
+{% block navigation %}
+{{ include('_navigation.html.twig') }}
+{% endblock %}
+{% block content %}
+<div>
+{{ include('_translation_node_path.html.twig') }}
+</div>
+{% trans %}Translated by{% endtrans %}: {{ source.name }}
+{% if node.notes %}
+<br><br>{{ node.notes|raw }}
+{% endif %}
+{% if child_nodes is defined and child_nodes|length>1 %}
+    <ul>
+    {% for child_node in nodes %}
+    <li><a href="#{{ child_node.nodeid }}">{{ child_node.trname ?? child_node.title  }}</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{{ include('_related_nodes.html.twig') }}
+    {% if showsidebar %}<table>{% endif %}
+{% for node in nodes %}
+    {% if showsidebar %}
+    <tr>
+    <td style="width:50px"><a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}View{% endtrans %}</a></td>
+    <td style="width:100px"><a href="{{ path('bookmark_node_add', {id: node.nodeid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>
+    <td>
+    {% endif %}
+    <a name="{{ node.nodeid }}"></a>
+    <p class="{{ node.typename }}">{{ node.trname ?? node.title }}
+    <a href="{{ path('table_view', {id: node.nodeid}) }}">{% trans %}table{% endtrans %}</a>
+    <a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}original{% endtrans %}</a>
+    </p>
+    {% if showsidebar %}
+    </td>
+    </tr>
+    {% endif %}
+    {% for paragraph in paragraphs|filter(i=>i.nodeid==node.nodeid) %}
+        {% if showsidebar %}
+        <tr>
+        <td style="width:50px"><a href="{{ path('view_paragraph', {id: paragraph.paragraphid}) }}">{% trans %}View{% endtrans %}</a>{% if paragraph.hastranslation and showT %}&nbsp;T{% endif %}</td>
+        <td style="width:100px"><a href="{{ path('bookmark_paragraph_add', {id: paragraph.paragraphid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>
+        <td>
+        {% endif %}
+        <p class="{{ paragraph.typename }}">
+        {% if not paragraph.paranum is empty %}
+        <span class="paranum">{{ paragraph.paranum }}</span><span class="dot">.</span>
+        {% endif %}  
+        {% for sentence in translations|filter(t=>t.paragraphid==paragraph.paragraphid) %}
+        {{ sentence.translation }} 
+        {% endfor %}
+        </p>
+        {% if showsidebar %}
+        </td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+{% if showsidebar %}</table>{% endif %}
+{% if tags|length>0 %}
+	<div>
+	{% trans %}Tags{% endtrans %}:
+    {% for tag in tags %}
+        <a href="{{ path('toc_tags_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>&nbsp;
+    {% endfor %}
+    {% if is_granted(authorRole) %}
+    &nbsp;<a href="{{ path('node_tags',{nodeid: node.nodeid }) }}">({% trans %}Edit tags{% endtrans %})</a>
+    {% endif %}
+	</div>
+{% endif %}	   
+{% endblock %}

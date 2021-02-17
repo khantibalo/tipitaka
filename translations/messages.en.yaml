@@ -1,0 +1,199 @@
+Whatsnew: What's new
+Table of contents: Table of contents
+search: Search
+bookmarks: bookmarks
+dictionary: dictionary
+login: login
+My account: My account
+Latest updates: Latest updates
+New comments: New comments
+Today: Today
+DaysAgo: days ago
+My comments: My comments
+Sources: Sources
+Logout: Logout
+Top: Top
+GoPTS: "Go to PTS volume:"
+GoPara: "Go to paragraph:"
+page: page
+not found: not found
+more than one paragraph with this number: more than one paragraph with this number
+GoButton: Go
+SearchFieldLabel: "Search:"
+table of contents: table of contents
+text: text
+ScopeLabel: "Scope:"
+SearchButton: Search
+View: View
+Bookmark: Bookmark
+link to this bookmark set: link to this bookmark set
+Remove: Remove
+no bookmarks: no bookmarks
+DictionaryFieldLabel: "Dictionary:"
+SearchTypeLabel: "Search type:"
+IgnoreDiac: "Ignore pali diacritics:"
+results found: results
+allDictionaries: -- all --
+auto: auto
+begins with: begins with
+contains: contains
+term names: term names
+dictionary content: dictionary content
+Pali: Pali
+Edit: Edit
+Code: Code
+Translate: Translate
+All comments: All comments
+Add new comment: Add new comment
+New source: New source
+User1 translation code: User1 translation code
+Split for translation: Split for translation
+Show new source: Show new source
+Show code: Show code
+Comments: Comments
+Code for pali: Code for pali
+Location: "Location: "
+page numbers: "page numbers: "
+PageNumbersNone: "none "
+notes: "notes: "
+print view: "print view: "
+open: open
+on: on
+off: off
+Back: Back
+Next: Next
+Table view: Table view
+SplitForTranslation: Split for translation
+CodeNotice: "Notice: this code will only work on the web pages you create or where it is allowed to paste Javascript. Most forums and social media platforms do not allow this."
+new source link: "new source link:"
+code link: "code link:"
+Shift down: Shift down
+Shift up: Shift up
+Import: Import
+hide: hide
+show: show
+align tools: "align tools:"
+Join: Join
+Save: Save
+Translation: "Translation:"
+Cancel: Cancel
+SaveAndEditNext: save and edit next sentence
+Parent translation id: "Parent translation id:"
+Source: "Source:"
+paragraph: paragraph
+by: by
+Comment: Comment
+Comment submitted: Comment submitted
+Delete: Delete
+ImportFileUpload: "File (plain text utf8 only):"
+ImportText: or text
+Name: Name
+Language: Language
+Is hidden: Is hidden
+User: User
+Add new source: Add new source
+yes: yes
+no: no
+Add new name: Add new name
+Return to node page: Return to node page
+authorName: Author
+Choose an option: Choose an option
+Edit names: Names
+TranslationToc: Translated texts only
+FullToc: All texts
+NullOption: Not specified
+Return to node: Return to node
+Translation source: "Translation source:"
+Enable table view: Enable table view
+translation: translation
+table: table view
+fragments: fragments
+original: Original pali
+Add: Add
+Create new tag: Create new tag
+Or: Or
+Pali name: Pali name
+Title: Title
+Applied on: Applied on
+Applied by: Applied by
+Edit node: Edit node
+Edit tags: Edit tags
+Tags: Tags
+Nodes with tag: Nodes with tag
+Translated by: Translated by
+Name in this language already exists: Name in this language already exists
+Translation to this language already exists: Translation to this language already exists
+Exclude from search: Exclude from search
+Contains formatting: Contains formatting
+Update: Update
+Notes: Notes
+Disable view link: Disable view link
+Tag type: Tag type
+Related texts: Related texts
+translations: Translations
+New search: New search
+No results: No results
+pali: pali
+Column view: Column view
+Quick Edit: Quick Edit
+Save error: Save error
+Log in!: Log in!
+Please sign in: Please sign in
+Username: Username
+Password: Password
+Sign in: Sign in
+In translated: In translated only
+Collections: Collections
+New collection: New collection
+View order: View order
+Add folder: Add folder
+Add item: Add item
+Level: Level
+Limit rows: Limit rows
+ConfirmScript: "javascript: return confirm('are you sure');"
+Collection item names: Collection item names
+Return to collection: Return to collection
+Edit collection item name: Edit collection item name
+PrintViewTable: table
+PrintViewPaper: paper
+PrintViewTranslation: translation
+Sentence text: Sentence text
+preview: preview
+Rows: Rows
+Tag names: Tag names
+Return to tags list: Return to tags list
+Print view: Print view
+Home: Home
+Texts tagged with: Texts tagged with
+Add entry: Add entry
+Explanation Translation IDs: Explanation Translation IDs
+Usage example Translation ID: Usage example Translation ID
+Usage example pali word: Usage example pali word
+Usage example translation: Usage example translation
+Example usage: Example usage
+pali word: pali word
+Explanation: Explanation
+Term: Term
+Add use: Add example usage
+Prologue: Prologue
+Save аnd assign: Save аnd assign
+User manual: User manual (in Russian)
+Contact us: Contact us
+Username already exists: Username already exists
+Register: Register
+RegisterNote: Creating an account allows you to comment on translations. An administrator can give you other permissions. 
+RegisterAccount: register
+Not registered: If you don't have an account, you can
+RegisterAccountButton: Register
+NoUsername: Username could not be found or is disabled.
+allowcommentshtml: Allow HTML in comments
+Enabled: Enabled
+Users: Users
+Roles: Roles
+Users list: Users list
+TagType1: Subject
+TagType2: Related texts
+TagType3: Geography
+TagType4: People
+Publisher: ""
+Retrieved: Retrieved on

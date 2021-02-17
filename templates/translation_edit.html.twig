@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block title %}Translate{% endblock %}
+{% block content %}
+{{ sentenceText }}
+<br><br>
+{{ form_start(form) }}
+{{ form_label(form.source, 'Source') }}{{ form_widget(form.source) }}<font color="red">{{ message }}</font><br>
+{{ form_label(form.translation, 'Translation') }}<br>
+{{ form_widget(form.translation,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}<br>
+{# {{ form_label(form.parenttranslationid, 'Parent translation id') }}{{ form_widget(form.parenttranslationid) }}<br> #}
+{{ form_widget(form.save,{'label': 'Save'}) }} {{ form_widget(form.saveAndNext,{'label': 'SaveAndEditNext'}) }}
+<a href="{{ cancelUrl }}">{% trans %}Cancel{% endtrans %}</a>
+{{ form_end(form) }}
+{% endblock %}

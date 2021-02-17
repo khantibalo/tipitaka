@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /toc/full/
+Disallow: /node/pali/
+Disallow: /p/
+Disallow: /bookmarks
+Disallow: /node/bookmark/
+Disallow: /toc/tags
+Disallow: /dictionary
+Disallow: /term/
+
+

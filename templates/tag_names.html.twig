@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block title %}Tag names{% endblock %}
+{% block content %}
+<a href="{{ path('tag_name_edit',{tagid: tag.tagid}) }}">{% trans %}Add new name{% endtrans %}</a>
+<a href="{{ path('toc_tags_list') }}">{% trans %}Return to tags list{% endtrans %}</a>
+<table class="bordercell" style="width:100%">
+<tr>
+<td>
+{% trans %}Name{% endtrans %}
+</td>
+<td>
+{% trans %}Language{% endtrans %}
+</td>
+<td>&nbsp;</td>
+</tr>
+{% for nameItem in names %}
+<tr>
+<td>
+{{ nameItem.title }}
+</td>
+<td>
+{{ nameItem.languageName }}
+</td>
+<td>
+<a href="{{ path('tag_name_edit',{tagnameid: nameItem.tagnameid}) }}">{% trans %}Edit{% endtrans %}</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

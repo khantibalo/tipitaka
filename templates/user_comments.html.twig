@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% set page='user' %}
+{% block title %}{% trans %}My account{% endtrans %}{% endblock %}
+{% block content %}
+{% set userPage='comments' %}
+{{ include('_user_navigation.html.twig') }}
+{% for comment in comments %}
+<div>
+<a href="{{ path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.title}}</a>
+{% if '<' in comment.CommentText %}
+<div>{{comment.CommentText|raw}}</div>
+{% else %}
+<div>{{comment.CommentText|converturls|nl2br}}</div>
+{% endif %}
+<div><small>
+{% if comment.DateDiff==0 %}
+{% trans %}Today{% endtrans %}
+{% else %}
+{{comment.DateDiff}} {% trans %}DaysAgo{% endtrans %}
+{% endif %}
+</small></div>
+</div>
+{% endfor %}
+
+{% endblock %}

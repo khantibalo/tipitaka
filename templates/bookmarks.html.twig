@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% set page='bookmarks' %}
+{% block title %}{% trans %}bookmarks{% endtrans %}{% endblock %}
+{% block content %}
+<a href="{{ path('bookmarks', {b: bs}) }}">{% trans %}link to this bookmark set{% endtrans %}</a><br/>
+
+<table>
+{% for item in bookmarks %}
+<tr>
+    {% if item.paragraphid is defined %}
+    <td>
+    <a href="{{ path('view_paragraph',{id:item.paragraphid}) }}">{% trans %}View{% endtrans %}</a>
+    </td>
+    <td>
+    <a href="{{ path('bookmark_paragraph_remove',{id:item.paragraphid}) }}">{% trans %}Remove{% endtrans %}</a>
+    </td>
+    <td>
+    <p class="{{ item.typename }}">
+        {% if not item.paranum is empty %}
+        <span class="paranum">{{ item.paranum }}</span><span class="dot">.</span>
+        {% endif %}  
+        {{ item.text|capitalize(item.caps)|raw }}
+    </p>
+    </td>
+    {% else %}
+    <td>
+        {% if item.titletypeid.canview %}
+        <a href="{{ path('view_node',{id:item.nodeid}) }}">{% trans %}View{% endtrans %}</a>
+        {% endif %}
+    </td>
+    <td>
+    <a href="{{ path('bookmark_node_remove',{id:item.nodeid}) }}">{% trans %}Remove{% endtrans %}</a>
+    </td>
+    <td>
+    <p class="{{ item.titletypeid.name }}">{{ item.title }}</p>
+    </td>
+    {% endif %}
+</tr>
+{% endfor %}
+</table>
+{% if bookmarks is empty %}
+{% trans %}no bookmarks{% endtrans %}
+{% endif %}
+
+{% endblock %}

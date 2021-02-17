@@ -1,0 +1,53 @@
+<tr>
+	{% if showPali %}
+	    <td style="vertical-align: top;">
+	    <a name="sent{{ sentence.sentenceid }}"></a> 
+	    {% if is_granted(authorRole) and showAlign %}{{ loop.index }} : {% endif %}
+	    {{ sentence.sentencetext }}
+	    {% if is_granted(adminRole) and showAlign %}
+	    <a href="{{ path('sentence_edit',{sentenceid: sentence.sentenceid }) }}">{% trans %}Edit{% endtrans %}</a>
+	    {% endif %}
+	    </td>
+    {% endif %}
+    {% if sources|length>0 %}
+        {% for source in sources %}
+        	<td style="vertical-align: top;">
+            {% set translation=translations|filter(t=>t.sentenceid==sentence.sentenceid and t.sourceid==source.sourceid)|first %}
+            {% if translation %}
+            <span id="et{{ translation.sentencetranslationid }}">{{ source.hasformatting ? translation.translation|raw : translation.translation  }}</span>
+            	{% if is_granted(userRole) %}
+                  	<span id="ec{{ translation.sentencetranslationid }}">
+                	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>            	
+                	{% if is_granted(editorRole) or (translation.userid==app.user.userid and is_granted(authorRole)) %}
+                    	<a href="{{ path('translation_edit',{translationid : translation.sentencetranslationid, return: 'node', 'nodeid': node.nodeid }) }}">{% trans %}Edit{% endtrans %}</a>
+                    	<a href="javascript:QTEdit({{ translation.sentencetranslationid }});">{% trans %}Quick Edit{% endtrans %}</a>
+                	{% endif %}                            
+                    {% if showCode %}
+                    	<a href="{{ path('quote_code',{sentencetranslation : translation.sentencetranslationid,paragraphid: sentence.paragraphid }) }}">{% trans %}Code{% endtrans %}</a>
+                    {% endif %}
+                	</span>
+                {% endif %}
+            {% else %}
+                {% if is_granted(authorRole) %}
+                	<span id="ncse{{ sentence.sentenceid }}so{{ source.sourceid }}">
+        			<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid,sourceid :  source.sourceid, return: 'node', 'nodeid': node.nodeid}) }}">{% trans %}Translate{% endtrans %}</a>
+        			<a href="javascript:QTNew({{ sentence.sentenceid }},{{ source.sourceid }});">{% trans %}Quick Edit{% endtrans %}</a>  
+            		</span>                 		              		
+            	{% endif %}
+            {% endif %}
+        </td>
+        {% endfor %}
+    {% endif %}
+    {% if showComments %}
+		<td>
+		{% if sentence.commentcount>0 %}
+		    {{ sentence.lastcomment }}<br>
+			<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+		{% else %}
+		    {% if is_granted(userRole) %}
+				<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}Add new comment{% endtrans %}</a>
+			{% endif %}
+		{% endif %}
+		</td>
+	{% endif %}          
+</tr>

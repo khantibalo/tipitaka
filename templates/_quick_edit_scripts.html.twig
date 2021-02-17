@@ -1,0 +1,33 @@
+<script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+{# <script type="text/javascript" src="{{ asset('jquery-3.5.0.js') }}"></script>  #}
+<script type="text/javascript" src="{{ asset('scripts.js') }}"></script>
+<script>
+	var ajaxRoot="{{ asset('ajax') }}";
+	var saveError="{% trans %}Save error{% endtrans %}";
+	var translateText="{% trans %}Translate{% endtrans %}";
+	var quickEditText="{% trans %}Quick Edit{% endtrans %}";
+	var editText="{% trans %}Edit{% endtrans %}";	
+	var saveText="{% trans %}Save{% endtrans %}";
+	var cancelText="{% trans %}Cancel{% endtrans %}"; 
+	
+	var codeText="{% trans %}Code{% endtrans %}";
+	var codeUrl="{{ (showCode and sentence is defined ) ? path('quote_code',{sentencetranslation : 'stidParam',paragraphid: sentence.paragraphid })|raw : ''  }}";
+
+	var shiftDownText="{% trans %}Shift down{% endtrans %}";
+	var shiftUpText="{% trans %}Shift up{% endtrans %}";
+
+	var shiftDownLink="{{ showAlign ? path('shiftdown',{translationid : 'stidParam' })|raw : '' }}";
+	var shiftUpLink="{{ showAlign ? path('shiftup',{translationid : 'stidParam' })|raw : '' }}";
+	
+	{% if showAlign %}
+	var translateUrl="{{ path('translation_edit',{sentenceid : 'sentenceidParam',sourceid : 'sourceidParam', return: 'node', showAlign: 'yes' })|raw }}";
+    {% else %}
+    var translateUrl="{{ path('translation_edit',{sentenceid : 'sentenceidParam',sourceid : 'sourceidParam', return: 'node'})|raw }}";
+    {% endif %} 
+
+    {% if showAlign %}
+    	var editUrl="{{ path('translation_edit',{translationid : 'stidParam', return: 'node', showAlign: 'yes' })|raw }}";
+    {% else %}
+    	var editUrl="{{ path('translation_edit',{translationid : 'stidParam', return: 'node' })|raw }}";
+    {% endif %}
+</script>

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit tag{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>{{ form_label(form.title,'Title') }}:</td>
+<td>{{ form_widget(form.title) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.language,'Language') }}:</td>
+<td>{{ form_widget(form.language) }}</td>
+</tr>
+</table>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path('tag_names',{tagid: tagid}) }}">{% trans %}Cancel{% endtrans %}</a>
+<br><font color="red">{{ message }}</font>
+{{ form_end(form) }}
+{% endblock %}

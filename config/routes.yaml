@@ -1,0 +1,257 @@
+index:
+    path: /
+    controller: App\Controller\DefaultController::default
+
+full_toc:
+    path: /toc/full
+    controller: App\Controller\TOCController::fullToc
+
+full_toc_node:
+    path: /toc/full/{id}
+    controller: App\Controller\TOCController::fullTocListById
+
+#that should be /node/{id}/pali but deliberately made this way to disallow it in robots.txt
+view_node:
+    path: /node/pali/{id}
+    controller: App\Controller\ViewController::viewNode
+
+view_paragraph:
+    path: /p/{id}
+    controller: App\Controller\ViewController::viewParagraph
+
+bookmarks:
+    path: /bookmarks
+    controller: App\Controller\BookmarksController::list
+
+#that should be /node/{id}/bookmark but deliberately made this way to disallow it in robots.txt
+bookmark_node_add:
+    path: /node/bookmark/{id}
+    controller: App\Controller\BookmarksController::addNode
+
+bookmark_paragraph_add:
+    path: /p/{id}/bookmark
+    controller: App\Controller\BookmarksController::addParagraph
+    
+bookmark_node_remove:
+    path: /node/bookmark/{id}/remove
+    controller: App\Controller\BookmarksController::removeNode
+
+bookmark_paragraph_remove:
+    path: /p/{id}/bookmark/remove
+    controller: App\Controller\BookmarksController::removeParagraph    
+    
+search:
+    path: /search
+    controller: App\Controller\SearchController::search
+
+dictionary:
+    path: /dictionary
+    controller: App\Controller\DictionaryController::dictionary
+
+term:
+    path: /term/{word}
+    controller: App\Controller\DictionaryController::term
+    
+useredit:
+   path: /user/{id}/edit
+   controller: App\Controller\UserController::edit
+   
+app_login:
+   path: /user/login
+   controller: App\Controller\UserController::login
+   
+app_logout:
+   path: /user/logout
+   controller: App\Controller\UserController::logout
+
+paragraph_split:
+   path: /p/{id}/split
+   controller: App\Controller\TranslateController::paragraphSplit
+   
+translation_edit:
+   path: /translation/edit
+   controller: App\Controller\TranslateController::translationEdit
+         
+quote_pali:
+   path: /quote/pali/{contentids}
+   controller: App\Controller\QuoteController::quotePali
+     
+quote_sentencetranslation:
+   path: /quote/sentencetranslation/{translationids}
+   controller: App\Controller\QuoteController::quoteSentenceTranslation
+   
+quote_code:
+   path: /quote/code
+   controller: App\Controller\QuoteController::getCode
+   
+#that should be /node/{id}/table but deliberately made this way to disallow other paths in robots.txt   
+table_view:
+   path: /node/table/{id}
+   controller: App\Controller\ViewController::tableView
+
+node_split:
+   path: /node/{nodeid}/split
+   controller: App\Controller\TranslateController::nodeSplit
+   
+translation_import:
+   path: /translation/import/source/{sourceid}/node/{nodeid}
+   controller: App\Controller\TranslateController::translationImport
+   
+join:
+   path: /sentenceid/{sentenceid}/join
+   controller: App\Controller\TranslateController::join
+        
+shiftdown:
+   path: /translationid/{translationid}/shiftdown  
+   controller: App\Controller\TranslateController::shiftDown
+   
+shiftup:
+   path: /translationid/{translationid}/shiftup
+   controller: App\Controller\TranslateController::shiftUp
+
+sources_list:
+   path: /sources/list
+   controller: App\Controller\SourcesController::list     
+   
+user:
+   path: /user
+   controller: App\Controller\UserController::comments
+     
+source_edit:
+   path: /source/edit
+   controller: App\Controller\SourcesController::edit
+   
+comments:
+   path: /comments/sentenceid/{sentenceid}
+   controller: App\Controller\CommentsController::listBySentence
+      
+comment_delete:
+   path: /comment/delete/{commentid}
+   controller: App\Controller\CommentsController::commentDelete
+   
+comments_feed:
+   path: /feeds/comments.xml
+   controller: App\Controller\CommentsController::commentsFeed
+   
+translations_feed:
+   path: /feeds/translations.xml
+   controller: App\Controller\TranslateController::translationsFeed
+   
+setlocale:
+   path: /locale/{locale}/set
+   controller: App\Controller\DefaultController::setlocale
+   
+node_names:
+   path: /node/{nodeid}/names
+   controller: App\Controller\TOCController::listNodeNames
+   
+node_name_edit:
+   path: /node/name/edit
+   controller: App\Controller\TOCController::editNodeName
+      
+toc:
+    path: /toc
+    controller: App\Controller\TOCController::translationToc
+
+translation_toc_node:
+    path: /toc/translations/{id}
+    controller: App\Controller\TOCController::translationListById
+
+node_edit:
+    path: /node/{nodeid}/edit
+    controller: App\Controller\TOCController::nodeEdit
+    
+table_enable:
+   path: /node/{nodeid}/table/enable
+   controller: App\Controller\TOCController::enableTableView
+   
+translation_view:
+   path: /node/translation/{id}
+   controller: App\Controller\ViewController::translationView
+      
+node_tags:
+   path: /node/tags/{nodeid}
+   controller: App\Controller\TOCController::listNodeTags  
+   
+tag_edit:
+   path: /tag/edit
+   controller: App\Controller\TagsController::editTag
+    
+node_tag_remove:
+   path: /node/{nodeid}/tag/{tagid}/remove
+   controller: App\Controller\TOCController::removeNodeTag
+   
+toc_tags_list:
+   path: /toc/tags
+   controller: App\Controller\TagsController::tocTagsList
+   
+ajax_translation_update:
+   path: /ajax/translation/update
+   controller: App\Controller\TranslateController::ajaxTranslationUpdate
+   
+ajax_translation_add:
+   path: /ajax/translation/add
+   controller: App\Controller\TranslateController::ajaxTranslationAdd
+   
+collections_list:
+   path: /toc/collections
+   controller: App\Controller\CollectionController::list
+   
+collection_item_edit:
+   path: /toc/collectionitem/edit
+   controller: App\Controller\CollectionController::edit
+
+collection_item_names:
+   path: /toc/collectionitem/{itemid}/names
+   controller: App\Controller\CollectionController::namesList
+
+collection_item_name_edit:
+   path: /toc/collectionitemname/edit
+   controller: App\Controller\CollectionController::nameEdit
+   
+sentence_edit:
+   path: /sentenceid/{sentenceid}/edit
+   controller: App\Controller\TranslateController::sentenceEdit
+      
+sentence_shiftdown:
+   path: /sentenceid/{sentenceid}/shiftdown
+   controller: App\Controller\TranslateController::sentenceShiftDown
+
+tag_names:
+   path: /toc/tag/{tagid}/names/list
+   controller: App\Controller\TagsController::listTagNames
+
+tag_name_edit:  
+   path: /toc/tag/name/edit
+   controller: App\Controller\TagsController::editTagName
+
+legacy_redirect:
+   path: /comments/legacyid/{legacyid}
+   controller: App\Controller\CommentsController::legacyRedirect
+   
+paliword_tags:
+   path: /dictionary/paliword/{paliword}/tags
+   controller: App\Controller\DictionaryController::listPaliwordTags
+   
+paliword_tag_remove:
+   path: /dictionary/paliword/{paliword}/tag/{tagid}/remove
+   controller: App\Controller\DictionaryController::removePaliwordTag
+
+dictionaryentry_edit:
+   path: /dictionary/entry/edit
+   controller: App\Controller\DictionaryController::editDictionaryEntry
+
+dictionaryentryuse_edit:
+   path: /dictionary/entry/use/edit
+   controller: App\Controller\DictionaryController::editDictionaryEntryUse
+   
+register:
+   path: /user/register
+   controller: App\Controller\UserController::register
+   
+userlist:
+   path: /user/list
+   controller: App\Controller\UserController::list
+   
+      
+      

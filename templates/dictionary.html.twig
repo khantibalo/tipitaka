@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+{% set page='dictionary' %}
+{% block title %}{% trans %}dictionary{% endtrans %}{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>
+{{ form_label(form.searchString, 'SearchFieldLabel') }}
+</td>
+<td>
+{{ form_widget(form.searchString) }}
+{{ include('_palibox.html.twig',{searchControlId: 'form_searchString'}) }}
+</td>
+</tr>
+<tr>
+<td>
+{{ form_label(form.dictionaryChoice, 'DictionaryFieldLabel') }}
+</td>
+<td>
+{{ form_widget(form.dictionaryChoice) }}
+</td>
+</tr>
+<tr>
+<td>
+{{ form_label(form.typeChoice, 'SearchTypeLabel') }}
+</td>
+<td>
+{{ form_widget(form.typeChoice) }}
+</td>
+</tr>
+<tr>
+<td>
+{{ form_label(form.ignoreDiac, 'IgnoreDiac') }}
+</td>
+<td>
+{{ form_widget(form.ignoreDiac) }}
+</td>
+</tr>
+<tr>
+<td>
+{{ form_label(form.scopeChoice, 'ScopeLabel') }}
+</td>
+<td>
+{{ form_widget(form.scopeChoice) }}
+</td>
+</tr>
+</table>
+{{ form_row(form.search, {'label': 'SearchButton'}) }}
+{{ form_end(form) }}
+
+<a href="{{ path('dictionary',{tagid: -1 }) }}">{% trans %}Tags{% endtrans %}</a>&nbsp;&nbsp;&nbsp;
+{% for letterItem in letters %}
+    {% if letterItem==selLetter %}
+    {{ letterItem }}
+    {% else %}
+    <a href='{{ path('dictionary',{letter: letterItem }) }}'>{{ letterItem }}</a> 
+    {% endif %}
+{% endfor %}
+{% if is_granted(editorRole) %}
+<a href="{{ path('dictionaryentry_edit') }}">{% trans %}Add entry{% endtrans %}</a>
+{% endif %}		
+{% if selLetter %}
+    <ul>
+    {% for letterTerm in letterTerms %}
+    <li><a href="{{ path('term',{word: letterTerm.paliword}) }}">{{ letterTerm.paliword }}</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% if foundTerms|length>0 %}
+    <br><br>
+    {{ foundTerms|length }} {% trans %}results found{% endtrans %}    
+    <ul>
+    {% for foundTerm in foundTerms %}
+        <li>
+        <a href="{{ path('term',{word: foundTerm.UniquePaliword}) }}">{{ foundTerm.UniquePaliword }}</a> {{ foundTerm.Buddhadatta }}
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% if foundContent|length>0 %}
+	<br><br>
+    {{ foundContent|length }} {% trans %}results found{% endtrans %} 
+    <br><br>  
+    {% for item in foundContent %}
+    <b>{{ item.paliword }} - {{ item.name }}</b><br>
+    {{ item.explanation|highlight(keyword)|raw }}
+    <hr>
+    {% endfor %}
+{% endif %}
+
+{% if tagid %}
+    <ul>
+    {% for tag in tags %}
+    <li><a href="{{ path('dictionary',{tagid: tag.tagid}) }}">{{ tag.title }}</a> ({{ tag.TagCount}})
+            <ul>
+        	{% for tagPaliword in tagPaliwords %}
+            <li><a href="{{ path('term',{word: tagPaliword.paliword}) }}">{{ tagPaliword.paliword }}</a></li>
+            {% endfor %}
+            </ul>
+    </li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

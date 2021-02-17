@@ -1,0 +1,80 @@
+security:
+    encoders:
+        App\Entity\TipitakaUsers:
+            algorithm: auto
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\TipitakaUsers
+                property: username
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: lazy
+            guard:
+                authenticators:
+                    - App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                target: index
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+    
+    role_hierarchy:
+        ROLE_AUTHOR: ROLE_USER
+        ROLE_EDITOR: ROLE_AUTHOR
+        ROLE_ADMIN: ROLE_EDITOR
+    
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+      - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/p/\d+/split, roles: ROLE_AUTHOR }
+      - { path: ^/translation/edit, roles: ROLE_AUTHOR }
+      - { path: ^/quote/code, roles: ROLE_USER }
+      - { path: ^/node/\d+/split, roles: ROLE_AUTHOR }
+      - { path: ^/translation/import, roles: ROLE_EDITOR }
+      - { path: ^/sentenceid/\d+/join, roles: ROLE_EDITOR }
+      - { path: ^/translationid/\d+/shiftdown , roles: ROLE_EDITOR }
+      - { path: ^/translationid/\d+/shiftup, roles: ROLE_EDITOR }
+      - { path: ^/user$, roles: ROLE_USER }
+      - { path: ^/sources/list, roles: ROLE_EDITOR }
+      - { path: ^/source/edit, roles: ROLE_EDITOR }
+      - { path: ^/comment/delete, roles: ROLE_USER }
+      - { path: ^/node/\d+/names, roles: ROLE_EDITOR }      
+      - { path: ^/node/name/edit, roles: ROLE_EDITOR }
+      - { path: ^/fill_pst, roles: ROLE_ADMIN }
+      - { path: ^/fill_nst, roles: ROLE_ADMIN }
+      - { path: ^/node/\d+/edit, roles: ROLE_EDITOR }
+      - { path: ^/node/\d+/table/enable, roles: ROLE_EDITOR }
+      - { path: ^/node/\d+/tags, roles: ROLE_EDITOR }
+      - { path: ^/tag/edit, roles: ROLE_EDITOR }
+      - { path: ^/node/\d+/tag/\d+/remove, roles: ROLE_EDITOR }
+      - { path: ^/ajax/translation/update, roles: ROLE_AUTHOR }
+      - { path: ^/ajax/translation/add, roles: ROLE_AUTHOR }
+      - { path: ^/toc/collectionitem/edit, roles: ROLE_EDITOR }
+      - { path: ^/toc/collectionitem/\d+/names, roles: ROLE_EDITOR }
+      - { path: ^/toc/collectionitemname/edit, roles: ROLE_EDITOR }
+      - { path: ^/sentenceid/\d+/edit, roles: ROLE_ADMIN }
+      - { path: ^/sentenceid/\d+/shiftdown, roles: ROLE_ADMIN }
+      - { path: ^/toc/tag/\d+/names/list, roles: ROLE_EDITOR }
+      - { path: ^/toc/tag/name/edit, roles: ROLE_EDITOR }
+      - { path: ^/pali/copy/nodeid/\d+/sourceid/\d+, roles: ROLE_ADMIN }
+      - { path: ^/fixpaths/nodeid/\d+, roles: ROLE_ADMIN }
+      - { path: ^/dictionary/paliword/\d+/tags, roles: ROLE_EDITOR }
+      - { path: ^/dictionary/paliword/\d+/tag/\d+/remove, roles: ROLE_EDITOR }
+      - { path: ^/dictionary/entry/edit, roles: ROLE_EDITOR }
+      - { path: ^/dictionary/entry/use/edit, roles: ROLE_EDITOR }
+      - { path: ^/user/list, roles: ROLE_ADMIN }
+      - { path: ^/user/\d+/edit, roles: ROLE_ADMIN }
+      

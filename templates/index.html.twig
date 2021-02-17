@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% set page='default' %}
+{% block title %}{% trans %}Home{% endtrans %}{% endblock %}
+{% block content %}
+<table style="width:100%">
+<tr>
+<td style="width:80%;vertical-align: top">
+<h3>{% trans %}Latest updates{% endtrans %}</h3>
+    <table style="width:100%">
+    {% for lastItem in lastupd %}
+    <tr{% if loop.index % 2 ==0 %} style="background-color:LightGrey"{% endif %}>
+    <td>
+    {{ lastItem.updated|date('Y-m-d H:i:s') }}
+    </td>
+    <td>
+    <small>{{ lastItem.textpath }}</small>
+    </td>
+    <td>
+    <a href="{{ path('view_paragraph',{id: lastItem.paragraphid}) }}">{{ lastItem.trname ?? lastItem.title }}</a>
+    </td>
+    </tr>
+    {% endfor %}
+    </table>
+</td>
+<td style="vertical-align: top">
+<h3>{% trans %}New comments{% endtrans %}</h3>
+    {% for comment in comments %}
+    <div>
+    <a href="{{ path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.trname ?? comment.title}}</a>
+    <div>{{comment.CommentText|shorten }}</div>
+    <div><small>
+    {% if comment.DaysAgo==0 %}
+    {% trans %}Today{% endtrans %}
+    {% else %}
+    {{comment.DaysAgo}} {% trans %}DaysAgo{% endtrans %}
+    {% endif %}
+    </small></div>
+    </div>    
+    {%endfor%}
+</td>
+</tr>
+</table>
+{% endblock %}

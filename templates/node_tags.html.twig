@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}Tags{% endblock %}
+{% block content %}
+{{ node.trname ?? node.title  }} <a href="{{ path('full_toc_node',{id: node.nodeid}) }}">{% trans %}Back{% endtrans %}</a>
+
+{{ form_start(form) }}
+{{ form_widget(form.tagtypes) }}
+{{ form_widget(form.update,{'label': 'Update'}) }}
+{{ form_widget(form.tags) }}
+{{ form_widget(form.save,{'label': 'Add'}) }} {% trans %}Or{% endtrans %} <a href="{{ path('tag_edit',{nodeid: node.nodeid}) }}">{% trans %}Create new tag{% endtrans %}</a>
+{{ form_end(form) }}
+<table class="bordercell">
+<tr>
+<td>{% trans %}Pali name{% endtrans %}</td>
+<td>{% trans %}Tag type{% endtrans %}</td>
+<td>{% trans %}Applied on{% endtrans %}</td>
+<td>{% trans %}Applied by{% endtrans %}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+{% for tag in tags %}
+<tr>
+<td>{{ tag.paliname }}</td>
+<td>{{ "TagType#{tag.tagtypeid}" | trans }}</td>
+<td>{{ tag.applydate|date('Y-m-d H:i:s') }}</td>
+<td>{{ tag.username }}</td>
+<td>
+{% for name in names|filter(n=>n.nodetagid==tag.nodetagid) %}
+<div>{{ name.title }}<a href="{{ path('tag_name_edit',{tagnameid: name.tagnameid, nodeid: node.nodeid}) }}">{% trans %}Edit{% endtrans %}</a></div>
+{% endfor %}
+</td>
+<td><a href="{{ path('tag_edit',{tagid: tag.tagid, nodeid: node.nodeid}) }}">{% trans %}Edit{% endtrans %}</a></td>
+<td><a href="{{ path('node_tag_remove',{tagid:tag.tagid, nodeid: node.nodeid}) }}">{% trans %}Remove{% endtrans %}</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

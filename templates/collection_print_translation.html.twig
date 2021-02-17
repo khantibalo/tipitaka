@@ -1,0 +1,39 @@
+{% extends 'collection_print.html.twig' %}
+{% block stylesheets %}
+<link href="{{ asset('styles.css') }}" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+	{% for collectionItem in collectionItems %}
+		{% if collectionItem.level>0 %}
+			<div style="padding-left:{{collectionItem.level*20}}px">
+		{% else %}
+			<div>
+		{% endif %} 
+		{% if collectionItem.nodeid %}		
+			<a href="#ch{{collectionItem.collectionitemid}}">{{ collectionItem.nodeName ?? collectionItem.title }}</a>
+		{% else %} 
+			<a href="#ch{{collectionItem.collectionitemid}}">{{ collectionItem.colItemName }}</a>
+		{% endif %}
+		</div>
+	{% endfor %}
+	{% for collectionItem in collectionItems %}
+		{% if collectionItem.nodeid %}		
+			<h2>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} - {{ collectionItem.altPaliName ?? collectionItem.title }}</h2>				
+		{% else %} 
+			<h{{collectionItem.level}}>{{ collectionItem.colItemName }}</h{{collectionItem.level}}>				
+		{% endif %}
+		<p></p>
+		{% if collectionItem.nodeid %}	
+			{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
+				<p class="{{ paragraph.paragraphtype }}">
+				{% for sentence in sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
+					{% set other=otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) %}	
+					{% if other|length>0 %}				
+						{{ (other|first).translation }}
+					{% endif %}
+				{% endfor %}
+				</p>
+			{% endfor %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}

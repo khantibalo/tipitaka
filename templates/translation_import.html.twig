@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block title %}Import translation{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+{{ form_row(form.importFile,{'label': 'ImportFileUpload'}) }}
+{{ form_row(form.importText,{'label': 'ImportText',"attr" : {"style" : "width: 100%", "rows": 5 }}) }}
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path('table_view',{id: nodeid}) }}">{% trans %}Cancel{% endtrans %}</a>
+{{ form_end(form) }}
+{% endblock %}

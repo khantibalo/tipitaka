@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit collection item name{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>{{ form_label(form.name,'Name') }}:</td>
+<td>{{ form_widget(form.name,{"attr" : {"style" : "width: 500px", "maxlength" : 255  }}) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.language,'Language') }}:</td>
+<td>{{ form_widget(form.language) }}</td>
+</tr>
+</table>
+<table style="width:100%">
+<tr>
+<td>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path('collection_item_names',{itemid: itemid}) }}">{% trans %}Cancel{% endtrans %}</a>
+</td>
+<td style="text-align:right">
+{% if itemnameid %}
+{{ form_widget(form.delete,{'label': 'Delete',"attr" : {"onclick" : "ConfirmScript" | trans }}) }}
+{% endif %}
+</td>
+</tr>
+</table>
+<br><font color="red">{{ message }}</font>
+{{ form_end(form) }}
+{% endblock %}

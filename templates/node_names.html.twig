@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}Node names{% endblock %}
+{% block content %}
+<p class="{{ node.titletypeid.name }}">{{ node.title }}</p>
+<a href="{{ path('node_name_edit',{nodeid: node.nodeid}) }}">{% trans %}Add new name{% endtrans %}</a>
+<a href="{{ path('full_toc_node',{id: node.nodeid}) }}">{% trans %}Return to node page{% endtrans %}</a>
+<table class="bordercell" style="width:100%">
+<tr>
+<td>
+{% trans %}Name{% endtrans %}
+</td>
+<td>
+{% trans %}Language{% endtrans %}
+</td>
+<td>
+{% trans %}authorName{% endtrans %}
+</td>
+<td>&nbsp;</td>
+</tr>
+{% for nameItem in names %}
+<tr>
+<td>
+{{ nameItem.name }}
+</td>
+<td>
+{{ nameItem.languageName }}
+</td>
+<td>
+{{ nameItem.username }}
+</td>
+<td>
+<a href="{{ path('node_name_edit',{nodenameid: nameItem.nodenameid}) }}">{% trans %}Edit{% endtrans %}</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

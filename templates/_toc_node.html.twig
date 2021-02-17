@@ -1,0 +1,16 @@
+<div style="margin-left:{{ level*20 }}px">
+{% if node.haschildnodes %}
+<a href="{{ path(expandRoute, {id: node.nodeid}) }}">{{ node.title }}</a>
+{% else %}
+{{ node.title }}
+{% endif %}
+{% if node.titletypeid.canview %}
+&nbsp;<a href="{{ path('view_node', {id: node.nodeid}) }}">({% trans %}View{% endtrans %})</a>
+{% endif %}
+&nbsp;<a href="{{ path('bookmark_node_add', {id: node.nodeid}) }}">({% trans %}Bookmark{% endtrans %})</a>
+{% if is_granted(authorRole) %}
+&nbsp;<a href="{{ path('node_names',{nodeid: node.nodeid }) }}">({% trans %}Edit names{% endtrans %})</a>
+&nbsp;<a href="{{ path('node_edit',{nodeid: node.nodeid }) }}">({% trans %}Edit node{% endtrans %})</a>
+&nbsp;<a href="{{ path('node_tags',{nodeid: node.nodeid }) }}">({% trans %}Tags{% endtrans %})</a>
+{% endif %}
+</div>

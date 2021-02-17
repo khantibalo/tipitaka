@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0" xml:base="{{ link }}" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>{{ title }}</title>
+    <link>{{ link }}</link>
+    <description>{{ description }}</description>
+    <language>{{ langcode }}</language>
+    {% for item in items %}   
+    <item>
+      <title>{{ titleFormat|format(item.title) }}</title>
+      <link>{{ item.link }}</link>
+      <description>{{ item.description|nl2br|escape }}</description>
+      <pubDate>{{ item.pubDate|date('r','UTC') }}</pubDate>
+	  <dc:creator>{{ item.creator }}</dc:creator>
+	  <guid>{{ item.link }}</guid>      
+    </item>
+    {% endfor %}
+  </channel>
+</rss>

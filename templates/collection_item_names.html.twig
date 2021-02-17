@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block title %}Collection item names{% endblock %}
+{% block content %}
+<a href="{{ path('collection_item_name_edit',{itemid: itemid}) }}">{% trans %}Add new name{% endtrans %}</a>
+<a href="{{ path('collections_list',{itemid: collectionid}) }}">{% trans %}Return to collection{% endtrans %}</a>
+<table class="bordercell" style="width:100%">
+<tr>
+<td>
+{% trans %}Name{% endtrans %}
+</td>
+<td>
+{% trans %}Language{% endtrans %}
+</td>
+<td>&nbsp;</td>
+</tr>
+{% for nameItem in names %}
+<tr>
+<td>
+{{ nameItem.name }}
+</td>
+<td>
+{{ nameItem.languageName }}
+</td>
+<td>
+<a href="{{ path('collection_item_name_edit',{itemnameid: nameItem.itemnameid}) }}">{% trans %}Edit{% endtrans %}</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

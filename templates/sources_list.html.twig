@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% set page='user' %}
+{% block title %}{% trans %}Sources{% endtrans %}{% endblock %}
+{% block content %}
+{% set userPage='sources' %}
+{{ include('_user_navigation.html.twig') }}
+<a href="{{ path('source_edit') }}">{% trans %}Add new source{% endtrans %}</a>
+<table class="bordercell" style="width:100%">
+<tr style="background-color:LightGrey">
+<td>{% trans %}Name{% endtrans %}</td>
+<td>{% trans %}Language{% endtrans %}</td>
+<td>{% trans %}Is hidden{% endtrans %}</td>
+<td>{% trans %}Exclude from search{% endtrans %}</td>
+<td>{% trans %}Contains formatting{% endtrans %}</td>
+<td>{% trans %}User{% endtrans %}</td>
+<td></td>
+</tr>
+{% for source in sources %}
+<tr{% if loop.index % 2 ==0 %} style="background-color:LightGrey"{% endif %}>
+<td>{{ source.name }}</td>
+<td>{{ source.language }}</td>
+<td>{{ source.ishidden ? 'yes'|trans : 'no'|trans }}</td>
+<td>{{ source.excludefromsearch ? 'yes'|trans : 'no'|trans }}</td>
+<td>{{ source.hasformatting ? 'yes'|trans : 'no'|trans }}</td>
+<td>{{ source.username }}</td>
+<td><a href="{{ path('source_edit',{'sourceid': source.sourceid}) }}">{% trans %}Edit{% endtrans %}</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

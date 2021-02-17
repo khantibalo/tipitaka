@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block title %}Translate{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+{{ form_label(form.sentencetext, 'Sentence text') }}<br>
+{{ form_widget(form.sentencetext,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}<br>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ cancelUrl }}">{% trans %}Cancel{% endtrans %}</a>
+{{ form_end(form) }}
+{% endblock %}

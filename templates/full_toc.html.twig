@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% set page='toc' %}
+{% block title %}{% trans %}Table of contents{% endtrans %}{% endblock %}
+{% block content %}
+{% set tocPage='full' %}
+{{ include('_toc_navigation.html.twig') }}
+<div><a href="{{ path('full_toc') }}">{% trans %}Top{% endtrans %}</a></div>
+{% set level = 1 %}
+{% if path_nodes is defined %}
+    {% for node in path_nodes %}
+		{{ include('_toc_node.html.twig') }}
+		{% set level = level+1 %}
+    {% endfor %}
+	{% if thisNode.hasprologue %}
+	<div style="margin-left:{{ level*20 }}px">
+	{% trans %}Prologue{% endtrans %}
+	&nbsp;<a href="{{ path('view_node', {id: thisNode.nodeid,prologue: 1}) }}">({% trans %}View{% endtrans %})</a>
+	</div>
+	{% endif %}
+{% endif %}
+{% for node in child_nodes %}
+	{{ include('_toc_node.html.twig') }}
+{% endfor %}
+{% if showForm %}
+    {{ form_start(ptsForm) }}
+    {% trans %}GoPTS{% endtrans %}
+    {{ form_widget(ptsForm.volume) }}
+    {% if pageRangeMin and pageRangeMax %}
+    {% trans %}page{% endtrans %} ({{ pageRangeMin }} - {{ pageRangeMax }})
+    {% endif %}        
+    {{ form_widget(ptsForm.page,{'attr' : {'style' : 'width:100px'}}) }}
+    {{ form_widget(ptsForm.search) }}
+    {{ form_end(ptsForm) }}
+    <br>
+    {{ form_start(paraForm) }}
+    {% trans %}GoPara{% endtrans %}
+    {{ form_widget(paraForm.paranum) }}
+    {{ form_widget(paraForm.search) }}
+    <span style="color:red">{{ paraFormMessage }}</span>
+    {{ form_end(paraForm) }}
+{% endif %}
+{% endblock %}

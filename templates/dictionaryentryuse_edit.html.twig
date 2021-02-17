@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit term{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>{{ form_label(form.sentencetranslationid,'Usage example Translation ID') }}:</td>
+<td>{{ form_widget(form.sentencetranslationid) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.paliword,'Usage example pali word') }}:</td>
+<td>{{ form_widget(form.paliword) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.translation,'Usage example translation') }}:</td>
+<td>{{ form_widget(form.translation) }}</td>
+</tr>
+</table>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path('term',{word: paliword}) }}">{% trans %}Cancel{% endtrans %}</a>
+{{ form_end(form) }}
+{% endblock %}

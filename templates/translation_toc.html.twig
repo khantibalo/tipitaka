@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% set page='toc' %}
+{% block title %}{% trans %}Table of contents{% endtrans %}{% endblock %}
+{% block content %}
+{% set tocPage='translation' %}
+{{ include('_toc_navigation.html.twig') }}
+<div><a href="{{ path('toc') }}">{% trans %}Top{% endtrans %}</a></div>
+{% set level = 1 %}
+{% if path_nodes is defined %}
+    {% for node in path_nodes %}
+		{{ include('_translation_toc_node.html.twig') }}
+		{% set level = level+1 %}
+    {% endfor %}
+	{% if thisNode.hasprologue %}
+	<div style="margin-left:{{ level*20 }}px">
+	{% set route=thisNode.HasTableView ? 'table_view' : 'view_node' %}
+	{% set label=thisNode.HasTableView ? 'table'|trans : 'fragments'|trans %}
+	{% trans %}Prologue{% endtrans %}
+	&nbsp;<a href="{{ path(route, {id: thisNode.nodeid,prologue: 1}) }}">({{ label }})</a>
+	</div>
+	{% endif %}
+{% endif %}
+{% for node in child_nodes %}
+	{{ include('_translation_toc_node.html.twig') }}
+{% endfor %}
+{% endblock %}

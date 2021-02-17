@@ -1,0 +1,13 @@
+/var/cache/*
+/var/log/*
+/vendor/
+/.settings/
+/.buildpath
+/.project
+/.env.local
+/.env.test
+/public/favicon.png
+
+
+
+

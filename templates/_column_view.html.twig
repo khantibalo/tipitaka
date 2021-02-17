@@ -1,0 +1,9 @@
+{% trans %}Column view{% endtrans %}
+{{ form_start(form) }}
+{{ form_widget(form.pali) }}{{ form_label(form.pali,'Pali') }}<br>
+{% for source in allSources %}
+{{ form_widget(form.sources[loop.index0]) }}{{ form_label(form.sources[loop.index0]) }}<br>
+{% endfor %}
+{{ form_widget(form.comments) }}{{ form_label(form.comments,'Comments') }}<br>
+{{ form_widget(form.update,{'label': 'Update'}) }}
+{{ form_end(form) }}

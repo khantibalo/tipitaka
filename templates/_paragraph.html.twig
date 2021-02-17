@@ -1,0 +1,13 @@
+<tr>
+{% if view_settings.printview is empty %}
+<td style="width:100px"><a href="{{ path('bookmark_paragraph_add', {id: paragraph.paragraphid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>
+{% endif %}
+<td>
+<p class="{{ paragraph.typename }}">
+{% if not paragraph.paranum is empty %}
+<span class="paranum">{{ paragraph.paranum }}</span><span class="dot">.</span>
+{% endif %}  
+{{ paragraph.text|raw }}
+</p>
+</td>
+</tr>

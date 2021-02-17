@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}Tags{% endblock %}
+{% block content %}
+{{ paliword }} <a href="{{ path('term',{word: paliword}) }}">{% trans %}Back{% endtrans %}</a>
+
+{{ form_start(form) }}
+{{ form_widget(form.tagtypes) }}
+{{ form_widget(form.update,{'label': 'Update'}) }}
+{{ form_widget(form.tags) }}
+{{ form_widget(form.save,{'label': 'Add'}) }} {% trans %}Or{% endtrans %} <a href="{{ path('tag_edit',{paliword: paliword}) }}">{% trans %}Create new tag{% endtrans %}</a>
+{{ form_end(form) }}
+<table class="bordercell">
+<tr>
+<td>{% trans %}Pali name{% endtrans %}</td>
+<td>{% trans %}Tag type{% endtrans %}</td>
+<td>{% trans %}Applied on{% endtrans %}</td>
+<td>{% trans %}Applied by{% endtrans %}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+{% for tag in tags %}
+<tr>
+<td>{{ tag.paliname }}</td>
+<td>{{ "TagType#{tag.tagtypeid}" | trans }}</td>
+<td>{{ tag.applydate|date('Y-m-d H:i:s') }}</td>
+<td>{{ tag.username }}</td>
+<td>
+{% for name in names|filter(n=>n.paliwordtagid==tag.paliwordtagid) %}
+<div>{{ name.title }}<a href="{{ path('tag_name_edit',{tagnameid: name.tagnameid, paliword: paliword}) }}">{% trans %}Edit{% endtrans %}</a></div>
+{% endfor %}
+</td>
+<td><a href="{{ path('tag_edit',{tagid: tag.tagid, paliword: paliword}) }}">{% trans %}Edit{% endtrans %}</a></td>
+<td><a href="{{ path('paliword_tag_remove',{tagid: tag.tagid, paliword: paliword}) }}">{% trans %}Remove{% endtrans %}</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

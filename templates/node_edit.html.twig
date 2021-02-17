@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit node name{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table style="width:100%">
+<tr>
+<td>{{ form_label(form.title,'Title') }}:</td>
+<td>{{ form_widget(form.title) }}</td>
+</tr>
+<tr>
+<td style="width:200px">{{ form_label(form.IsHidden,'Is hidden') }}:</td>
+<td>{{ form_widget(form.IsHidden) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.TranslationSourceID,'Translation source') }}</td>
+<td>{{ form_widget(form.TranslationSourceID) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.notes, 'Notes') }}</td>
+<td>{{ form_widget(form.notes,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.disableview,'Disable view link') }}:</td>
+<td>{{ form_widget(form.disableview) }}</td>
+</tr>
+</table>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path(route,{id: node.nodeid}) }}">{% trans %}Return to node{% endtrans %}</a>
+{{ form_end(form) }}
+{% endblock %}

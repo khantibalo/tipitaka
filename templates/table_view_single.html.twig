@@ -1,0 +1,176 @@
+{% extends 'base.html.twig' %}
+{% set showT=false %}
+{% block title %}{{ node.trname ?? node.title }}{% endblock %}
+{% block navigation %}
+{{ include('_navigation.html.twig') }}
+{% endblock %}
+{% block content %}
+<div>
+{{ include('_translation_node_path.html.twig') }}
+</div>
+{% if is_granted(authorRole) %}
+    <div>
+    {% trans %}new source link{% endtrans %}
+    {% if showNewSource %}
+    	<a href="{{ path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
+    {% else %}
+    	{% trans %}hide{% endtrans %} <a href="{{ path('table_view',{id : node.nodeid,showNewSource : 'yes'}) }}">{% trans %}show{% endtrans %}</a>
+    {% endif %}|
+{% endif %} 
+{% if is_granted(userRole) %}    
+    {% trans %}code link{% endtrans %} 
+    {% if showCode %}
+    	<a href="{{ path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
+    {% else %}
+    	{% trans %}hide{% endtrans %} <a href="{{ path('table_view',{id : node.nodeid,showCode : 'yes'}) }}">{% trans %}show{% endtrans %}</a>
+    {% endif %}
+{% endif %}         
+{% if is_granted(editorRole) %}|
+    {% trans %}align tools{% endtrans %} 
+    {% if showAlign %}
+    	<a href="{{ path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
+    {% else %}
+    	{% trans %}hide{% endtrans %} <a href="{{ path('table_view',{id : node.nodeid,showAlign : 'yes'}) }}">{% trans %}show{% endtrans %}</a>
+    {% endif %}
+    </div>
+{% endif %} 
+{% if node.notes %}
+<br>{{ node.notes|raw }}
+{% endif %}
+<center>
+{% if not back_id is empty %}
+{% if backPrologue %}<a href="{{ path('table_view', {id: back_id, prologue: 1}) }}">{% else %}<a href="{{ path('table_view', {id: back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>
+{% endif %}
+{% if not next_id is empty %}
+<a href="{{ path('table_view', {id: next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+{% endif %}
+</center>
+{{ include('_related_nodes.html.twig') }}
+{{ include('_column_view.html.twig') }}
+<p class="{{ node.typename }}">{{ node.trname ?? node.title }}
+{% if node.TranslationSourceID %}<a href="{{ path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
+    <a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}original{% endtrans %}</a>
+</p>
+{% if sentences|length>0 %}
+{% set colWidth=90/(sources|length+(showPali ? 1 : 0)) %}
+    <table class="bordercell" style="width:100%">
+    <tr>
+    {% if showPali %}<td style="width:{{ colWidth }}%">{% trans %}Pali{% endtrans %}</td>{% endif %}
+    {% if sources|length>0 %}
+        {% for source in sources %}
+        	<td style="width:{{ colWidth }}%">{{ source.sourcename }} - {{ source.languagename }}
+        	{% if is_granted(editorRole) and showAlign%}
+        		<a href="{{ path('translation_import',{sourceid: source.sourceid, nodeid: node.nodeid }) }}">{% trans %}Import{% endtrans %}</a>
+        	{% endif %}
+        	</td>
+        {% endfor %}
+    {% endif %}
+    {% if showComments %}<td>{% trans %}Comments{% endtrans %}</td>{% endif %}
+    {% if is_granted(authorRole)  and showNewSource=='yes' %}
+    	<td></td>
+    {% endif %} 
+    </tr>
+    {% for sentence in sentences %}
+    <tr>
+    	{% if showPali %}
+        	<td style="vertical-align: top;"><a name="sent{{ sentence.sentenceid }}"></a>
+{% if is_granted(editorRole) and showAlign %}{{ loop.index }} : {% endif %}
+{{ sentence.sentencetext }}
+	        {% if is_granted(editorRole) and showAlign %}
+	        <br><a href="{{ path('join',{sentenceid: sentence.sentenceid}) }}">{% trans %}Join{% endtrans %}</a>
+	        {% endif %}        
+	    	{% if is_granted(adminRole) and showAlign %}
+	    	<a href="{{ path('sentence_edit',{sentenceid: sentence.sentenceid }) }}">{% trans %}Edit{% endtrans %}</a>
+	    	<a href="{{ path('sentence_shiftdown',{sentenceid: sentence.sentenceid }) }}">{% trans %}Shift down{% endtrans %}</a>
+	    	{% endif %}        
+	        </td>
+        {% endif %}
+        {% if sources|length>0 %}
+            {% for source in sources %}
+            <td style="vertical-align: top;">
+                {% set translation=translations|filter(t=>t.sentenceid==sentence.sentenceid and t.sourceid==source.sourceid)|first %}
+                {% if translation %}
+                	<span id="et{{ translation.sentencetranslationid }}">{{ source.hasformatting ? translation.translation|raw : translation.translation }}</span>
+                    {% if is_granted(userRole) %}
+                    	<span id="ec{{ translation.sentencetranslationid }}">
+                    	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>
+	                    {% if is_granted(editorRole) or (translation.userid==app.user.userid and is_granted(authorRole)) %}
+	                        {% if showAlign %}
+	                        <a href="{{ path('translation_edit',{translationid : translation.sentencetranslationid, return: 'node', showAlign: 'yes' }) }}">{% trans %}Edit{% endtrans %}</a>
+	                        {% else %}
+	                        <a href="{{ path('translation_edit',{translationid : translation.sentencetranslationid, return: 'node' }) }}">{% trans %}Edit{% endtrans %}</a>
+	                        {% endif %}
+	                        <a href="javascript:QTEdit({{ translation.sentencetranslationid }});">{% trans %}Quick Edit{% endtrans %}</a>
+	                    {% endif %}
+                        {% if showCode %}
+                        	<a href="{{ path('quote_code',{sentencetranslation : translation.sentencetranslationid,paragraphid: sentence.paragraphid }) }}">{% trans %}Code{% endtrans %}</a>
+                        {% endif %}
+                    {% endif %}
+                    {% if is_granted(editorRole) %}
+                        {% if showAlign %}
+                        	&nbsp;|&nbsp;<a href="{{ path('shiftdown',{translationid : translation.sentencetranslationid }) }}">{% trans %}Shift down{% endtrans %}</a>
+                        	&nbsp;|&nbsp;<a href="{{ path('shiftup',{translationid : translation.sentencetranslationid }) }}">{% trans %}Shift up{% endtrans %}</a>
+                        {% endif %} 
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if is_granted(authorRole) %}
+                    	<span id="ncse{{ sentence.sentenceid }}so{{ source.sourceid }}">
+                    	{% if showAlign %}
+                			<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid,sourceid :  source.sourceid, return: 'node', showAlign: 'yes' }) }}">{% trans %}Translate{% endtrans %}</a>
+                		{% else %}
+                			<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid,sourceid :  source.sourceid, return: 'node'}) }}">{% trans %}Translate{% endtrans %}</a>
+                		{% endif %} 
+                		<a href="javascript:QTNew({{ sentence.sentenceid }},{{ source.sourceid }});">{% trans %}Quick Edit{% endtrans %}</a>  
+                		</span>             		
+                	{% endif %}
+                {% endif %}
+            </td>
+            {% endfor %}
+        {% endif %}
+        {% if showComments %}
+			<td>
+			{% if sentence.commentcount>0 %}
+			    {{ sentence.lastcomment }}<br>
+				<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+			{% else %}
+			    {% if is_granted(userRole) %}
+					<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}Add new comment{% endtrans %}</a>
+				{% endif %}
+			{% endif %}
+			</td>
+		{% endif %}   
+    	{% if is_granted(authorRole) and showNewSource=='yes' %}
+    	<td>
+    	<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid, return: 'node'}) }}">{% trans %}New source{% endtrans %}</a>
+    	</td>
+    	{% endif %}     
+    </tr>
+    {% endfor %}
+    </table> 
+	{% endif %}    
+	{% if tags|length>0 %}
+		<div>
+		{% trans %}Tags{% endtrans %}:
+	    {% for tag in tags %}
+	        <a href="{{ path('toc_tags_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>&nbsp;
+	    {% endfor %}
+	    {% if is_granted(authorRole) %}
+	    &nbsp;<a href="{{ path('node_tags',{nodeid: node.nodeid }) }}">({% trans %}Edit tags{% endtrans %})</a>
+	    {% endif %}
+		</div>
+	{% endif %}	
+	<center>
+	{% if not back_id is empty %}
+    {% if backPrologue %}<a href="{{ path('table_view', {id: back_id, prologue: 1}) }}">{% else %}<a href="{{ path('table_view', {id: back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>
+	{% endif %}
+	{% if not next_id is empty %}
+	<a href="{{ path('table_view', {id: next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+	{% endif %}
+	</center>	
+{% endblock %}
+{% block javascripts %}
+    {% if is_granted(authorRole) %}
+        {{ include('_quick_edit_scripts.html.twig') }}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block title %}Add user{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>
+{{ form_label(form.username, 'Username') }}:
+</td>
+<td>
+{{ form_widget(form.username) }}
+</td>
+</tr>
+<tr>
+<td>
+{{ form_label(form.email, 'Email') }}:
+</td>
+<td>
+{{ form_widget(form.email) }}
+</td>
+</tr>
+<tr>
+<td>
+{{ form_label(form.roles, 'Roles') }}:
+</td>
+<td>
+{{ form_widget(form.roles) }} ROLE_ADMIN,ROLE_EDITOR,ROLE_AUTHOR,ROLE_USER (choose one)
+</td>
+</tr>
+<tr>
+<td>
+{{ form_label(form.allowcommentshtml, 'allowcommentshtml') }}:
+</td>
+<td>
+{{ form_widget(form.allowcommentshtml) }}
+</td>
+</tr>
+<tr>
+<td>
+{{ form_label(form.isenabled, 'Enabled') }}:
+</td>
+<td>
+{{ form_widget(form.isenabled) }}
+</td>
+</tr>
+</table>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path('userlist') }}">{% trans %}Cancel{% endtrans %}</a>
+{{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}Sources{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>{{ form_label(form.name,'Name') }}:</td>
+<td>{{ form_widget(form.name) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.language,'Language') }}:</td>
+<td>{{ form_widget(form.language) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.ishidden,'Is hidden') }}:</td>
+<td>{{ form_widget(form.ishidden) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.excludefromsearch,'Exclude from search') }}:</td>
+<td>{{ form_widget(form.excludefromsearch) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.hasformatting,'Contains formatting') }}:</td>
+<td>{{ form_widget(form.hasformatting) }}</td>
+</tr>
+</table>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path('sources_list') }}">{% trans %}Cancel{% endtrans %}</a>
+{{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %}New tag{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>{{ form_label(form.tagtype,'Tag type') }}:</td>
+<td>{{ form_widget(form.tagtype) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.paliname,'Pali name') }}:</td>
+<td>{{ form_widget(form.paliname) }}</td>
+</tr>
+{% if form.title is defined %}
+<tr>
+<td>{{ form_label(form.title,'Title') }}:</td>
+<td>{{ form_widget(form.title) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.language,'Language') }}:</td>
+<td>{{ form_widget(form.language) }}</td>
+</tr>
+{% endif %}
+</table>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+{% if form.title is defined %}
+{{ form_widget(form.saveAndAssign,{'label': 'Save аnd assign'}) }}
+{% endif %}
+{% if nodeid %}
+<a href="{{ path('node_tags',{nodeid: nodeid}) }}">{% trans %}Cancel{% endtrans %}</a>
+{% endif %}
+{% if paliword %}
+<a href="{{ path('paliword_tags',{paliword: paliword}) }}">{% trans %}Cancel{% endtrans %}</a>
+{% endif %}
+{% if not nodeid and not paliword %}
+<a href="{{ path('collections_list') }}">{% trans %}Cancel{% endtrans %}</a>
+{% endif %}
+{{ form_end(form) }}
+{% endblock %}

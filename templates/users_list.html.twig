@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+{% set page='user' %}
+{% block title %}{% trans %}Users list{% endtrans %}{% endblock %}
+{% block content %}
+{% set userPage='users' %}
+{{ include('_user_navigation.html.twig') }}
+<table style="width:100%">
+<tr>
+<td>{% trans %}Username{% endtrans %}</td>
+<td>{% trans %}Roles{% endtrans %}</td>
+<td>{% trans %}Email{% endtrans %}</td>
+<td>{% trans %}allowcommentshtml{% endtrans %}</td>
+<td>{% trans %}Enabled{% endtrans %}</td>
+<td></td>
+</tr>
+{% for user in users %}
+<tr>
+<td>{{ user.username }}</td>
+<td>{{ user.roles|join(", ") }}</td>
+<td>{{ user.email }}</td>
+<td>{{ user.allowcommentshtml ? 'yes'|trans : 'no'|trans  }}</td>
+<td>{{ user.isenabled ? 'yes'|trans : 'no'|trans  }}</td>
+<td><a href="{{ path('useredit',{id: user.userid }) }}">{% trans %}Edit{% endtrans %}</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

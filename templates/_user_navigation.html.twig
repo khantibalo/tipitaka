@@ -1,0 +1,36 @@
+{% set colno=2 %}
+{% if is_granted(authorRole) %}
+{% set colno=colno+1 %}
+{% endif %}
+{% if is_granted(adminRole) %}
+{% set colno=colno+1 %}
+{% endif %}
+<table style="width:100%">
+<tr>
+<td style="width:{{ 100/colno }}%;text-align: center">
+{% set isComments= userPage is defined and userPage=='comments' %}
+{% if not isComments %}<a href="{{ path('user') }}">{% endif %}  
+{% trans %}My comments{% endtrans %}
+{% if not isComments %}</a>{% endif %}
+</td>
+{% if is_granted(editorRole) %}
+<td style="width:{{ 100/colno }}%;text-align: center">
+{% set isSources= userPage is defined and userPage=='sources' %}
+{% if not isSources %}<a href="{{ path('sources_list') }}">{% endif %}  
+{% trans %}Sources{% endtrans %}
+{% if not isSources %}</a>{% endif %}
+</a>
+</td>
+{% endif %}
+{% if is_granted(adminRole) %}
+<td style="width:{{ 100/colno }}%;text-align: center">
+{% set isUsers= userPage is defined and userPage=='users' %}
+{% if not isUsers %}<a href="{{ path('userlist') }}">{% endif %}  
+{% trans %}Users{% endtrans %}
+{% if not isUsers %}</a>{% endif %}
+</td>
+{% endif %}
+<td style="width:{{ 100/colno }}%;text-align: center">
+<a href="{{ path('app_logout') }}">{% trans %}Logout{% endtrans %}</a>
+</td>
+</table>

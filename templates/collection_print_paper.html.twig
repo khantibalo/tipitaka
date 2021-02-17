@@ -1,0 +1,37 @@
+{% extends 'collection_print.html.twig' %}
+{% block content %}
+		{% for collectionItem in collectionItems %}
+			{% if collectionItem.nodeid %}		
+				<h2 style="font-family:Ubuntu,Tahoma;font-size:23pt;">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} - {{ collectionItem.altPaliName ?? collectionItem.title }}</h2>				
+			{% else %} 
+				<h{{collectionItem.level}} style="font-family:Ubuntu,Tahoma;font-size:30pt;">{{ collectionItem.colItemName }}</h{{collectionItem.level}}>				
+			{% endif %}
+			<p style="font-family:Ubuntu,Tahoma;font-size:19pt;margin-bottom:0;margin-top:0"></p>
+			{% if collectionItem.nodeid %}	
+				{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
+					{% for sentence in sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
+						{% set pali=collectionItem.nodeid in paliTranslations|keys ? paliTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) : "" %}
+						{% set other=otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) %}
+						{% set sentenceComments=comments|filter(c=>c.sentenceid==sentence.sentenceid) %}
+						{% set comment1=sentenceComments|filter(c=>c.forprint==1)|first %}
+						{% set comment2=sentenceComments|filter(c=>c.forprint==2)|first %}
+						{% set comment3=sentenceComments|filter(c=>c.forprint==3)|first %}
+						{% set comment4=sentenceComments|filter(c=>c.forprint==4)|first %}		
+						{% if other|length>0 and pali|length>0 %}				
+							<p style="font-family:Ubuntu,Tahoma;font-size:19pt;margin-bottom:0;margin-top:0">
+								{% if comment1 or comment2 %}
+								<small>{% if comment1 %}{{comment1.commenttext}}{% endif %}{% if comment2 %}{{comment2.commenttext}}{% endif %}</small>{%if comment1 %}<br/>{% endif %}
+								{% endif %}						
+								{{ pali|length>0 ? (pali|first).translation|raw : sentence.sentencetext|raw }}
+								{% if comment3 or comment4 %}
+								{%if comment3%}<br/>{% endif %}<small>{% if comment3%}{{comment3.commenttext}}{% endif %}{% if comment4 %}{{comment4.commenttext}}{% endif %}</small>
+								{% endif %}		
+							</p>
+							<p style="font-family:Liberation Sans,Times New Roman;font-size:12pt;margin-bottom:0;margin-top:0">{{ (other|first).translation }}</p>
+						{% endif %}
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		{% endfor %}
+
+{% endblock %}

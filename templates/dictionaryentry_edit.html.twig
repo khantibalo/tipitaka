@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit term{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>{{ form_label(form.dictionarytypeid,'DictionaryFieldLabel') }}</td>
+<td>{{ form_widget(form.dictionarytypeid) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.paliword,'Term') }}:</td>
+<td>{{ form_widget(form.paliword) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.explanation,'Explanation') }}:</td>
+<td>{{ form_widget(form.explanation,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.explanationids,'Explanation Translation IDs') }}:</td>
+<td>{{ form_widget(form.explanationids,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.translation,'Translation') }}</td>
+<td>{{ form_widget(form.translation) }}</td>
+</tr>
+</table>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+{% if entry.paliword %}
+<a href="{{ path('term',{word: entry.paliword}) }}">{% trans %}Cancel{% endtrans %}</a>
+{% else %}
+<a href="{{ path('dictionary') }}">{% trans %}Cancel{% endtrans %}</a>
+{% endif %}
+{{ form_end(form) }}
+{% endblock %}

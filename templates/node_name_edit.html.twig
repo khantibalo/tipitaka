@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit node name{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table>
+<tr>
+<td>{{ form_label(form.name,'Name') }}:</td>
+<td>{{ form_widget(form.name,{"attr" : {"style" : "width: 500px" }}) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.language,'Language') }}:</td>
+<td>{{ form_widget(form.language) }}</td>
+</tr>
+</table>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path('node_names',{nodeid: nodeid}) }}">{% trans %}Cancel{% endtrans %}</a>
+<br><font color="red">{{ message }}</font>
+{{ form_end(form) }}
+{% endblock %}

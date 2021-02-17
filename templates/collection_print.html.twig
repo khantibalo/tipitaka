@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>{{ collection.name }}</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="robots" content="noindex,nofollow" />
+		{% block stylesheets %}{% endblock %}
+    </head>
+    <body style="font-family:Tahoma,Verdana">
+		<a name="top"></a>
+		<center><h1>{{ collection.name }}</h1></center>
+		<center>{% trans %}Publisher{% endtrans %}</center><br/>
+		<center>{% trans %}Retrieved{% endtrans %} {{ "now"|date("d.m.Y") }}</center>
+
+        {% block content %}{% endblock %}
+    </body>
+</html>

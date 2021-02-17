@@ -1,0 +1,51 @@
+<div>
+{% trans %}page numbers{% endtrans %}
+{% if view_settings.ic is empty %}
+{% trans %}PageNumbersNone{% endtrans %} 
+{% else %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.id,notes: view_settings.notes}) }}">{% trans %}PageNumbersNone{% endtrans %}</a>
+{% endif %}
+{% if view_settings.ic=='P' %}
+PTS
+{% else %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.id,ic: 'P',notes: view_settings.notes}) }}">PTS</a>
+{% endif %}
+{% if view_settings.ic=='V' %}
+VRI
+{% else %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.id,ic: 'V',notes: view_settings.notes}) }}">VRI</a>
+{% endif %}
+{% if view_settings.ic=='T' %}
+Thai
+{% else %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.id,ic: 'T',notes: view_settings.notes}) }}">Thai</a>
+{% endif %}
+{% if view_settings.ic=='M' %}
+Myanmar
+{% else %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.id,ic: 'M',notes: view_settings.notes}) }}">Myanmar</a>
+{% endif %}|
+{% trans %}notes{% endtrans %}
+{% if view_settings.notes is empty %}
+{% trans %}on{% endtrans %}
+{% else %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.id,ic: view_settings.ic}) }}">{% trans %}on{% endtrans %}</a>
+{% endif %} 
+{% if view_settings.notes=='off'%}
+{% trans %}off{% endtrans %}
+{% else %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.id,notes: 'off',ic: view_settings.ic}) }}">{% trans %}off{% endtrans %}</a>
+{% endif %}|
+{% trans %}print view{% endtrans %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.id,printview: 'on',ic: view_settings.ic,notes: view_settings.notes}) }}">{% trans %}open{% endtrans %}</a>
+</div>
+<div>
+<center>
+{% if not view_settings.back_id is empty %}
+{% if backPrologue %}<a href="{{ path(view_settings.view_route, {id: view_settings.back_id,prologue: 1}) }}">{% else %}<a href="{{ path(view_settings.view_route, {id: view_settings.back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>
+{% endif %}
+{% if not view_settings.next_id is empty %}
+<a href="{{ path(view_settings.view_route, {id: view_settings.next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+{% endif %}
+</center>
+</div>

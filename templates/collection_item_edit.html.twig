@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block title %}{% trans %}Edit{% endtrans %}{% endblock %}
+{% block content %}
+{{ form_start(form) }}
+<table style="width:100%">
+{% if form.name is defined %}
+	<tr>
+	<td>{{ form_label(form.name,'Title') }}:</td>
+	<td>{{ form_widget(form.name,{"attr" : {"style" : "width: 500px", "maxlength" : 255 }}) }}</td>
+	</tr>
+	<tr>
+	<td>{{ form_label(form.language,'Language') }}:</td>
+	<td>{{ form_widget(form.language) }}</td>
+	</tr>
+{% endif %}
+{% if form.nodeid  is defined %}
+	<tr>
+	<td>NodeID:</td>
+	<td>{{ url('index') }}node/pali/{{ form_widget(form.nodeid) }}</td>
+	</tr>
+	<tr>
+	<td>{{ form_label(form.limitrows,'Limit rows') }}:</td>
+	<td>{{ form_widget(form.limitrows,{"attr" : {"style" : "width: 100%", "rows": 3, "maxlength" : 500  }}) }}</td>
+	</tr>
+{% endif %}
+<tr>
+<td style="width:200px">{{ form_label(form.level,'Level') }}:</td>
+<td>{{ form_widget(form.level) }}</td>
+</tr>
+<tr>
+<td>{{ form_label(form.vieworder,'View order') }}:</td>
+<td>{{ form_widget(form.vieworder) }}</td>
+</tr>
+</table>
+<table style="width:100%">
+<tr>
+<td>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+<a href="{{ path('collections_list') }}">{% trans %}Cancel{% endtrans %}</a>
+</td>
+<td style="text-align:right">
+{% if itemid %}
+{{ form_widget(form.delete,{'label': 'Delete',"attr" : {"onclick" : "ConfirmScript" | trans }}) }}
+{% endif %}
+</td>
+</tr>
+</table>
+{{ form_end(form) }}
+{% endblock %}
