@@ -73,7 +73,7 @@ translation_edit:
    controller: App\Controller\TranslateController::translationEdit
          
 quote_pali:
-   path: /quote/pali/{contentids}
+   path: /quote/pali/{paragraphids}
    controller: App\Controller\QuoteController::quotePali
      
 quote_sentencetranslation:
