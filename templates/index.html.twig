@@ -21,6 +21,7 @@
     </tr>
     {% endfor %}
     </table>
+    <a href="{{ path("translations_feed") }}"><img src="{{ asset("feed.svg") }}"/></a>
 </td>
 <td style="vertical-align: top">
 <h3>{% trans %}New comments{% endtrans %}</h3>
@@ -37,6 +38,7 @@
     </small></div>
     </div>    
     {%endfor%}
+    <a href="{{ path("comments_feed") }}"><img src="{{ asset("feed.svg") }}"/></a>
 </td>
 </tr>
 </table>
