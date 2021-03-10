@@ -150,7 +150,7 @@ class TranslateController extends AbstractController
             
             if(!$this->isGranted(Roles::Editor))
             {
-                $author=$translation->getUser();
+                $author=$translation->getUserid();
                 $currentUser=$this->getUser();
                 if($author->getUserid()!=$currentUser->getUserid())
                 {
@@ -602,7 +602,7 @@ class TranslateController extends AbstractController
             {
                 $author=$translation->getUserid();
                 $currentUser=$this->getUser();
-                if($author->getUserid!=$currentUser->getUserid())
+                if($author->getUserid()!=$currentUser->getUserid())
                 {
                     $this->denyAccessUnlessGranted(Roles::Editor);
                 }
