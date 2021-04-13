@@ -77,4 +77,6 @@ security:
       - { path: ^/dictionary/entry/use/edit, roles: ROLE_EDITOR }
       - { path: ^/user/list, roles: ROLE_ADMIN }
       - { path: ^/user/\d+/edit, roles: ROLE_ADMIN }
+      - { path: ^/p/\d+/analyze, roles: ROLE_USER }
+      - { path: ^/p/\d+/analyze/sentence/\d+, roles: ROLE_USER }
       

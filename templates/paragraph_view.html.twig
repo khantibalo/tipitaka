@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+{% set showT=false %}
+{% block title %}{{ paragraph.nodetitle }}{% endblock %}
+{% block navigation %}
+{% if view_settings.printview is empty %}
+{{ include('_navigation.html.twig') }}
+{% endif %}
+{% endblock %}
+{% block content %}
+{% if view_settings.printview is empty %}
+{{ include('_translation_node_path.html.twig') }}
+{% if paragraph.hastableview %}
+&gt;&gt;
+<a href="{{ path('table_view',{id: paragraph.nodeid, _fragment: "sent#{sentences|first.sentenceid}"}) }}">{% trans %}Table view{% endtrans %}</a>
+{% endif %}
+{{ include('_view_settings.html.twig') }}
+{% endif %}
+<table>
+{{ include('_paragraph.html.twig') }}
+</table>
+{% if sentences|length>0 %}
+{% set colWidth=90/(sources|length+1) %}
+    <table class="bordercell" style="width:100%">
+    <tr>
+    <td style="width:{{ colWidth }}%">{% trans %}Pali{% endtrans %}</td>
+    {% if sources|length>0 %}
+        {% for source in sources %}
+        	<td style="width:{{ colWidth }}%">{{ source.languagename }} - {{ source.sourcename }}</td>
+        {% endfor %}
+    {% endif %}
+    <td>{% trans %}Comments{% endtrans %}</td>
+    {% if is_granted(authorRole)  and showNewSource %}
+    	<td></td>
+    {% endif %} 
+    </tr>
+    {% for sentence in sentences %}
+    <tr>
+        <td>
+        {{ sentence.sentencetext }}
+        </td>
+        {% if sources|length>0 %}
+            {% for source in sources %}
+            <td>
+                {% set translation=translations|filter(t=>t.sentenceid==sentence.sentenceid and t.sourceid==source.sourceid)|first %}
+                {% if translation %}
+                	<span id="et{{ translation.sentencetranslationid }}">{{ source.hasformatting ? translation.translation|raw : translation.translation }}</span>
+                	<span id="ec{{ translation.sentencetranslationid }}">
+                	{% if is_granted(userRole) %}
+                    	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>
+                    	{% if is_granted(editorRole) or (translation.userid==app.user.userid and is_granted(authorRole)) %}
+                    		<a href="{{ path('translation_edit',{translationid : translation.sentencetranslationid }) }}">{% trans %}Edit{% endtrans %}</a>
+                    		<a href="javascript:QTEdit({{ translation.sentencetranslationid }});">{% trans %}Quick Edit{% endtrans %}</a>    
+                    	{% endif %}
+                        {% if showCode %}
+                        	<a href="{{ path('quote_code',{sentencetranslation : translation.sentencetranslationid,paragraphid: paragraph.paragraphid }) }}">{% trans %}Code{% endtrans %}</a>
+                        {% endif %} 
+                    {% endif %}                        
+                    </span>
+                {% else %}
+                    {% if is_granted(authorRole) %}
+                    	<span id="ncse{{ sentence.sentenceid }}so{{ source.sourceid }}">
+                		<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid,sourceid :  source.sourceid}) }}">{% trans %}Translate{% endtrans %}</a>
+	        			<a href="javascript:QTNew({{ sentence.sentenceid }},{{ source.sourceid }});">{% trans %}Quick Edit{% endtrans %}</a>  
+	            		</span>  
+                    {% endif %}
+                {% endif %}
+            </td>
+            {% endfor %}
+        {% endif %}
+		<td>
+		{% if sentence.commentcount>0 %}
+		    {{ sentence.lastcomment }}<br>
+			<a href="{{ path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+		{% else %}
+		    {% if is_granted(userRole) %}
+				<a href="{{ path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}Add new comment{% endtrans %}</a>
+			{% endif %}
+		{% endif %}
+		</td>          
+    	{% if is_granted(authorRole) and showNewSource %}
+        	<td>
+        	<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid}) }}">{% trans %}New source{% endtrans %}</a>
+        	</td>
+    	{% endif %}        
+    </tr>
+    {% endfor %}
+    </table>
+    {% if is_granted(authorRole) %}
+    <a href="{{ path('quote_code',{pali: paragraph.paragraphid}) }}">{% trans %}Code for pali{% endtrans %}</a>
+    {% endif %}    
+{% endif %}    
+{% if is_granted(authorRole) %}
+    {% if sentences is empty %}
+    <a href="{{ path('paragraph_split',{id : paragraph.paragraphid }) }}">{% trans %}Split for translation{% endtrans %}</a>
+    {% else %}
+        <a href="{{ path('view_paragraph',{id : paragraph.paragraphid,showNewSource : 'yes'}) }}">{% trans %}Show new source{% endtrans %}</a>        
+    {% endif %}	
+{% endif %}
+{% if is_granted(userRole) %}
+	{% if sentences is not empty %}
+	<a href="{{ path('view_paragraph',{id : paragraph.paragraphid,showCode : 'yes'}) }}">{% trans %}Show code{% endtrans %}</a>
+	{% endif %}	
+	<a href="{{ path('paragraph_analyze',{id : paragraph.paragraphid}) }}">{% trans %}Analyze{% endtrans %}</a>
+{% endif %}
+{% endblock %}
+{% block javascripts %}
+    {% set showAlign=false %}
+    {% if is_granted(authorRole) %}
+        {{ include('_quick_edit_scripts.html.twig') }}
+    {% endif %}
+{% endblock %}

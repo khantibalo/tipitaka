@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+{% set showT=false %}
+{% block title %}{{ paragraph.nodetitle }}{% endblock %}
+{% block navigation %}
+{% if view_settings.printview is empty %}
+{{ include('_navigation.html.twig') }}
+{% endif %}
+{% endblock %}
+{% block content %}
+{% if view_settings.printview is empty %}
+{{ include('_translation_node_path.html.twig') }}
+{{ include('_view_settings.html.twig') }}
+{% endif %}
+<table>
+{{ include('_paragraph.html.twig') }}
+</table>
+{% if analysisResults|length>0 %}
+{% set colWidth=90/3 %}
+    <table class="bordercell" style="width:100%">
+    <tr>
+    <td style="width:{{ colWidth }}%">{% trans %}Pali{% endtrans %}</td>
+	<td style="width:{{ colWidth }}%">{% trans %}Pali found{% endtrans %}</td>
+	<td style="width:{{ colWidth }}%">{% trans %}Translation found{% endtrans %}</td>
+	<td></td>
+	<td></td>
+    </tr>
+    {% for analysisResult in analysisResults %}
+    <tr>
+        <td>
+        {% if analysisResult.sentencetext is defined  %}
+        {{ analysisResult.origsentencetext|highlight(analysisResult.sentencetext,true)|raw }}
+        {% else %}
+        {{ analysisResult.origsentencetext|raw }}
+        {% endif %}
+        </td>
+		<td>
+		{% if analysisResult.sentencetext is defined  %}
+        {{ analysisResult.sentencetext|highlight(analysisResult.origsentencetext,true)|raw }}
+		{% endif %}
+		</td>
+		<td>
+		{% if analysisResult.translation is defined  %}
+		{{ analysisResult.translation }}
+		{% endif %}
+		</td>
+		<td>
+		{% if analysisResult.paragraphid is defined and analysisResult.paragraphid %}
+		<a href="{{ path('view_paragraph',{id: analysisResult.paragraphid}) }}">{% trans %}View{% endtrans %}</a>
+		{% endif %}
+		</td>
+		<td>
+		<a href="{{ path('paragraph_sentence_analyze',{id:paragraph.paragraphid, ordinal: loop.index0 }) }}" target="_blank">{% trans %}Analyze{% endtrans %}</a>
+		</td>               
+    </tr>
+    {% endfor %}
+    </table>
+  
+{% endif %}    
+{% endblock %}

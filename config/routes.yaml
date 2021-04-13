@@ -13,11 +13,11 @@ full_toc_node:
 #that should be /node/{id}/pali but deliberately made this way to disallow it in robots.txt
 view_node:
     path: /node/pali/{id}
-    controller: App\Controller\ViewController::viewNode
+    controller: App\Controller\ViewController::nodeView
 
 view_paragraph:
     path: /p/{id}
-    controller: App\Controller\ViewController::viewParagraph
+    controller: App\Controller\ViewController::paragraphView
 
 bookmarks:
     path: /bookmarks
@@ -253,5 +253,14 @@ userlist:
    path: /user/list
    controller: App\Controller\UserController::list
    
-      
+paragraph_analyze:
+    path: /p/{id}/analyze
+    controller: App\Controller\ViewController::paragraphAnalyze
+    
+paragraph_sentence_analyze:
+    path: /p/{id}/analyze/sentence/{ordinal}
+    controller: App\Controller\ViewController::paragraphSentenceAnalyze
+    
+        
+          
       

@@ -363,6 +363,22 @@ class NativeRepository extends ServiceEntityRepository
         
         return $rows;
     }
-    
+       
+    public function analyzeSentence($sentenceText,$maxResults)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        
+        $sql="SELECT s.paragraphid,s.sentencetext, ". 
+             "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ". 
+             "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
+             "FROM `tipitaka_sentences` s WHERE s.sentenceid IN (SELECT sentenceid FROM tipitaka_sentence_translations) AND ".
+             "MATCH (s.sentencetext) AGAINST (:st IN NATURAL LANGUAGE MODE) ".
+             "LIMIT 0,$maxResults ";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['st'=>$sentenceText]);
+        
+        return $stmt->fetchAll();
+    }
 }
 

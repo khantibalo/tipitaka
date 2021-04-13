@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Repository\NativeRepository;
 use App\Repository\TipitakaSentencesRepository;
 use App\Repository\TipitakaTocRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +19,7 @@ use App\Repository\TipitakaTagsRepository;
 
 class ViewController extends AbstractController
 {
-    public function viewNode($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
+    public function nodeView($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
         Request $request,TipitakaTagsRepository $tagsRepository)
     {
         $prologue=$request->query->get('prologue');
@@ -97,14 +98,14 @@ class ViewController extends AbstractController
         
         $tags=$tagsRepository->listByOneNodeId($id,$request->getLocale());
                 
-        return $this->render('view_node.html.twig',
+        return $this->render('node_view.html.twig',
             ['node'=>$node,'path_nodes'=>$path_nodes,'nodes'=>$nodes,'paragraphs'=>$paragraphs,
                 'view_settings'=>$view_settings,'authorRole'=>Roles::Author,'backPrologue'=>$back_prologue,
                 'tags'=>$tags,'authorRole'=>Roles::Author]
             ); 
     }
     
-    public function viewParagraph($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
+    public function paragraphView($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
         TipitakaSentencesRepository $sentencesRepository,Request $request)
     {
         $paragraph=$paragraphsRepository->getParagraph($id);
@@ -145,7 +146,7 @@ class ViewController extends AbstractController
         
         $sources=$sentencesRepository->listParagraphSources($id);        
               
-        return $this->render('view_paragraph.html.twig',
+        return $this->render('paragraph_view.html.twig',
             ['paragraph'=>$paragraph,'path_nodes'=>$path_nodes,'view_settings'=>$view_settings,
                 'sentences'=>$sentences,'translations'=>$translations,'sources'=>$sources,
                 'showNewSource'=>$request->query->get('showNewSource'),
@@ -557,6 +558,114 @@ class ViewController extends AbstractController
         }        
         
         return $response;
+    }
+    
+    public function paragraphAnalyze($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
+        NativeRepository $nativeRepository,Request $request)
+    {
+        $paragraph=$paragraphsRepository->getParagraph($id);
+        
+        $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($paragraph['nodeid'],$request->getLocale());
+        
+        $pn=$paragraphsRepository->listPageNumbersByParagraph($id);
+        
+        $notes=$paragraphsRepository->listNotesByParagraph($id);
+        
+        
+        $back_id='';
+        $next_id='';
+        $backnext=$paragraphsRepository->getBackNextParagraph($id);
+        
+        if(sizeof($backnext)==3)
+        {
+            if($backnext[0]['nodeid']==$backnext[1]['nodeid'])
+            {
+                $back_id=$backnext[0]['paragraphid'];
+            }
+            
+            if($backnext[2]['nodeid']==$backnext[1]['nodeid'])
+            {
+                $next_id=$backnext[2]['paragraphid'];
+            }
+        }
+               
+        $ci=new CapitalizeExtension();
+        
+        $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request);
+        $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
+        
+        //we split the text, but not saving it anywhere
+        $ar_sentences =preg_split('/(?<=[.?!])\s+(?=[A-ZĀĪŪṬÑṂṆṄḶḌ"\'])/u', $paragraph['text']);
+        
+        $analysisResults=array();
+        
+        foreach ($ar_sentences as $sentenceText)
+        {
+            $sentenceTextFixed=str_replace("\""," ",$sentenceText);
+            $ar_result=$nativeRepository->analyzeSentence($sentenceTextFixed, 1);
+            $analysisResult=array_pop($ar_result);
+            $analysisResult["origsentencetext"]=$sentenceText;
+            
+            $analysisResults[]=$analysisResult;
+        }
+        
+        $paragraph['text']=$this->formatParagraph($paragraph['text'],$paragraph['bold'],$pn,$notes,$view_settings);
+                
+        return $this->render('paragraph_analyze.html.twig',
+            ['paragraph'=>$paragraph,'path_nodes'=>$path_nodes,'view_settings'=>$view_settings,
+                'authorRole'=>Roles::Author, 'userRole'=>Roles::User,'backPrologue'=>NULL,
+                'editorRole'=>Roles::Editor,'analysisResults'=>$analysisResults
+            ]);
+    }
+    
+    public function paragraphSentenceAnalyze($id, $ordinal, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
+        NativeRepository $nativeRepository,Request $request)
+    {
+        $paragraph=$paragraphsRepository->getParagraph($id);
+        
+        $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($paragraph['nodeid'],$request->getLocale());
+        
+        $pn=$paragraphsRepository->listPageNumbersByParagraph($id);
+        
+        $notes=$paragraphsRepository->listNotesByParagraph($id);
+        
+        
+        $back_id='';
+        $next_id='';
+        $backnext=$paragraphsRepository->getBackNextParagraph($id);
+        
+        if(sizeof($backnext)==3)
+        {
+            if($backnext[0]['nodeid']==$backnext[1]['nodeid'])
+            {
+                $back_id=$backnext[0]['paragraphid'];
+            }
+            
+            if($backnext[2]['nodeid']==$backnext[1]['nodeid'])
+            {
+                $next_id=$backnext[2]['paragraphid'];
+            }
+        }
+        
+        $ci=new CapitalizeExtension();
+        
+        $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request);
+        $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
+
+        //we split the text, but not saving it anywhere
+        $ar_sentences =preg_split('/(?<=[.?!])\s+(?=[A-ZĀĪŪṬÑṂṆṄḶḌ"\'])/u', $paragraph['text']);
+        
+        $sentenceTextFixed=str_replace("\""," ",$ar_sentences[$ordinal]);
+        $analysisResults=$nativeRepository->analyzeSentence($sentenceTextFixed, 100);
+        $sentenceText=$ar_sentences[$ordinal];
+        
+        $paragraph['text']=$this->formatParagraph($paragraph['text'],$paragraph['bold'],$pn,$notes,$view_settings);        
+                
+        return $this->render('paragraph_sentence_analyze.html.twig',
+            ['paragraph'=>$paragraph,'path_nodes'=>$path_nodes,'view_settings'=>$view_settings,
+                'authorRole'=>Roles::Author, 'userRole'=>Roles::User,'backPrologue'=>NULL,
+                'editorRole'=>Roles::Editor,'analysisResults'=>$analysisResults,'origsentencetext'=>$sentenceText
+            ]);
     }
 }
 
