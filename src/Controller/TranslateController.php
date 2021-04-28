@@ -219,7 +219,10 @@ class TranslateController extends AbstractController
             
             $translation->setSourceid($source);
             
-            $translation->setUserid($this->getUser());
+            if($translationid==NULL)
+            {//set author only if we add a new translation
+                $translation->setUserid($this->getUser());
+            }
             
             $translation->setDateupdated(new \DateTime());
             
@@ -595,7 +598,8 @@ class TranslateController extends AbstractController
             $data = json_decode($request->getContent(), true);
             $translation=$sentenceRepository->getTranslation($data['stid']);
             $translation->setTranslation($data['translation']);
-            $translation->setUserid($this->getUser());            
+            //don't change author
+            //$translation->setUserid($this->getUser());            
             $translation->setDateupdated(new \DateTime());
             
             if(!$this->isGranted(Roles::Editor))
