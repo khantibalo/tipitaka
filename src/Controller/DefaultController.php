@@ -11,7 +11,7 @@ class DefaultController extends AbstractController
 {
     public function default(NativeRepository $nativeRepository,TipitakaCommentsRepository $commentsRespository,Request $request)
     {       
-        $lastupd=$nativeRepository->listByLastUpdTranslation(20,$request->getLocale());
+        $lastupd=$nativeRepository->listByLastUpdTranslation(40,$request->getLocale());
         $comments=$commentsRespository->listLatest(10,$request->getLocale());
         
         return $this->render('index.html.twig',['lastupd'=>$lastupd,'comments'=>$comments]);

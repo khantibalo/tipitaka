@@ -16,7 +16,8 @@
     <small>{{ lastItem.textpath }}</small>
     </td>
     <td>
-    <a href="{{ path('view_paragraph',{id: lastItem.paragraphid}) }}">{{ lastItem.trname ?? lastItem.title }}</a>
+    {% set route=lastItem.TranslationSourceID ? 'translation_view' : (lastItem.HasTableView ? 'table_view' : 'view_node') %}
+    <a href="{{ path(route,{id: lastItem.nodeid}) }}">{{ lastItem.trname ?? lastItem.title }}</a>
     </td>
     </tr>
     {% endfor %}

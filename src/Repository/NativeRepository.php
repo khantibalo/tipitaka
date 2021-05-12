@@ -215,6 +215,8 @@ class NativeRepository extends ServiceEntityRepository
     {            
         $conn = $this->getEntityManager()->getConnection();
         
+        //list paragraphs
+        /*
         $sql="SELECT DT.textpath,DT.title,DT.paragraphid, MAX(DT.dateupdated) As updated,".
             "(SELECT nn1.name FROM tipitaka_node_names nn1 INNER JOIN tipitaka_languages l ON nn1.languageid=l.languageid WHERE l.code=:locale AND DT.nodeid=nn1.nodeid) AS trname ".
             "FROM ( SELECT T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated ".
@@ -226,6 +228,19 @@ class NativeRepository extends ServiceEntityRepository
             "GROUP BY DT.textpath,DT.title,DT.paragraphid ".
             "ORDER BY MAX(DT.dateupdated) DESC ".
             "LIMIT 0,20 ";
+        */
+        
+        $sql="SELECT DT.textpath,DT.title,MAX(DT.dateupdated) As updated,DT.nodeid,DT.hastableview as HasTableView,DT.translationsourceid as TranslationSourceID,".
+            "(SELECT nn1.name FROM tipitaka_node_names nn1 INNER JOIN tipitaka_languages l ON nn1.languageid=l.languageid WHERE l.code=:locale AND DT.nodeid=nn1.nodeid) AS trname ".
+            "FROM ( SELECT T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,T.hastableview,T.translationsourceid ".
+            "FROM tipitaka_sentence_translations ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
+            "INNER JOIN tipitaka_paragraphs C ON S.paragraphid=C.paragraphid ".
+            "INNER JOIN tipitaka_toc T ON C.nodeid=T.nodeid ".
+            "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid ".
+            "ORDER BY dateupdated DESC LIMIT 0,400) DT ".
+            "GROUP BY DT.textpath,DT.title,DT.nodeid,DT.hastableview,DT.translationsourceid ".
+            "ORDER BY MAX(DT.dateupdated) DESC ".
+            "LIMIT 0,$maxResults ";
         
         $stmt = $conn->prepare($sql);
         $stmt->execute(['locale'=>$locale]);
