@@ -111,15 +111,21 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         return $query->getOneOrNullResult();
     }
     
-    public function search($strSearchTerm)
+    public function search($strSearchTerm,$inTranslated)
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
         ->select('toc.title,toc.nodeid,tt.canview,toc.IsHidden,tt.name as typename,toc.HasTableView,toc.textpath')
         ->from('App\Entity\TipitakaToc','toc')
         ->innerJoin('toc.titletypeid', 'tt')
-        ->where('toc.title LIKE :search')
-        ->getQuery()
+        ->where('toc.title LIKE :search');
+        
+        if($inTranslated)
+        {
+            $query = $query->andWhere('toc.HasTranslation=1');
+        }
+        
+        $query = $query->getQuery()
         ->setParameter('search','%'.$strSearchTerm.'%');
         
         return $query->getResult();
@@ -401,7 +407,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         return $query->getResult();
     }
     
-    public function searchLanguage($strSearch,$languageid)
+    public function searchLanguage($strSearch,$languageid,$inTranslated)
     {       
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
@@ -411,8 +417,14 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         ->innerJoin('toc.titletypeid', 'tt')
         ->leftJoin('toc.TranslationSourceID', 's')        
         ->where('nn.name LIKE :search')
-        ->andWhere('nn.languageid=:lid')
-        ->getQuery()
+        ->andWhere('nn.languageid=:lid');
+        
+        if($inTranslated)
+        {
+            $query = $query->andWhere('toc.HasTranslation=1');
+        }
+        
+        $query = $query->getQuery()
         ->setParameter('lid', $languageid)
         ->setParameter('search', '%'.$strSearch.'%');
         

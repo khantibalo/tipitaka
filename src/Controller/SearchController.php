@@ -108,11 +108,11 @@ class SearchController extends AbstractController
                 {
                     if($lang==SearchController::LanguagePali)
                     {
-                        $searchItems=$tocRepository->search($searchString);
+                        $searchItems=$tocRepository->search($searchString,$inTranslated);
                     }
                     else 
                     {
-                        $searchItems=$tocRepository->searchLanguage($searchString,$lang);
+                        $searchItems=$tocRepository->searchLanguage($searchString,$lang,$inTranslated);
                     }
                 }
                 
