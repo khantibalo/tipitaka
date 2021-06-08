@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\QuoteRepository;
 use App\Repository\TipitakaParagraphsRepository;
 use App\Repository\TipitakaSentencesRepository;
+use App\Twig\CapitalizeExtension;
 
 class QuoteController extends AbstractController
 {   
@@ -20,9 +21,16 @@ class QuoteController extends AbstractController
         $idlist=$this->parseNumericList($paragraphids);
         
         if($idlist)
-        {//TODO: capital letters
+        {
+            $ce=new CapitalizeExtension();
             $ar_text=$qr->listParagraphs($idlist);
-            $joined=$this->joinText($ar_text);
+            $ar_caps=array();
+            foreach($ar_text as $item)
+            {
+                $ar_caps[]["Text"]=$ce->capitalize($item["Text"], $item["caps"]);
+            }
+            
+            $joined=$this->joinText($ar_caps);
         }
         
         return $this->json(['Text'=>$joined],200,$this->headers);

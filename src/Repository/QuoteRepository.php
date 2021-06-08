@@ -16,7 +16,7 @@ class QuoteRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('c.text As Text')
+        ->select('c.text As Text,c.caps')
         ->from('App\Entity\TipitakaParagraphs','c')
         ->where('c.paragraphid IN(:ci)')
         ->getQuery()
