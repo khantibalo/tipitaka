@@ -11,6 +11,9 @@
 <td>
 {{ form_widget(form.searchString) }}
 {{ include('_palibox.html.twig',{searchControlId: 'form_searchString'}) }}
+{% if searchError %}
+<span style="color:red">{% trans %}SearchStringError{% endtrans %}</span>
+{% endif %}
 </td>
 </tr>
 <tr>

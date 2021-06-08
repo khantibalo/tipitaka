@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Repository\NativeRepository;
 use App\Repository\TipitakaTocRepository;
 use App\Repository\TipitakaSentencesRepository;
+use Doctrine\DBAL\Exception\SyntaxErrorException;
 
 
 class SearchController extends AbstractController
@@ -52,7 +54,8 @@ class SearchController extends AbstractController
         
         $searchItems=array();
         $scope='';
-        $searchString='';                
+        $searchString='';        
+        $searchError=FALSE;
         
         if ($form->isSubmitted() && $form->isValid()) {         
             $data = $form->getData();
@@ -116,29 +119,37 @@ class SearchController extends AbstractController
                     }
                 }
                 
-                if($scope=='text')
+                try 
+                {                   
+                    //these searches may cause exceptions if the search string does not follow MySql Full text search syntax
+                    if($scope=='text')
+                    {
+                        if($lang==SearchController::LanguagePali)
+                        {
+                            $searchItems=$nativeRepository->searchGlobal($searchString,$inTranslated);
+                        }
+                        else
+                        {
+                            $searchItems=$sentencesRepository->searchTranslation($searchString,$lang);
+                        }
+                    }
+                    
+                    if($scope=='bkm')
+                    {
+                        if($lang==SearchController::LanguagePali)
+                        {
+                            $searchItems=$nativeRepository->searchBookmarks($searchString,$bookmarks_str,$inTranslated);
+                        }
+                        else
+                        {
+                            $searchItems=$nativeRepository->searchBookmarksTranslations($searchString,$bookmarks_str,$lang);
+                        }
+                    }       
+                } 
+                catch (SyntaxErrorException $e) 
                 {
-                    if($lang==SearchController::LanguagePali)
-                    {
-                        $searchItems=$nativeRepository->searchGlobal($searchString,$inTranslated);
-                    }
-                    else
-                    {
-                        $searchItems=$sentencesRepository->searchTranslation($searchString,$lang);
-                    }
+                    $searchError=true;
                 }
-                
-                if($scope=='bkm')
-                {
-                    if($lang==SearchController::LanguagePali)
-                    {
-                        $searchItems=$nativeRepository->searchBookmarks($searchString,$bookmarks_str,$inTranslated);
-                    }
-                    else
-                    {
-                        $searchItems=$nativeRepository->searchBookmarksTranslations($searchString,$bookmarks_str,$lang);
-                    }
-                }                          
             }
             
             $translations=array();
@@ -167,7 +178,8 @@ class SearchController extends AbstractController
             
             $response=$this->render('search.html.twig', [
                 'form' => $form->createView(), 'bookmarks'=>$bookmarks_str,'searchItems'=>$searchItems,
-                'scope'=>$scope,'searchString'=>$searchString,'language'=>$lang,'translations'=>$translations
+                'scope'=>$scope,'searchString'=>$searchString,'language'=>$lang,'translations'=>$translations,
+                'searchError'=>$searchError
             ]);
         }
         
