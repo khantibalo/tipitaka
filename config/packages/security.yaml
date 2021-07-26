@@ -79,4 +79,6 @@ security:
       - { path: ^/user/\d+/edit, roles: ROLE_ADMIN }
       - { path: ^/p/\d+/analyze, roles: ROLE_USER }
       - { path: ^/p/\d+/analyze/sentence/\d+, roles: ROLE_USER }
+      - { path: ^/statistics/view, roles: ROLE_ADMIN }
+      
       

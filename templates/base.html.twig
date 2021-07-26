@@ -15,5 +15,12 @@
         {% endblock %}
         {% block content %}{% endblock %}
         {% block javascripts %}{% endblock %}
+        {% block statistics %}
+            {% if not app.user %}
+            <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+            <script type="text/javascript" src="{{ asset('statistics.js') }}"></script>
+            <script id="statservice" type="application/json">{"url":"{{ asset('statistics/log') }}"}</script>         
+            {% endif %}
+        {% endblock %}
     </body>
 </html>

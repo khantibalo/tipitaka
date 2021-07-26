@@ -261,6 +261,11 @@ paragraph_sentence_analyze:
     path: /p/{id}/analyze/sentence/{ordinal}
     controller: App\Controller\ViewController::paragraphSentenceAnalyze
     
-        
+statistics_log:
+    path: /statistics/log
+    controller: App\Controller\StatisticsController::logRequest
           
-      
+statistics_view_agg:
+    path: /statistics/view
+    controller: App\Controller\StatisticsController::viewStatsAgg
+          

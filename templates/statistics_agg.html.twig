@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% set page='user' %}
+{% block title %}{% trans %}Usage statistics{% endtrans %}{% endblock %}
+{% block content %}
+{% set userPage='statistics' %}
+{{ include('_user_navigation.html.twig') }}
+<table class="bordercell" style="width:100%">
+<tr style="background-color:LightGrey">
+<td>{% trans %}Access count{% endtrans %}</td>
+<td>{% trans %}Title{% endtrans %}</td>
+<td>Url</td>
+</tr>
+{% for stat in stats %}
+<tr{% if loop.index % 2 ==0 %} style="background-color:LightGrey"{% endif %}>
+<td>{{ stat.accesscountsum }}</td>
+<td>{% if stat.nodeid %}<a href="{{ path('view_node',{id: stat.nodeid}) }}">{{ stat.title }}</a>{% endif %}</td>
+<td><a href="{{ stat.path }}">{{ stat.path }}</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

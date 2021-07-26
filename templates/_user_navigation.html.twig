@@ -3,7 +3,7 @@
 {% set colno=colno+1 %}
 {% endif %}
 {% if is_granted(adminRole) %}
-{% set colno=colno+1 %}
+{% set colno=colno+2 %}
 {% endif %}
 <table style="width:100%">
 <tr>
@@ -28,6 +28,12 @@
 {% if not isUsers %}<a href="{{ path('userlist') }}">{% endif %}  
 {% trans %}Users{% endtrans %}
 {% if not isUsers %}</a>{% endif %}
+</td>
+<td style="width:{{ 100/colno }}%;text-align: center">
+{% set isStatistics= userPage is defined and userPage=='statistics' %}
+{% if not isStatistics %}<a href="{{ path('statistics_view_agg') }}">{% endif %}  
+{% trans %}Usage statistics{% endtrans %}
+{% if not isStatistics %}</a>{% endif %}
 </td>
 {% endif %}
 <td style="width:{{ 100/colno }}%;text-align: center">
