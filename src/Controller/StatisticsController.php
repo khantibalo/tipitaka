@@ -25,7 +25,7 @@ class StatisticsController extends AbstractController
             $stat->setAccessdate((new \DateTime())->setTime(0,0));
                         
             $path=parse_url($url,PHP_URL_PATH);
-            $stat->setPath($path);
+            $stat->setPath($url);
             
             $path=str_replace("/tipitaka","",$path);
             
