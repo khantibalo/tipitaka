@@ -41,6 +41,10 @@ class StatisticsController extends AbstractController
                         $stat->setNodeid($params["id"]);
                         $stat->setPath(NULL);
                         break;
+                    case "full_toc_node":
+                    case "translation_toc_node":                        
+                        $stat->setNodeid($params["id"]);
+                        break;
                     case "view_paragraph":
                         $paragraph=$paragraphsRepository->getParagraph($params["id"]);
                         $stat->setNodeid($paragraph["nodeid"]);
