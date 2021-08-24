@@ -63,17 +63,7 @@ class QuoteController extends AbstractController
             $class_key='TipParagraphs';
             $function_name='getPali';
         }                
-        
-        if($request->get('authortranslation'))
-        {
-            $paraid=$request->get('authortranslation');
-            $id=[0=>['id'=>$request->get('authortranslation')]];            
-            $paragraph=$paragraphsRepository->getParagraph($request->get('authortranslation'));
-            $title=$paragraph['nodetitle'];
-            $class_key='AuthorTransl';
-            $function_name='getAuthorTranslation';
-        }
-        
+                
         if($request->get('sentencetranslation'))
         {
             $paraid=$request->get('paragraphid');

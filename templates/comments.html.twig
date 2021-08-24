@@ -44,7 +44,7 @@
 </div>
 <div>
 {% if commentItem.allowcommentshtml and '<' in commentItem.CommentText %}
-{{ commentItem.CommentText|raw}}
+{{ commentItem.CommentText|convertquote|raw}}
 {% else %}
 {{ commentItem.CommentText|converturls|nl2br}}
 {% endif %}

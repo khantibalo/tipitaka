@@ -100,5 +100,30 @@ class TipitakaStatisticsRepository extends ServiceEntityRepository
         
         return $query->getResult();
     }
+    
+    public function getViewsTotal()
+    {
+        $result=array();
+        
+        $entityManager = $this->getEntityManager();
+        
+        $query = $entityManager->createQueryBuilder()
+        ->select('SUM(s.accesscount) As totalViews')
+        ->from('App\Entity\TipitakaStatistics','s')
+        ->getQuery();
+        
+        $result["totalViews"]=$query->getOneOrNullResult()["totalViews"];
+        
+        $query = $entityManager->createQueryBuilder()
+        ->select('SUM(s.accesscount) As dayViews')
+        ->from('App\Entity\TipitakaStatistics','s')
+        ->where('s.accessdate=CURRENT_DATE()')
+        ->getQuery();
+        
+        $result["dayViews"]=$query->getOneOrNullResult()["dayViews"];
+        
+        return $result;
+    }
+
 }
 
