@@ -19,6 +19,7 @@ use App\Entity\TipitakaNodeNames;
 use App\Enums\TagTypes;
 use App\Repository\TipitakaSourcesRepository;
 use App\Repository\TipitakaTagsRepository;
+use Symfony\Component\HttpFoundation\Response;
 
 class TOCController extends AbstractController
 {
@@ -251,44 +252,55 @@ class TOCController extends AbstractController
     public function translationListById($id,TipitakaTocRepository $tocRepository,Request $request,
         TranslatorInterface $translator,TipitakaTagsRepository $tagsRepository)
     {
-        //show node titles in user's language if they are available        
-        $child_nodes=$tocRepository->listChildNodesWithNamesTranslation($id,$request->getLocale());
-
-        //replace hidden nodes with their child nodes until no hidden nodes are left
-        do
-        {
-            $hiddenNodeFound=false;
-            
-            $child_nodes=$tocRepository->filterHiddenNodes($child_nodes,$request->getLocale());
-            
-            foreach($child_nodes as $node)
-            {
-                if($node['IsHidden'])
-                {
-                    $hiddenNodeFound=true;
-                    break;
-                }
-            }            
-        }
-        while($hiddenNodeFound);
-                        
-        $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($id,$request->getLocale());
-        
         $node=$tocRepository->find($id);
         
-        $path=$node->getPath();
-        
-        $ar_child_node_id=array();
-        foreach($child_nodes as $child_node)
+        if($node)
         {
-            $ar_child_node_id[]=$child_node['nodeid'];
+            //show node titles in user's language if they are available        
+            $child_nodes=$tocRepository->listChildNodesWithNamesTranslation($id,$request->getLocale());
+    
+            //replace hidden nodes with their child nodes until no hidden nodes are left
+            do
+            {
+                $hiddenNodeFound=false;
+                
+                $child_nodes=$tocRepository->filterHiddenNodes($child_nodes,$request->getLocale());
+                
+                foreach($child_nodes as $node)
+                {
+                    if($node['IsHidden'])
+                    {
+                        $hiddenNodeFound=true;
+                        break;
+                    }
+                }            
+            }
+            while($hiddenNodeFound);
+                            
+            $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($id,$request->getLocale());
+            
+            $node=$tocRepository->find($id);
+            
+            $path=$node->getPath();
+            
+            $ar_child_node_id=array();
+            foreach($child_nodes as $child_node)
+            {
+                $ar_child_node_id[]=$child_node['nodeid'];
+            }
+            
+            $tags=$tagsRepository->listByNodeId($ar_child_node_id,$request->getLocale(),$path);
+                    
+            $response=$this->render('translation_toc.html.twig',
+                ['child_nodes'=>$child_nodes,'path_nodes'=>$path_nodes,'expandRoute'=>'translation_toc_node','authorRole'=>Roles::Author,
+                    'tags'=>$tags,'thisNode'=>$node]);
+        }
+        else 
+        {
+            $response=new Response('not found',404);
         }
         
-        $tags=$tagsRepository->listByNodeId($ar_child_node_id,$request->getLocale(),$path);
-                
-        return $this->render('translation_toc.html.twig',
-            ['child_nodes'=>$child_nodes,'path_nodes'=>$path_nodes,'expandRoute'=>'translation_toc_node','authorRole'=>Roles::Author,
-                'tags'=>$tags,'thisNode'=>$node]);
+        return $response;
     }
     
     

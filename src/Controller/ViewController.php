@@ -112,49 +112,58 @@ class ViewController extends AbstractController
     {
         $paragraph=$paragraphsRepository->getParagraph($id);
                 
-        $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($paragraph['nodeid'],$request->getLocale());
-                
-        $pn=$paragraphsRepository->listPageNumbersByParagraph($id);
-        
-        $notes=$paragraphsRepository->listNotesByParagraph($id);   
-        
-        
-        $back_id='';
-        $next_id='';
-        $backnext=$paragraphsRepository->getBackNextParagraph($id);
-        
-        if(sizeof($backnext)==3)
-        {
-            if($backnext[0]['nodeid']==$backnext[1]['nodeid'])
+        if($paragraph)
+        {        
+            $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($paragraph['nodeid'],$request->getLocale());
+                    
+            $pn=$paragraphsRepository->listPageNumbersByParagraph($id);
+            
+            $notes=$paragraphsRepository->listNotesByParagraph($id);   
+            
+            
+            $back_id='';
+            $next_id='';
+            $backnext=$paragraphsRepository->getBackNextParagraph($id);
+            
+            if(sizeof($backnext)==3)
             {
-                $back_id=$backnext[0]['paragraphid'];
+                if($backnext[0]['nodeid']==$backnext[1]['nodeid'])
+                {
+                    $back_id=$backnext[0]['paragraphid'];
+                }
+                
+                if($backnext[2]['nodeid']==$backnext[1]['nodeid'])
+                {
+                    $next_id=$backnext[2]['paragraphid'];
+                }
             }
             
-            if($backnext[2]['nodeid']==$backnext[1]['nodeid'])
-            {
-                $next_id=$backnext[2]['paragraphid'];
-            }
+            $sentences=$sentencesRepository->listByParagraphid($id);
+            
+            $translations=$sentencesRepository->listTranslationsByParagraphid($id);
+            
+            $ci=new CapitalizeExtension();
+            
+            $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request);
+            $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
+            $paragraph['text']=$this->formatParagraph($paragraph['text'],$paragraph['bold'],$pn,$notes,$view_settings);     
+            
+            $sources=$sentencesRepository->listParagraphSources($id);        
+                  
+            $response= $this->render('paragraph_view.html.twig',
+                ['paragraph'=>$paragraph,'path_nodes'=>$path_nodes,'view_settings'=>$view_settings,
+                    'sentences'=>$sentences,'translations'=>$translations,'sources'=>$sources,
+                    'showNewSource'=>$request->query->get('showNewSource'),
+                    'showCode'=>$request->query->get('showCode'),'authorRole'=>Roles::Author, 'userRole'=>Roles::User,'backPrologue'=>NULL,
+                    'editorRole'=>Roles::Editor
+                ]);
+        }
+        else
+        {
+            $response=new Response('not found',404);
         }
         
-        $sentences=$sentencesRepository->listByParagraphid($id);
-        
-        $translations=$sentencesRepository->listTranslationsByParagraphid($id);
-        
-        $ci=new CapitalizeExtension();
-        
-        $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request);
-        $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
-        $paragraph['text']=$this->formatParagraph($paragraph['text'],$paragraph['bold'],$pn,$notes,$view_settings);     
-        
-        $sources=$sentencesRepository->listParagraphSources($id);        
-              
-        return $this->render('paragraph_view.html.twig',
-            ['paragraph'=>$paragraph,'path_nodes'=>$path_nodes,'view_settings'=>$view_settings,
-                'sentences'=>$sentences,'translations'=>$translations,'sources'=>$sources,
-                'showNewSource'=>$request->query->get('showNewSource'),
-                'showCode'=>$request->query->get('showCode'),'authorRole'=>Roles::Author, 'userRole'=>Roles::User,'backPrologue'=>NULL,
-                'editorRole'=>Roles::Editor
-            ]);
+        return $response;
     }
            
     private function formatParagraph($text,$boldmarkups,$pagenumbers,$notes,$view_settings)
