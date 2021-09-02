@@ -7,5 +7,5 @@ Disallow: /node/bookmark/
 Disallow: /toc/tags
 Disallow: /dictionary
 Disallow: /term/
-
+Disallow: /statistics/
 
