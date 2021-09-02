@@ -104,7 +104,7 @@ class TagsController extends AbstractController
                 $tagsRepository->updateTagName($tagName); 
             }
             
-            if($form->get('saveAndAssign')->isClicked())
+            if($form->has('saveAndAssign') && $form->get('saveAndAssign')->isClicked())
             {
                 if($nodeid)
                 {
@@ -130,7 +130,7 @@ class TagsController extends AbstractController
             
             if(!isset($response))
             {
-                $response=$this->redirectToRoute('node_tags_list');
+                $response=$this->redirectToRoute('toc_tags_list');
             }
         }
         else 
