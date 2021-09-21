@@ -8,7 +8,7 @@
 <div>
 <a href="{{ path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.title}}</a>
 {% if '<' in comment.CommentText %}
-<div>{{comment.CommentText||convertquote|raw}}</div>
+<div>{{comment.CommentText|convertquote|raw}}</div>
 {% else %}
 <div>{{comment.CommentText|converturls|nl2br}}</div>
 {% endif %}

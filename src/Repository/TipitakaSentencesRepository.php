@@ -283,13 +283,14 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('so.sourceid,so.name As sourcename,l.name As languagename,so.hasformatting,so.ishidden,l.languageid')
+        ->select('so.sourceid,so.name As sourcename,l.name As languagename,so.hasformatting,so.ishidden,l.languageid,u.userid')
         ->from('App\Entity\TipitakaSentenceTranslations','st')
         ->innerJoin('st.sentenceid','s')
         ->innerJoin('st.sourceid','so')
         ->innerJoin('so.languageid','l')
         ->innerJoin('s.paragraphid', 'c')
         ->innerJoin('c.nodeid', 'toc')
+        ->leftJoin('so.userid', 'u')
         ->where('toc.nodeid=:id')
         ->groupBy('so.sourceid,so.name,l.name')
         ->orderBy('l.languageid','desc')
@@ -331,7 +332,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
         return $query->getOneOrNullResult();
     }
     
-    public function importTranslations($translations,$sourceid,$nodeid,$user)
+    public function importTranslations($translations,$sourceid,$nodeid,$user,$paliskip)
     {
         //loop by sentences that belong to this node paragraphs                       
         $entityManager = $this->getEntityManager();
@@ -343,6 +344,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
         ->where('toc.nodeid=:id')
         ->orderBy('c.paragraphid,s.sentenceid')
         ->getQuery()
+        ->setFirstResult($paliskip)
         ->setParameter('id',$nodeid);
         
         $sentences=$query->getResult();
@@ -868,13 +870,14 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('so.sourceid,so.name As sourcename,l.name As languagename,so.hasformatting,so.ishidden')
+        ->select('so.sourceid,so.name As sourcename,l.name As languagename,so.hasformatting,so.ishidden,u.userid')
         ->from('App\Entity\TipitakaSentenceTranslations','st')
         ->innerJoin('st.sentenceid','s')
         ->innerJoin('st.sourceid','so')
         ->innerJoin('so.languageid','l')
         ->innerJoin('s.paragraphid', 'c')
         ->innerJoin('c.nodeid', 'toc')
+        ->leftJoin('so.userid','u')
         ->where('toc.nodeid=:id')
         ->orWhere('toc.path LIKE :path ')
         ->groupBy('so.sourceid,so.name,l.name')

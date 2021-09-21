@@ -41,6 +41,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
     
+    
+    public function findAllAssoc()
+    {
+        $query=$this->createQueryBuilder('u')
+        ->select("u.username,u.userid")
+        ->orderBy('u.username', 'ASC')
+        ->getQuery();
+        
+        $assoc=array();
+        
+        foreach($query->getResult() as $result)
+        {
+            $assoc[$result["username"]]=$result["userid"];
+        }
+        
+        return $assoc;
+    }
+    
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

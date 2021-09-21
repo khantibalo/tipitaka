@@ -8,4 +8,5 @@ Disallow: /toc/tags
 Disallow: /dictionary
 Disallow: /term/
 Disallow: /statistics/
+Disallow: /search
 

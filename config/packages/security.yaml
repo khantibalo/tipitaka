@@ -45,8 +45,8 @@ security:
       - { path: ^/node/\d+/split, roles: ROLE_AUTHOR }
       - { path: ^/translation/import, roles: ROLE_EDITOR }
       - { path: ^/sentenceid/\d+/join, roles: ROLE_EDITOR }
-      - { path: ^/translationid/\d+/shiftdown , roles: ROLE_EDITOR }
-      - { path: ^/translationid/\d+/shiftup, roles: ROLE_EDITOR }
+      - { path: ^/translationid/\d+/shiftdown , roles: ROLE_AUTHOR }
+      - { path: ^/translationid/\d+/shiftup, roles: ROLE_AUTHOR }
       - { path: ^/user$, roles: ROLE_USER }
       - { path: ^/sources/list, roles: ROLE_EDITOR }
       - { path: ^/source/edit, roles: ROLE_EDITOR }

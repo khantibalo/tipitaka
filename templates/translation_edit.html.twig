@@ -4,7 +4,10 @@
 {{ sentenceText }}
 <br><br>
 {{ form_start(form) }}
-{{ form_label(form.source, 'Source') }}{{ form_widget(form.source) }}<font color="red">{{ message }}</font><br>
+{{ form_label(form.source, 'Source') }} {{ form_widget(form.source) }}<font color="red">{{ message }}</font><br>
+{% if is_granted(editorRole) %}
+{{ form_label(form.author, 'authorName') }}: {{ form_widget(form.author) }}<br>
+{% endif %} 
 {{ form_label(form.translation, 'Translation') }}<br>
 {{ form_widget(form.translation,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}<br>
 {# {{ form_label(form.parenttranslationid, 'Parent translation id') }}{{ form_widget(form.parenttranslationid) }}<br> #}
