@@ -613,7 +613,7 @@ class TranslateController extends AbstractController
         
         $translations=array();
                 
-        $parts=preg_split("/(ʘ|\?“|!“|\.“|\?»|!»|\.»|\.’|\?’|!’|\.'\"|\.\"|\.'|\.\s+|\?|!|\r\n|\n|\r)/iu",$fileContents,-1,PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        $parts=preg_split("/(ʘ|\?“|!“|\.“|\.”|\?”|\?»|!»|\.»|\.’|\?’|!’|\.'\"|\.\"|\.'|\.\s+|\?|!|\r\n|\n|\r)/iu",$fileContents,-1,PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
         if($parts)
         {
             for($i=0;$i<sizeof($parts);$i++)
@@ -622,7 +622,7 @@ class TranslateController extends AbstractController
                 
                 if(!empty(trim($translation)))
                 {
-                    if(preg_match("/^(ʘ|\?“|!“|\.“|\?»|!»|\.»|\.’|\?’|!’|\.'\"|\.\"|\.'|\.|\?|!)\s*/iu",$translation))
+                    if(preg_match("/^(ʘ|\?“|!“|\.“|\.”|\?”|\?»|!»|\.»|\.’|\?’|!’|\.'\"|\.\"|\.'|\.|\?|!)\s*/iu",$translation))
                     {
                         $translations[sizeof($translations)-1]=$translations[sizeof($translations)-1].trim($translation);
                     }
