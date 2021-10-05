@@ -268,4 +268,8 @@ statistics_log:
 statistics_view_agg:
     path: /statistics/view
     controller: App\Controller\StatisticsController::viewStatsAgg
-          
+
+clean_empty_rows:
+   path: /node/{nodeid}/clean_empty_rows
+   controller: App\Controller\TranslateController::cleanEmptyRows
+             

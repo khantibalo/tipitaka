@@ -59,7 +59,7 @@
     {% if sources|length>0 %}
         {% for source in sources %}
         	<td style="width:{{ colWidth }}%">{{ source.sourcename }} - {{ source.languagename }}
-        	{% if is_granted(editorRole) and showAlign%}
+        	{% if (is_granted(editorRole) and showAlign) or (showAlign and is_granted(authorRole) and source.userid==app.user.userid)%}
         		<a href="{{ path('translation_import',{sourceid: source.sourceid, nodeid: node.nodeid }) }}">{% trans %}Import{% endtrans %}</a>
         	{% endif %}
         	</td>
@@ -94,7 +94,7 @@
                     {% if is_granted(userRole) %}
                     	<span id="ec{{ translation.sentencetranslationid }}">
                     	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>
-	                    {% if is_granted(editorRole) or (translation.userid==app.user.userid and is_granted(authorRole)) %}
+	                    {% if is_granted(editorRole) or (is_granted(authorRole) and translation.userid==app.user.userid) or (is_granted(authorRole) and source.userid==app.user.userid) %}
 	                        {% if showAlign %}
 	                        <a href="{{ path('translation_edit',{translationid : translation.sentencetranslationid, return: 'node', showAlign: 'yes' }) }}">{% trans %}Edit{% endtrans %}</a>
 	                        {% else %}
@@ -105,8 +105,6 @@
                         {% if showCode %}
                         	<a href="{{ path('quote_code',{sentencetranslation : translation.sentencetranslationid,paragraphid: sentence.paragraphid }) }}">{% trans %}Code{% endtrans %}</a>
                         {% endif %}
-                    {% endif %}
-                    {% if is_granted(editorRole) or (translation.userid==app.user.userid and is_granted(authorRole)) %}
                         {% if showAlign %}
                         	&nbsp;|&nbsp;<a href="{{ path('shiftdown',{translationid : translation.sentencetranslationid }) }}">{% trans %}Shift down{% endtrans %}</a>
                         	&nbsp;|&nbsp;<a href="{{ path('shiftup',{translationid : translation.sentencetranslationid }) }}">{% trans %}Shift up{% endtrans %}</a>
@@ -114,7 +112,7 @@
                         </span>
                     {% endif %}
                 {% else %}
-                    {% if is_granted(editorRole) or (source.userid==app.user.userid and is_granted(authorRole))  %}
+                    {% if is_granted(editorRole) or (is_granted(authorRole) and source.userid==app.user.userid)  %}
                     	<span id="ncse{{ sentence.sentenceid }}so{{ source.sourceid }}">
                     	{% if showAlign %}
                 			<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid,sourceid :  source.sourceid, return: 'node', showAlign: 'yes' }) }}">{% trans %}Translate{% endtrans %}</a>
@@ -148,18 +146,23 @@
     </tr>
     {% endfor %}
     </table> 
-	{% endif %}    
-	{% if tags|length>0 %}
-		<div>
+	{% endif %}  
+	<div>
+	{% if tags|length>0 %}		
 		{% trans %}Tags{% endtrans %}:
 	    {% for tag in tags %}
 	        <a href="{{ path('toc_tags_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>&nbsp;
 	    {% endfor %}
-	    {% if is_granted(authorRole) %}
-	    &nbsp;<a href="{{ path('node_tags',{nodeid: node.nodeid }) }}">({% trans %}Edit tags{% endtrans %})</a>
-	    {% endif %}
-		</div>
 	{% endif %}	
+	{% if is_granted(authorRole) %}
+    &nbsp;<a href="{{ path('node_tags',{nodeid: node.nodeid }) }}">({% trans %}Edit tags{% endtrans %})</a>
+    {% endif %}
+	</div>
+    {% if is_granted(authorRole) and  showAlign  %}
+	<div>	
+    <a href="{{ path('clean_empty_rows',{nodeid: node.nodeid }) }}">{% trans %}Clean empty rows{% endtrans %}</a>
+    </div>
+    {% endif %}
 	<center>
 	{% if not back_id is empty %}
     {% if backPrologue %}<a href="{{ path('table_view', {id: back_id, prologue: 1}) }}">{% else %}<a href="{{ path('table_view', {id: back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>

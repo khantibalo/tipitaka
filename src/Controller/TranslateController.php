@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Repository\NativeRepository;
 use App\Repository\TipitakaParagraphsRepository;
 use App\Repository\TipitakaSentencesRepository;
+use App\Repository\TipitakaSourcesRepository;
 use App\Repository\TipitakaTocRepository;
 use App\Repository\UserRepository;
 use App\Security\Roles;
@@ -133,7 +134,7 @@ class TranslateController extends AbstractController
         $sourceObj=null;
         
         if($translationid)
-        {
+        {//editing existing translation
             $translation=$sentenceRepository->getTranslation($translationid);
             $sentenceText=$translation->getSentenceId()->getSentenceText();
             $paragraphid=$translation->getSentenceId()->getParagraphid()->getParagraphid();
@@ -150,10 +151,10 @@ class TranslateController extends AbstractController
             ];  
             
             if(!$this->isGranted(Roles::Editor))
-            {//if you are not an editor, you can edit translation only if you are its author
+            {//if you are not an editor, you can edit translation only if you are its author or is assigned to its source
                 $author=$translation->getUserid();
                 $currentUser=$this->getUser();
-                if($author->getUserid()!=$currentUser->getUserid())
+                if($author->getUserid()!=$currentUser->getUserid() && $sourceid->getUserid()->getUserid()!=$currentUser->getUserid())
                 {
                     $this->denyAccessUnlessGranted(Roles::Editor);
                 }
@@ -161,7 +162,7 @@ class TranslateController extends AbstractController
         }
         
         if($sentenceid)
-        {
+        {//adding new translation
             $translation=new TipitakaSentenceTranslations();
             $sentence=$sentenceRepository->find($sentenceid);
             $sentenceText=$sentence->getSentenceText();
@@ -497,8 +498,19 @@ class TranslateController extends AbstractController
     }
     
     public function translationImport($sourceid,$nodeid,TipitakaSentencesRepository $sentenceRepository,
-        Request $request, UserRepository $userRepository)
+        Request $request, UserRepository $userRepository,TipitakaSourcesRepository $sourcesRepository)
     {        
+        if(!$this->isGranted(Roles::Editor))
+        {//if you are not an editor, you can import only if source are assigned to
+            $source=$sourcesRepository->find($sourceid);
+            $user=$source->getUserid();
+            $currentUser=$this->getUser();
+            if($user && $user->getUserid()!=$currentUser->getUserid())
+            {
+                $this->denyAccessUnlessGranted(Roles::Editor);
+            }
+        }
+                
         $users=$userRepository->findAllAssoc();
         
         $authorOptions=['choices'  => $users,
@@ -509,28 +521,37 @@ class TranslateController extends AbstractController
             'mapped' => false
         ];  
         
-        $form = $this->createFormBuilder()
-        ->add('importFile', FileType::class, ['mapped' => false,   
+        $importFileOptions=['mapped' => false,
             'required' => false,
             'label'=>'File (plain text utf8 only):',
             'constraints' => [
-            new File([
-                'maxSize' => '1024k',
-                'mimeTypes' => [
-                    'text/plain',
-                ],
-                'mimeTypesMessage' => 'Please upload a text file',
-            ])
-        ]])
-        ->add('importText', TextareaType::class,
+                new File([
+                    'maxSize' => '1024k',
+                    'mimeTypes' => [
+                        'text/plain',
+                    ],
+                    'mimeTypesMessage' => 'Please upload a text file',
+                ])
+            ]];
+        
+        $importTextOptions=
             ['required' => false,
                 'label' => 'or text',
-                'mapped'=>false                
-            ])
-        ->add('author', ChoiceType::class,$authorOptions)
+                'mapped'=>false
+            ];
+        
+        $form = $this->createFormBuilder()
+        ->add('importFile', FileType::class, $importFileOptions)
+        ->add('importText', TextareaType::class,$importTextOptions)
         ->add('paliskip', IntegerType::class,['required' => true,'label' => false])
-        ->add('save', SubmitType::class,['label' => 'save'])
-        ->getForm();
+        ->add('save', SubmitType::class,['label' => 'save']);
+        
+        if($this->isGranted(Roles::Editor))
+        {
+            $form=$form->add('author', ChoiceType::class,$authorOptions);
+        }
+        
+        $form=$form->getForm();
         
         $form->handleRequest($request);
         
@@ -538,7 +559,16 @@ class TranslateController extends AbstractController
         {
             // @var UploadedFile importFile
             $importFile = $form->get('importFile')->getData();
-            $author=$userRepository->find($form->get("author")->getData());
+            
+            if($this->isGranted(Roles::Editor))
+            {
+                $author=$userRepository->find($form->get("author")->getData());
+            }
+            else
+            {
+                $author=$this->getUser();
+            }
+            
             $paliskip=$form->get("paliskip")->getData();
             
             if($importFile)//$importFile->guessExtension()=='txt'
@@ -564,7 +594,11 @@ class TranslateController extends AbstractController
         }
         else
         {
-            $form->get("author")->setData($this->getUser()->getUserid());
+            if($this->isGranted(Roles::Editor))
+            {
+                $form->get("author")->setData($this->getUser()->getUserid());
+            }
+            
             $form->get("paliskip")->setData(0);
             $response=$this->render('translation_import.html.twig', ['form' => $form->createView(),'nodeid'=>$nodeid]);
         }
@@ -706,7 +740,8 @@ class TranslateController extends AbstractController
             {
                 $author=$translation->getUserid();
                 $currentUser=$this->getUser();
-                if($author->getUserid()!=$currentUser->getUserid())
+                $source=$translation->getSourceid();
+                if($author->getUserid()!=$currentUser->getUserid() && $source->getUserid()->getUserid()!=$currentUser->getUserid())
                 {
                     $this->denyAccessUnlessGranted(Roles::Editor);
                 }
@@ -801,6 +836,7 @@ class TranslateController extends AbstractController
     
     public function sentenceShiftDown($sentenceid,Request $request,TipitakaSentencesRepository $sentenceRepository)
     {
+        //TODO: this code should be moved to repository class
         //find paragraph
         $sentence=$sentenceRepository->find($sentenceid);
         $paragraph=$sentence->getParagraphid();
@@ -827,5 +863,12 @@ class TranslateController extends AbstractController
             ["id"=>$node->getNodeid(),'showAlign'=>'yes','_fragment' => "sent$sentenceid"]);
     }
     
+    public function cleanEmptyRows($nodeid,TipitakaSentencesRepository $sentenceRepository,
+        Request $request)
+    {
+        $sentenceRepository->cleanEmptyRows($nodeid);
+        
+        return $this->redirect($request->headers->get('referer','/'));
+    }
 }
 

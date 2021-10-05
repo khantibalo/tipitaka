@@ -1086,7 +1086,68 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
         return $query->getResult();
     }
     
+    public function cleanEmptyRows($nodeid)
+    {
+        //iterate node sentences from the bottom up
+        $entityManager = $this->getEntityManager();
+        $sentencesQuery = $entityManager->createQueryBuilder()
+        ->select('s')
+        ->from('App\Entity\TipitakaSentences','s')
+        ->innerJoin('s.paragraphid', 'c')
+        ->innerJoin('c.nodeid','toc')
+        ->where('toc.nodeid=:nodeid')
+        ->orderBy('s.sentenceid','desc')
+        ->getQuery()
+        ->setParameter('nodeid', $nodeid);
         
+        $translationsQuery=$entityManager->createQueryBuilder()
+        ->select('st')
+        ->from('App\Entity\TipitakaSentenceTranslations','st')
+        ->innerJoin('st.sentenceid', 's')
+        ->where('s.sentenceid=:sentenceid')
+        ->getQuery();
+        
+        $sentences=$sentencesQuery->getResult();
+        foreach($sentences as $sentence)
+        {
+            if(trim($sentence->getSentencetext())=="")
+            {
+                //check that all translations are empty
+                $translationsQuery=$translationsQuery->setParameter('sentenceid', $sentence->getSentenceid());
+                $translations=$translationsQuery->getResult();
+                $nonempty=false;
+                
+                foreach($translations as $translation)
+                {
+                    if(trim($translation->getTranslation())!="")
+                    {
+                        $nonempty=true;
+                        break;
+                    }
+                }
+                
+                if($nonempty)
+                {
+                    break;
+                }
+                else
+                {
+                    foreach($translations as $translation)
+                    {
+                        $entityManager->remove($translation);
+                    }
+                    
+                    $entityManager->flush();
+                    
+                    $entityManager->remove($sentence);
+                    $entityManager->flush();
+                }
+            }
+            else 
+            {
+                break;
+            }
+        }
+    }
 
 }
-

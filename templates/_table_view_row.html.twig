@@ -18,7 +18,7 @@
             	{% if is_granted(userRole) %}
                   	<span id="ec{{ translation.sentencetranslationid }}">
                 	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>            	
-                	{% if is_granted(editorRole) or (translation.userid==app.user.userid and is_granted(authorRole)) %}
+                	{% if is_granted(editorRole) or (is_granted(authorRole) and translation.userid==app.user.userid) or (is_granted(authorRole) and source.userid==app.user.userid) %}
                     	<a href="{{ path('translation_edit',{translationid : translation.sentencetranslationid, return: 'node', 'nodeid': node.nodeid }) }}">{% trans %}Edit{% endtrans %}</a>
                     	<a href="javascript:QTEdit({{ translation.sentencetranslationid }});">{% trans %}Quick Edit{% endtrans %}</a>
                 	{% endif %}                            
@@ -28,7 +28,7 @@
                 	</span>
                 {% endif %}
             {% else %}
-                {% if is_granted(editorRole) or (source.userid==app.user.userid and is_granted(authorRole)) %}
+                {% if is_granted(editorRole) or (is_granted(authorRole) and source.userid==app.user.userid) %}
                 	<span id="ncse{{ sentence.sentenceid }}so{{ source.sourceid }}">
         			<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid,sourceid :  source.sourceid, return: 'node', 'nodeid': node.nodeid}) }}">{% trans %}Translate{% endtrans %}</a>
         			<a href="javascript:QTNew({{ sentence.sentenceid }},{{ source.sourceid }});">{% trans %}Quick Edit{% endtrans %}</a>  

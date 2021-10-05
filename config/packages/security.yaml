@@ -43,7 +43,7 @@ security:
       - { path: ^/translation/edit, roles: ROLE_AUTHOR }
       - { path: ^/quote/code, roles: ROLE_USER }
       - { path: ^/node/\d+/split, roles: ROLE_AUTHOR }
-      - { path: ^/translation/import, roles: ROLE_EDITOR }
+      - { path: ^/translation/import, roles: ROLE_AUTHOR }
       - { path: ^/sentenceid/\d+/join, roles: ROLE_EDITOR }
       - { path: ^/translationid/\d+/shiftdown , roles: ROLE_AUTHOR }
       - { path: ^/translationid/\d+/shiftup, roles: ROLE_AUTHOR }
@@ -80,5 +80,5 @@ security:
       - { path: ^/p/\d+/analyze, roles: ROLE_USER }
       - { path: ^/p/\d+/analyze/sentence/\d+, roles: ROLE_USER }
       - { path: ^/statistics/view, roles: ROLE_EDITOR }
-      
+      - { path: ^/node/\d+/clean_empty_rows, roles: ROLE_AUTHOR }      
       
