@@ -75,7 +75,7 @@
     {% if searchItems|length==0 %}
     <p style="color:red">{% trans %}No results{% endtrans %}</p>
     {% endif %}
-    {% if language==0 %}
+    {% if language==0 and inTranslated==0 %}
         <table style="width:100%">        
         {% for paragraph in searchItems %}        	
             <tr {% if loop.index % 2 ==0 %}style="background-color:LightGrey"{% endif %}>
@@ -114,10 +114,10 @@
             <td style="width:100px"><a href="{{ path('bookmark_paragraph_add', {id: translationItem.paragraphid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>        
     	    <td style="width:100px"><small>{{ translationItem.textpath }}</small></td>
     	    <td style="width:40%">
-    	    {{ translationItem.sentencetext }}
+    	    {% if language==0 %}{{ translationItem.sentencetext|highlight(searchString)|raw  }}{% else %}{{ translationItem.sentencetext }}{% endif %}
     	    </td>
     	    <td>
-    	    <p>{{ translationItem.translation|highlight(searchString)|raw }}</p>
+    	    <p>{% if language==0 %}{{ translationItem.translation }}{% else %}{{ translationItem.translation|highlight(searchString)|raw }}{% endif %}</p>
     		</td>
             </tr>
         {% endfor %}  	    

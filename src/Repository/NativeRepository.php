@@ -19,18 +19,31 @@ class NativeRepository extends ServiceEntityRepository
     {
         $conn = $this->getEntityManager()->getConnection();
 
-        $sql="SELECT c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation, ".
-            "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext, ".
-            "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
-                "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
-            "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
-            "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid  ".
-            "LEFT OUTER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
-            "WHERE MATCH (c.text) AGAINST (:ss in boolean mode)";
-        
         if($inTranslations)
         {
-            $sql.=" AND c.hastranslation=1 ";
+            $sql="SELECT toc.textpath,c.paragraphid, ".
+                "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext, ".
+                "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
+                "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
+                "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
+                "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid  ".
+                "INNER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
+                "WHERE EXISTS(SELECT st.sentencetranslationid FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
+                    "WHERE st.sentenceid=s.sentenceid) and MATCH (s.sentencetext) AGAINST (:ss in boolean mode)";
+        }
+        else
+        {
+            $sql="SELECT c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation, ".
+                "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext, ".
+                "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
+                    "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
+                "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
+                "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid  ".
+                "LEFT OUTER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
+                "WHERE MATCH (c.text) AGAINST (:ss in boolean mode)";
+        
+
+            //$sql.=" AND c.hastranslation=1 ";
         }
         
         $sql.=" ORDER BY score desc";
@@ -89,18 +102,28 @@ class NativeRepository extends ServiceEntityRepository
         
         $paragraph_line=implode(",",$paragraph_ids);
         
-        $sql="SELECT c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation,".
-            "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath, ".
-            "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
-                "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
-            "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid ".
-            "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid ".
-            "LEFT OUTER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
-            "WHERE MATCH (c.text) AGAINST (:ss in boolean mode) ";
-        
         if($inTranslations)
         {
-            $sql.=" AND c.hastranslation=1 ";
+            $sql="SELECT toc.textpath,c.paragraphid, ".
+                "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext, ".
+                "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
+                "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
+                "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
+                "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid  ".
+                "INNER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
+                "WHERE EXISTS(SELECT st.sentencetranslationid FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
+                    "WHERE st.sentenceid=s.sentenceid) and MATCH (s.sentencetext) AGAINST (:ss in boolean mode)";
+        }
+        else
+        {
+            $sql="SELECT c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation,".
+                "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath, ".
+                "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
+                    "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
+                "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid ".
+                "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid ".
+                "LEFT OUTER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
+                "WHERE MATCH (c.text) AGAINST (:ss in boolean mode) ";        
         }
         
         $sql.=" AND (";

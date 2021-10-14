@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -179,7 +178,7 @@ class SearchController extends AbstractController
             $response=$this->render('search.html.twig', [
                 'form' => $form->createView(), 'bookmarks'=>$bookmarks_str,'searchItems'=>$searchItems,
                 'scope'=>$scope,'searchString'=>$searchString,'language'=>$lang,'translations'=>$translations,
-                'searchError'=>$searchError
+                'searchError'=>$searchError, 'inTranslated'=>$inTranslated
             ]);
         }
         
