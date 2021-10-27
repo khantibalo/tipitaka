@@ -8,6 +8,7 @@
 {{ form_label(form.author, 'authorName') }}: {{ form_widget(form.author) }}<br>
 {% endif %}
 {{ form_label(form.paliskip, 'paliskip') }}: {{ form_widget(form.paliskip,{'attr' : {'style' : 'width:100px'}}) }}<br>
+{{ form_label(form.splitlinebreaksonly, 'splitlinebreaksonly') }}: {{ form_widget(form.splitlinebreaksonly) }}<br>
 {{ form_widget(form.save,{'label': 'Save'}) }}
 <a href="{{ path('table_view',{id: nodeid}) }}">{% trans %}Cancel{% endtrans %}</a>
 {{ form_end(form) }}

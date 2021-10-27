@@ -9,6 +9,7 @@ use App\Repository\TipitakaTocRepository;
 use App\Repository\UserRepository;
 use App\Security\Roles;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -544,6 +545,7 @@ class TranslateController extends AbstractController
         ->add('importFile', FileType::class, $importFileOptions)
         ->add('importText', TextareaType::class,$importTextOptions)
         ->add('paliskip', IntegerType::class,['required' => true,'label' => false])
+        ->add('splitlinebreaksonly', CheckboxType::class,['required' => false])
         ->add('save', SubmitType::class,['label' => 'save']);
         
         if($this->isGranted(Roles::Editor))
@@ -570,12 +572,13 @@ class TranslateController extends AbstractController
             }
             
             $paliskip=$form->get("paliskip")->getData();
+            $splitlinebreaksonly=$form->get("splitlinebreaksonly")->getData();
             
             if($importFile)//$importFile->guessExtension()=='txt'
             {
                 $fileContents=file_get_contents($importFile->getPathname());
                 
-                $translations=$this->parseText($fileContents);
+                $translations=$this->parseText($fileContents,$splitlinebreaksonly);
                 
                 $sentenceRepository->importTranslations($translations,$sourceid,$nodeid,$author,$paliskip);
             }    
@@ -584,7 +587,7 @@ class TranslateController extends AbstractController
                 $importText = $form->get('importText')->getData();
                 if(!empty($importText))
                 {
-                    $translations=$this->parseText($importText);
+                    $translations=$this->parseText($importText,$splitlinebreaksonly);
                     
                     $sentenceRepository->importTranslations($translations,$sourceid,$nodeid,$author,$paliskip);
                 }
@@ -606,29 +609,50 @@ class TranslateController extends AbstractController
         return $response;
     }
     
-    private function parseText($fileContents)
+    private function parseText($fileContents,$splitlinebreaksonly)
     {
-        $fileContents=preg_replace("/(etc|Mr|Ms|Ven|\d)\./mi","$1\u{0000}",$fileContents);
-        $fileContents=str_ireplace("...","\u{0000}\u{0000}\u{0000}",$fileContents);
-        
-        $translations=array();
-                
-        $parts=preg_split("/(ʘ|\?“|!“|\.“|\.”|\?”|\?»|!»|\.»|\.’|\?’|!’|\.'\"|\.\"|\.'|\.\s+|\?|!|\r\n|\n|\r)/iu",$fileContents,-1,PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-        if($parts)
-        {
-            for($i=0;$i<sizeof($parts);$i++)
+        if($splitlinebreaksonly)
+        {           
+            $translations=array();
+            
+            $parts=preg_split("/(\r\n|\n|\r)/iu",$fileContents,-1,PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+            if($parts)
             {
-                $translation=$parts[$i];
-                
-                if(!empty(trim($translation)))
+                for($i=0;$i<sizeof($parts);$i++)
                 {
-                    if(preg_match("/^(ʘ|\?“|!“|\.“|\.”|\?”|\?»|!»|\.»|\.’|\?’|!’|\.'\"|\.\"|\.'|\.|\?|!)\s*/iu",$translation))
+                    $translation=$parts[$i];
+                    
+                    if(!empty(trim($translation)))
                     {
-                        $translations[sizeof($translations)-1]=$translations[sizeof($translations)-1].trim($translation);
+                         $translations[]=trim($translation);                       
                     }
-                    else
+                }
+            }
+        }
+        else
+        {
+            $fileContents=preg_replace("/(etc|Mr|Ms|Ven|\d)\./mi","$1\u{0000}",$fileContents);
+            $fileContents=str_ireplace("...","\u{0000}\u{0000}\u{0000}",$fileContents);
+            
+            $translations=array();
+                    
+            $parts=preg_split("/(ʘ|\?“|!“|\.“|\.”|\?”|\?»|!»|\.»|\.’|\?’|!’|\.'\"|\.\"|\.'|\.\s+|\?|!|\r\n|\n|\r)/iu",$fileContents,-1,PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+            if($parts)
+            {
+                for($i=0;$i<sizeof($parts);$i++)
+                {
+                    $translation=$parts[$i];
+                    
+                    if(!empty(trim($translation)))
                     {
-                        $translations[]=trim(str_ireplace("\u{0000}",".",$translation));
+                        if(preg_match("/^(ʘ|\?“|!“|\.“|\.”|\?”|\?»|!»|\.»|\.’|\?’|!’|\.'\"|\.\"|\.'|\.|\?|!)\s*/iu",$translation))
+                        {
+                            $translations[sizeof($translations)-1]=$translations[sizeof($translations)-1].trim($translation);
+                        }
+                        else
+                        {
+                            $translations[]=trim(str_ireplace("\u{0000}",".",$translation));
+                        }
                     }
                 }
             }
@@ -639,7 +663,7 @@ class TranslateController extends AbstractController
     
     public function join($sentenceid,TipitakaSentencesRepository $sentenceRepository)
     {
-	$node=$sentenceRepository->getNodeIdBySentenceId($sentenceid);
+	   $node=$sentenceRepository->getNodeIdBySentenceId($sentenceid);
 
         $sentenceRepository->join($sentenceid,$this->getUser());
         
