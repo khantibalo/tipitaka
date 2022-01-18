@@ -169,6 +169,12 @@ class TipitakaToc
      */
     private $hasprologue;
     
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="disabletranslalign", type="boolean", nullable=false, options={"default"="0"})
+     */
+    private $disabletranslalign;
     
     /**
      * @return \App\Entity\TipitakaSources
@@ -428,6 +434,17 @@ class TipitakaToc
     public function setHasprologue(bool $hasprologue): self
     {
         $this->hasprologue = $hasprologue;
+        return $this;
+    }
+    
+    public function getDisableTranslAlign(): bool
+    {
+        return $this->disabletranslalign;
+    }
+    
+    public function setDisableTranslAlign(bool $disabletranslalign): self
+    {
+        $this->disabletranslalign = $disabletranslalign;
         return $this;
     }
 }

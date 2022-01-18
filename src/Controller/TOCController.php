@@ -335,6 +335,7 @@ class TOCController extends AbstractController
         ->add('TranslationSourceID', ChoiceType::class,$sourcesOptions)
         ->add('notes', TextareaType::class,['required' => false,'label' => false])
         ->add('disableview', CheckboxType::class,['label' => false,'required' => false])
+        ->add('disabletranslalign', CheckboxType::class,['label' => false,'required' => false])
         ->add('save', SubmitType::class)
         ->getForm();
         

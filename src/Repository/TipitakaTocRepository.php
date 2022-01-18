@@ -298,7 +298,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
     {                        
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.path,s.sourceid as TranslationSourceID,toc.notes')
+        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.path,s.sourceid as TranslationSourceID,toc.notes,toc.disabletranslalign')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaToc','toc')
         ->innerJoin('toc.titletypeid', 'tt')

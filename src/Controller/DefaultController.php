@@ -14,7 +14,15 @@ class DefaultController extends AbstractController
     public function default(NativeRepository $nativeRepository,TipitakaCommentsRepository $commentsRespository,Request $request,
         AdapterInterface $pool, TipitakaStatisticsRepository $statisticsRepository)
     {       
-        $lastupd=$nativeRepository->listByLastUpdTranslation(40,$request->getLocale());
+        $lastupdItem=$pool->getItem('lastupdatednodes');
+        if(!$lastupdItem->isHit())
+        {
+            $lastupdValue=$nativeRepository->listByLastUpdTranslation(40,$request->getLocale());
+            $lastupdItem->expiresAfter(120);
+            $lastupdItem->set($lastupdValue);
+            $pool->save($lastupdItem);
+        }        
+        
         $comments=$commentsRespository->listLatest(10,$request->getLocale());
                                 
         $viewcountItem = $pool->getItem('viewcount');
@@ -26,7 +34,8 @@ class DefaultController extends AbstractController
             $pool->save($viewcountItem);
         }
         
-        return $this->render('index.html.twig',['lastupd'=>$lastupd,'comments'=>$comments,'viewCount'=>$viewcountItem->get()]);
+        return $this->render('index.html.twig',['lastupd'=>$lastupdItem->get(),'comments'=>$comments,
+            'viewCount'=>$viewcountItem->get()]);
     }
     
     public function setLocale($locale,Request $request)

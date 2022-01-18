@@ -59,7 +59,7 @@
     {% if sources|length>0 %}
         {% for source in sources %}
         	<td style="width:{{ colWidth }}%">{{ source.sourcename }} - {{ source.languagename }}
-        	{% if (is_granted(editorRole) and showAlign) or (showAlign and is_granted(authorRole) and source.userid==app.user.userid)%}
+        	{% if (is_granted(editorRole) and showAlign and not node.disabletranslalign) or (showAlign and is_granted(authorRole) and source.userid==app.user.userid and not node.disabletranslalign)%}
         		<a href="{{ path('translation_import',{sourceid: source.sourceid, nodeid: node.nodeid }) }}">{% trans %}Import{% endtrans %}</a>
         	{% endif %}
         	</td>
@@ -105,7 +105,7 @@
                         {% if showCode %}
                         	<a href="{{ path('quote_code',{sentencetranslation : translation.sentencetranslationid,paragraphid: sentence.paragraphid }) }}">{% trans %}Code{% endtrans %}</a>
                         {% endif %}
-                        {% if showAlign %}
+                        {% if showAlign  and not node.disabletranslalign%}
                         	&nbsp;|&nbsp;<a href="{{ path('shiftdown',{translationid : translation.sentencetranslationid }) }}">{% trans %}Shift down{% endtrans %}</a>
                         	&nbsp;|&nbsp;<a href="{{ path('shiftup',{translationid : translation.sentencetranslationid }) }}">{% trans %}Shift up{% endtrans %}</a>
                         {% endif %} 

@@ -16,8 +16,8 @@
 	var shiftDownText="{% trans %}Shift down{% endtrans %}";
 	var shiftUpText="{% trans %}Shift up{% endtrans %}";
 
-	var shiftDownLink="{{ showAlign ? path('shiftdown',{translationid : 'stidParam' })|raw : '' }}";
-	var shiftUpLink="{{ showAlign ? path('shiftup',{translationid : 'stidParam' })|raw : '' }}";
+	var shiftDownLink="{{ showAlign and not node.disabletranslalign ? path('shiftdown',{translationid : 'stidParam' })|raw : '' }}";
+	var shiftUpLink="{{ showAlign and not node.disabletranslalign ? path('shiftup',{translationid : 'stidParam' })|raw : '' }}";
 	
 	{% if showAlign %}
 	var translateUrl="{{ path('translation_edit',{sentenceid : 'sentenceidParam',sourceid : 'sourceidParam', return: 'node', showAlign: 'yes' })|raw }}";

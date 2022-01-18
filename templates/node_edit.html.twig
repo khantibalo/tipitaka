@@ -23,6 +23,10 @@
 <td>{{ form_label(form.disableview,'Disable view link') }}:</td>
 <td>{{ form_widget(form.disableview) }}</td>
 </tr>
+<tr>
+<td>{{ form_label(form.disabletranslalign,'Disable translation align') }}:</td>
+<td>{{ form_widget(form.disabletranslalign) }}</td>
+</tr>
 </table>
 {{ form_widget(form.save,{'label': 'Save'}) }}
 <a href="{{ path(route,{id: node.nodeid}) }}">{% trans %}Return to node{% endtrans %}</a>
