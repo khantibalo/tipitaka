@@ -11,3 +11,6 @@ ALTER TABLE `tipitaka_statistics`
 
 ALTER TABLE `tipitaka_statistics`
   MODIFY `statid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  
+  ALTER TABLE `tipitaka_toc` ADD `disabletranslalign` BOOLEAN NOT NULL DEFAULT FALSE AFTER `hasprologue`; 
+  
