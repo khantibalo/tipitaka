@@ -19,6 +19,8 @@ This software is based on [Symfony](https://symfony.com) framework, so requireme
 
 If you are installing a production instance, open `.env` file in the source code root directory and change `APP_ENV=dev` to `APP_ENV=prod`.
 
+Make sure the following php extensions are installed: xml curl apcu
+
 From the command line switch to the the source code root directory with `composer.json` and run 
     
     composer install --no-dev --optimize-autoloader

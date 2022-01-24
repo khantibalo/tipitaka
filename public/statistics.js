@@ -7,7 +7,7 @@ $(document).ready(function () {
 		$.ajax({
 			type: 'POST',
 			cache: false,
-			url: data.url,
+			url: data.url+'statistics/log',
 			dataType : "json",			
 			data: { "url" : window.location.href }
 	    });
