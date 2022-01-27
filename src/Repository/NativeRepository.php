@@ -256,11 +256,10 @@ class NativeRepository extends ServiceEntityRepository
         $sql="SELECT DT.textpath,DT.title,MAX(DT.dateupdated) As updated,DT.nodeid,DT.hastableview as HasTableView,DT.translationsourceid as TranslationSourceID,".
             "(SELECT nn1.name FROM tipitaka_node_names nn1 INNER JOIN tipitaka_languages l ON nn1.languageid=l.languageid WHERE l.code=:locale AND DT.nodeid=nn1.nodeid) AS trname ".
             "FROM ( SELECT T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,T.hastableview,T.translationsourceid ".
-            "FROM tipitaka_sentence_translations ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
+            "FROM (SELECT ST1.sentenceid,ST1.dateupdated FROM tipitaka_sentence_translations ST1 ORDER BY dateupdated DESC LIMIT 0,400) ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
             "INNER JOIN tipitaka_paragraphs C ON S.paragraphid=C.paragraphid ".
             "INNER JOIN tipitaka_toc T ON C.nodeid=T.nodeid ".
-            "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid ".
-            "ORDER BY dateupdated DESC LIMIT 0,400) DT ".
+            "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid) DT ".
             "GROUP BY DT.textpath,DT.title,DT.nodeid,DT.hastableview,DT.translationsourceid ".
             "ORDER BY MAX(DT.dateupdated) DESC ".
             "LIMIT 0,$maxResults ";
@@ -278,12 +277,11 @@ class NativeRepository extends ServiceEntityRepository
         
         $sql="SELECT DT.NodeID as nodeid, DT.textpath As description,DT.title,DT.paragraphid, MIN(DT.dateupdated) As pubDate,DT.username As creator ".
             "FROM ( SELECT T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,U.username ".
-            "FROM tipitaka_sentence_translations ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
+            "FROM (SELECT ST1.sentenceid,ST1.dateupdated FROM tipitaka_sentence_translations ST1 ORDER BY dateupdated DESC LIMIT 0,400) ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
             "INNER JOIN tipitaka_paragraphs C ON S.paragraphid=C.paragraphid ".
             "INNER JOIN tipitaka_toc T ON C.nodeid=T.nodeid ".
             "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid ".
-            "INNER JOIN tipitaka_users U ON ST.userid=U.userid ".
-            "ORDER BY dateupdated DESC LIMIT 0,200) DT ".
+            "INNER JOIN tipitaka_users U ON ST.userid=U.userid) DT ".
             "GROUP BY DT.nodeid,DT.textpath,DT.title,DT.paragraphid,DT.username ".
             "ORDER BY MAX(DT.dateupdated) DESC ".
             "LIMIT 0,$maxResults ";
