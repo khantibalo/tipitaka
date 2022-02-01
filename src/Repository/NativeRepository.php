@@ -3,7 +3,7 @@ namespace App\Repository;
 
 use App\Entity\TipitakaParagraphs;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 //this repository is for native queries
 //if you want to use another DBMS, you should review them

@@ -3,7 +3,7 @@ namespace App\Repository;
 
 use App\Entity\TipitakaParagraphs;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 class QuoteRepository extends ServiceEntityRepository
 {
