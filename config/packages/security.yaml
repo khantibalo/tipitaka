@@ -1,7 +1,4 @@
 security:
-    encoders:
-        App\Entity\TipitakaUsers:
-            algorithm: auto
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -15,22 +12,23 @@ security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
-    firewalls:
+    firewalls:       
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: lazy
-            guard:
-                authenticators:
-                    - App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
                 # where to redirect after logout
                 target: index
             lazy: true
             provider: app_user_provider
-
+            form_login:
+                login_path: app_login
+                check_path: app_login 
+                enable_csrf: true  
+                use_referer: true         
+            #custom_authenticator: App\Security\SecurityAuthenticator
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -45,7 +43,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-      - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/login$, roles: PUBLIC_ACCESS }
       - { path: ^/p/\d+/split, roles: ROLE_AUTHOR }
       - { path: ^/translation/edit, roles: ROLE_AUTHOR }
       - { path: ^/quote/code, roles: ROLE_USER }

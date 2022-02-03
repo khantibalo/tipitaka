@@ -1,14 +1,14 @@
 <?php
-namespace App\Extensions\Doctrine;
+//namespace App\Extensions\Doctrine;
 
-use Doctrine\ORM\Query\Lexer;
-use Doctrine\ORM\Query\AST\Functions\FunctionNode;
+//use Doctrine\ORM\Query\Lexer;
+//use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 
 //https://ourcodeworld.com/articles/read/90/how-to-implement-fulltext-search-mysql-with-doctrine-and-symfony-3
 //I tried to use this to create DQL queries that use full-text search 
 /**
  * "MATCH_AGAINST" "(" {StateFieldPathExpression ","}* InParameter {Literal}? ")"
- */
+
 class MatchAgainst extends FunctionNode
 {
     public $columns = array();
@@ -47,4 +47,5 @@ class MatchAgainst extends FunctionNode
         return $query;
     }
 }
+ */
 

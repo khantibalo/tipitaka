@@ -49,9 +49,9 @@ class NativeRepository extends ServiceEntityRepository
         $sql.=" ORDER BY score desc";
         
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['ss'=>mb_convert_case($searchString,MB_CASE_LOWER)]);
+        $result=$stmt->executeQuery(['ss'=>mb_convert_case($searchString,MB_CASE_LOWER)]);
         
-        return $stmt->fetchAll();
+        return $result->fetchAllAssociative();
     }
     
         
@@ -147,9 +147,9 @@ class NativeRepository extends ServiceEntityRepository
         
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['ss'=>mb_convert_case($searchString,MB_CASE_LOWER)]);
+        $result=$stmt->executeQuery(['ss'=>mb_convert_case($searchString,MB_CASE_LOWER)]);
         
-        return $stmt->fetchAll();
+        return $result->fetchAllAssociative();
     }    
     
     
@@ -228,9 +228,9 @@ class NativeRepository extends ServiceEntityRepository
         
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['ss'=>'%'.$searchString.'%','lid'=>$languageid]);
+        $result=$stmt->executeQuery(['ss'=>'%'.$searchString.'%','lid'=>$languageid]);
         
-        return $stmt->fetchAll();
+        return $result->fetchAllAssociative();
     }
     
     
@@ -265,9 +265,9 @@ class NativeRepository extends ServiceEntityRepository
             "LIMIT 0,$maxResults ";
         
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['locale'=>$locale]);
+        $result=$stmt->executeQuery(['locale'=>$locale]);
         
-        return $stmt->fetchAll();
+        return $result->fetchAllAssociative();
     }
         
     public function listLastUpdTranslationFeed($maxResults)
@@ -277,7 +277,7 @@ class NativeRepository extends ServiceEntityRepository
         
         $sql="SELECT DT.NodeID as nodeid, DT.textpath As description,DT.title,DT.paragraphid, MIN(DT.dateupdated) As pubDate,DT.username As creator ".
             "FROM ( SELECT T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,U.username ".
-            "FROM (SELECT ST1.sentenceid,ST1.dateupdated FROM tipitaka_sentence_translations ST1 ORDER BY dateupdated DESC LIMIT 0,400) ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
+            "FROM (SELECT ST1.sentenceid,ST1.dateupdated,ST1.userid FROM tipitaka_sentence_translations ST1 ORDER BY dateupdated DESC LIMIT 0,400) ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
             "INNER JOIN tipitaka_paragraphs C ON S.paragraphid=C.paragraphid ".
             "INNER JOIN tipitaka_toc T ON C.nodeid=T.nodeid ".
             "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid ".
@@ -287,9 +287,9 @@ class NativeRepository extends ServiceEntityRepository
             "LIMIT 0,$maxResults ";
         
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $result=$stmt->executeQuery();
         
-        return $stmt->fetchAll();
+        return $result->fetchAllAssociative();
     }
     
     
@@ -380,9 +380,9 @@ class NativeRepository extends ServiceEntityRepository
             $params['dtid']=$dictionaryTypeID;
         }
         
-        $stmt->execute($params);
+        $result=$stmt->executeQuery($params);
         
-        $rows=$stmt->fetchAll();
+        $rows=$result->fetchAllAssociative();
         
         if(sizeof($rows)==0 && $searchType=='a')
         {
@@ -391,9 +391,9 @@ class NativeRepository extends ServiceEntityRepository
                 $keyword=mb_substr($keyword, 0,mb_strlen($keyword)-2)."%";
                 
                 $params['keyword']=$keyword;
-                $stmt->execute($params);
+                $result=$stmt->executeQuery($params);
                 
-                $rows=$stmt->fetchAll();
+                $rows=$result->fetchAllAssociative();
             }
         }
         
@@ -412,9 +412,9 @@ class NativeRepository extends ServiceEntityRepository
              "LIMIT 0,$maxResults ";
         
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['st'=>$sentenceText]);
+        $result=$stmt->executeQuery(['st'=>$sentenceText]);
         
-        return $stmt->fetchAll();
+        return $result->fetchAllAssociative();
     }
 }
 

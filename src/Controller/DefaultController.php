@@ -2,8 +2,8 @@
 namespace App\Controller;
 
 use App\Repository\TipitakaCommentsRepository;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\NativeRepository;
@@ -12,7 +12,7 @@ use App\Repository\TipitakaStatisticsRepository;
 class DefaultController extends AbstractController
 {
     public function default(NativeRepository $nativeRepository,TipitakaCommentsRepository $commentsRespository,Request $request,
-        AdapterInterface $pool, TipitakaStatisticsRepository $statisticsRepository)
+        CacheItemPoolInterface $pool, TipitakaStatisticsRepository $statisticsRepository)
     {                    
         $lastupdItem=$nativeRepository->listByLastUpdTranslation(40,$request->getLocale());
         

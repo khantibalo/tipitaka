@@ -9,19 +9,19 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
 use App\Repository\TipitakaCommentsRepository;
 use App\Repository\UserRepository;
-use App\Security\LoginFormAuthenticator;
 use App\Security\Roles;
 use App\Entity\TipitakaUsers;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
-    public function edit($id,UserRepository $ur,Request $request,EncoderFactoryInterface $factory)
+    public function edit($id,UserRepository $ur,Request $request)
     {               
         $user=$ur->find($id);
                 
@@ -60,8 +60,10 @@ class UserController extends AbstractController
         return $response;
     }
     
-    public function register(UserRepository $userRepository,Request $request,EncoderFactoryInterface $encoderFactory,
-        TranslatorInterface $translator, GuardAuthenticatorHandler $guard, LoginFormAuthenticator $login)
+    public function register(UserRepository $userRepository,Request $request,
+        TranslatorInterface $translator, 
+        UserPasswordHasherInterface $passwordHasher, UserAuthenticatorInterface $authenticator,
+        FormLoginAuthenticator $formLoginAuthenticator ) //see config/services.yaml for FormLoginAuthenticator to work
     {
         if($this->getParameter('app.enable_registration'))//see config/services.yaml
         {        
@@ -82,8 +84,7 @@ class UserController extends AbstractController
                 
                 $user->setUsername($data['username']);
                 
-                $encoder = $encoderFactory->getEncoder($user);
-                $password = $encoder->encodePassword($data['password'], $user->getSalt());
+                $password = $passwordHasher->hashPassword($user,$data['password']);
                 $user->setPassword($password);    
                 
                 $user->setEmail($data['email']);                
@@ -94,8 +95,11 @@ class UserController extends AbstractController
                 try
                 {
                     $userRepository->persist($user);
-                    
-                    $guard->authenticateUserAndHandleSuccess($user,$request,$login,'main');
+                                        
+                    $authenticator->authenticateUser(
+                        $user,
+                        $formLoginAuthenticator,
+                        $request);
                     
                     $response=$this->redirectToRoute('user');
                 }

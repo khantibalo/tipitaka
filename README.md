@@ -4,8 +4,8 @@ You can see this software in action at [https://tipitaka.theravada.su](https://t
 
 This software is based on [Symfony](https://symfony.com) framework, so requirements are the same as for other Symfony applications.
 
-1. PHP 7.2.5 or higher (not tested on php 8)
-2. Composer package manager - [get it here](https://getcomposer.org/download/)
+1. PHP 7.4 or higher (not tested on php 8)
+2. Composer2 package manager - [get it here](https://getcomposer.org/download/)
 3. MySql Database (tested with MySql 8.0.x)
 4. A web server (tested with apache and nginx)
 
@@ -19,7 +19,7 @@ This software is based on [Symfony](https://symfony.com) framework, so requireme
 
 If you are installing a production instance, open `.env` file in the source code root directory and change `APP_ENV=dev` to `APP_ENV=prod`.
 
-Make sure the following php extensions are installed: xml curl apcu
+Make sure the following php extensions are installed: xml curl apcu intl
 
 From the command line switch to the the source code root directory with `composer.json` and run 
     
