@@ -316,6 +316,21 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
         return $query->getOneOrNullResult();
     }
     
+    public function getNodeIdParagraphIdBySentenceId($sentenceid)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('toc.nodeid,c.paragraphid')
+        ->from('App\Entity\TipitakaSentences','s')
+        ->innerJoin('s.paragraphid', 'c')
+        ->innerJoin('c.nodeid', 'toc')
+        ->where('s.sentenceid=:id')
+        ->getQuery()
+        ->setParameter('id',$sentenceid);
+        
+        return $query->getOneOrNullResult();
+    }
+    
     public function getNodeIdByTranslationId($translationid)
     {
         $entityManager = $this->getEntityManager();
@@ -997,22 +1012,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
         $entityManager->persist($sentence);
         $entityManager->flush();
     }
-    
-    public function getSentenceNodeId($sentenceId)
-    {
-        $entityManager = $this->getEntityManager();
-        $query = $entityManager->createQueryBuilder()
-        ->select('toc.nodeid')
-        ->from('App\Entity\TipitakaSentences','s')
-        ->innerJoin('s.paragraphid', 'c')
-        ->innerJoin('c.nodeid','toc')
-        ->where('s.sentenceid=:sid')
-        ->getQuery()
-        ->setParameter('sid', $sentenceId);
         
-        return $query->getOneOrNullResult();
-    }
-    
     public function listTranslationsRows($sentencetranslationid,$rows)
     {
         //find node
@@ -1149,5 +1149,4 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
             }
         }
     }
-
 }

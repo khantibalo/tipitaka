@@ -15,7 +15,7 @@ class ConvertQuoteExtension extends AbstractExtension
     }
     
     
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('convertquote', [$this, 'convertquote']),

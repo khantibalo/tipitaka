@@ -6,7 +6,7 @@ use Twig\TwigFilter;
 
 class HighlightExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('highlight', [$this, 'highlight']),

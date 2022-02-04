@@ -8,7 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\QuoteRepository;
 use App\Repository\TipitakaParagraphsRepository;
 use App\Repository\TipitakaSentencesRepository;
+use App\Repository\TipitakaTocRepository;
+use App\Security\Roles;
 use App\Twig\CapitalizeExtension;
+use Symfony\Component\HttpFoundation\Response;
+use App\Repository\NativeRepository;
 
 class QuoteController extends AbstractController
 {   
@@ -54,6 +58,7 @@ class QuoteController extends AbstractController
     {                  
         $formView=NULL;
         
+        
         if($request->get('pali'))
         {            
             $paraid=$request->get('pali');
@@ -62,6 +67,7 @@ class QuoteController extends AbstractController
             $title=$paragraph['nodetitle'];	
             $class_key='TipParagraphs';
             $function_name='getPali';
+            $sentenceid=0;
         }                
                 
         if($request->get('sentencetranslation'))
@@ -73,6 +79,8 @@ class QuoteController extends AbstractController
             $id=[0=>['id'=>$request->get('sentencetranslation')]];
             $class_key='SentenceTransl';
             $function_name='getSentenceTranslation';
+            $translation=$sentencesRepository->getTranslation($request->get('sentencetranslation'));
+            $sentenceid=$translation->getSentenceid()->getSentenceid();
             
             $form = $this->createFormBuilder()
             ->add('rows', IntegerType::class,['required' => false,'label' => false])
@@ -95,7 +103,8 @@ class QuoteController extends AbstractController
         }
         
         return $this->render('quote_code.html.twig', ['ids'=>$id,'title'=>$title, 
-            'class_key'=>$class_key,'function_name'=>$function_name,'paraid'=>$paraid,'form'=>$formView
+            'class_key'=>$class_key,'function_name'=>$function_name,'paraid'=>$paraid,'form'=>$formView,
+            'sentenceid'=>$sentenceid
         ]);
     }
         
@@ -149,6 +158,39 @@ class QuoteController extends AbstractController
         }
         
         return $agg;
+    }
+    
+    public function quoteSentences($sentenceid,$length, TipitakaTocRepository $tocRepository,
+        TipitakaParagraphsRepository $paragraphsRepository, NativeRepository $nativeRepository,
+        TipitakaSentencesRepository $sentencesRepository,Request $request)
+    {
+        $sentence=$sentencesRepository->find($sentenceid);
+        
+        if($sentence)
+        {              
+            $sentencedata=$sentencesRepository->getNodeIdParagraphIdBySentenceId($sentenceid);
+            $nodeid=$sentencedata["nodeid"];
+            $paragraph=$paragraphsRepository->getParagraph($sentencedata["paragraphid"]);
+            
+            $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($nodeid,$request->getLocale());
+            $sources=$sentencesRepository->listParagraphSources($sentencedata["paragraphid"]);
+            
+            $sentences=$nativeRepository->listSentencesForQuote($nodeid,$sentenceid,$length);
+            //this will pull out all the translations for the node when we will usually need only some
+            $translations=$sentencesRepository->listTranslationsByNodeId($nodeid);
+                        
+            $response= $this->render('quote_view.html.twig',
+                ['paragraph'=>$paragraph,'path_nodes'=>$path_nodes,
+                    'sentences'=>$sentences,'translations'=>$translations,'sources'=>$sources,
+                    'userRole'=>Roles::User
+                ]);
+        }
+        else
+        {
+            $response=new Response('not found',404);
+        }
+        
+        return $response;
     }
 }
 

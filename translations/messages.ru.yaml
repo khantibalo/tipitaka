@@ -41,7 +41,7 @@ term names: названия терминов
 dictionary content: содержимое статей
 Pali: пали
 Edit: Правка
-Code: Код
+Code: Цитировать
 Translate: Перевести
 All comments: Все комментарии
 Add new comment: Добавить комментарий
@@ -66,7 +66,7 @@ Table view: Таблица
 SplitForTranslation: Разбить на предложения
 CodeNotice: "Этот код будет работать только на ваших собственных страницах или там, где разрешено вставлять javascript. Форумы и социальные сети обычно это не разрешают."
 new source link: "ссылка 'добавить источник':"
-code link: "ссылка 'код':"
+code link: "ссылка 'цитировать':"
 Shift down: Вниз
 Shift up: Вверх
 Import: Импорт
@@ -209,3 +209,4 @@ paliskip: Пропустить предложений в пали
 Clean empty rows: Удалить пустые строки
 splitlinebreaksonly: Разбивать только по переводам строки
 Disable translation align: Запретить сведение переводов
+url of this passage: Ссылка на этот фрагмент

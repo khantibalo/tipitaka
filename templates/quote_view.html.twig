@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% set showT=false %}
+{% block title %}{{ paragraph.nodetitle }}{% endblock %}
+{% block navigation %}
+{{ include('_navigation.html.twig') }}
+{% endblock %}
+{% block content %}
+{{ include('_translation_node_path.html.twig') }}
+{% if sentences|length>0 %}
+{% set colWidth=90/(sources|length+1) %}
+    <table class="bordercell" style="width:100%">
+    <tr>
+    <td style="width:{{ colWidth }}%">{% trans %}Pali{% endtrans %}</td>
+    {% if sources|length>0 %}
+        {% for source in sources %}
+        	<td style="width:{{ colWidth }}%">{{ source.languagename }} - {{ source.sourcename }}</td>
+        {% endfor %}
+    {% endif %}
+    <td>{% trans %}Comments{% endtrans %}</td>
+    </tr>
+    {% for sentence in sentences %}
+    <tr>
+        <td>
+        {{ sentence.sentencetext }}
+        </td>
+        {% if sources|length>0 %}
+            {% for source in sources %}
+            <td>
+                {% set translation=translations|filter(t=>t.sentenceid==sentence.sentenceid and t.sourceid==source.sourceid)|first %}
+                {% if translation %}
+                	{{ source.hasformatting ? translation.translation|raw : translation.translation }}
+                {% endif %}
+            </td>
+            {% endfor %}
+        {% endif %}
+		<td>
+		{% if sentence.commentcount>0 %}
+		    {{ sentence.lastcomment }}<br>
+			<a href="{{ path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+		{% else %}
+		    {% if is_granted(userRole) %}
+				<a href="{{ path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}Add new comment{% endtrans %}</a>
+			{% endif %}
+		{% endif %}
+		</td>                
+    </tr>
+    {% endfor %}
+    </table> 
+{% endif %}    
+{% endblock %}
+

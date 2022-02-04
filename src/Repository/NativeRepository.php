@@ -416,5 +416,22 @@ class NativeRepository extends ServiceEntityRepository
         
         return $result->fetchAllAssociative();
     }
+    
+    public function listSentencesForQuote($nodeid,$sentenceid,$length)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql="SELECT DT.sentenceid,DT.sentencetext,DT.commentcount,DT.lastcomment ".
+        "FROM (SELECT s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,p.paragraphid ".
+            "FROM tipitaka_sentences s INNER JOIN tipitaka_paragraphs p on s.paragraphid=p.paragraphid ".
+            "WHERE p.nodeid=:nodeid ORDER BY p.paragraphid,s.sentenceid) DT ".
+        "WHERE DT.sentenceid>=:sentenceid ".
+        "ORDER BY DT.paragraphid,DT.sentenceid ".
+        "LIMIT 0,$length ";
+                
+        $stmt = $conn->prepare($sql);
+        $result=$stmt->executeQuery(['nodeid'=>$nodeid,'sentenceid'=>$sentenceid]);
+        
+        return $result->fetchAllAssociative();
+    }
 }
 

@@ -50,7 +50,7 @@ class StatisticsController extends AbstractController
                         $stat->setNodeid($paragraph["nodeid"]);
                         break;
                     case "comments":
-                        $sentence=$sentencesRepository->getSentenceNodeId($params["sentenceid"]);
+                        $sentence=$sentencesRepository->getNodeIdBySentenceId($params["sentenceid"]);
                         $stat->setNodeid($sentence["nodeid"]);
                         break;
                 }                                

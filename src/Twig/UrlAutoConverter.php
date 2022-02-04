@@ -12,7 +12,7 @@ class UrlAutoConverter extends AbstractExtension
         return 'liip_urlautoconverter';
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return array(
             new TwigFilter(

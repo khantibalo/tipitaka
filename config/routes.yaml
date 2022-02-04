@@ -84,6 +84,10 @@ quote_code:
    path: /quote/code
    controller: App\Controller\QuoteController::getCode
    
+quote_sentences:
+   path: /quote/sentenceid/{sentenceid}/{length}
+   controller: App\Controller\QuoteController::quoteSentences 
+   
 #that should be /node/{id}/table but deliberately made this way to disallow other paths in robots.txt   
 table_view:
    path: /node/table/{id}

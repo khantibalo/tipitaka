@@ -6,7 +6,7 @@ use Twig\TwigFilter;
 
 class ShortenExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('shorten', [$this, 'shorten']),

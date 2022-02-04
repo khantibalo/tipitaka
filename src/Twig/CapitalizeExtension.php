@@ -7,7 +7,7 @@ use Twig\TwigFilter;
 //the reason for keeping the pali text lowercase is to allow case-insensitive search while honoring retroflex consonants 
 class CapitalizeExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('capitalize', [$this, 'capitalize']),
