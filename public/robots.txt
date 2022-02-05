@@ -9,4 +9,4 @@ Disallow: /dictionary
 Disallow: /term/
 Disallow: /statistics/
 Disallow: /search
-
+Disallow: /quote/sentenceid/
