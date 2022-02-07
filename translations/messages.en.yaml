@@ -41,7 +41,7 @@ term names: term names
 dictionary content: dictionary content
 Pali: Pali
 Edit: Edit
-Code: Code
+Code: Quote
 Translate: Translate
 All comments: All comments
 Add new comment: Add new comment
@@ -66,7 +66,7 @@ Table view: Table view
 SplitForTranslation: Split for translation
 CodeNotice: "Notice: this code will only work on the web pages you create or where it is allowed to paste Javascript. Most forums and social media platforms do not allow this."
 new source link: "new source link:"
-code link: "code link:"
+code link: "'quote' link:"
 Shift down: Shift down
 Shift up: Shift up
 Import: Import

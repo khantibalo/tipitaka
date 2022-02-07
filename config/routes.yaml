@@ -9,16 +9,22 @@ full_toc:
 full_toc_node:
     path: /toc/full/{id}
     controller: App\Controller\TOCController::fullTocListById
-
+    requirements:
+        id: '\d+'
+        
 #that should be /node/{id}/pali but deliberately made this way to disallow it in robots.txt
 view_node:
     path: /node/pali/{id}
     controller: App\Controller\ViewController::nodeView
-
+    requirements:
+        id: '\d+'
+        
 view_paragraph:
     path: /p/{id}
     controller: App\Controller\ViewController::paragraphView
-
+    requirements:
+        id: '\d+'
+        
 bookmarks:
     path: /bookmarks
     controller: App\Controller\BookmarksController::list
@@ -27,19 +33,27 @@ bookmarks:
 bookmark_node_add:
     path: /node/bookmark/{id}
     controller: App\Controller\BookmarksController::addNode
-
+    requirements:
+        id: '\d+'
+        
 bookmark_paragraph_add:
     path: /p/{id}/bookmark
     controller: App\Controller\BookmarksController::addParagraph
-    
+    requirements:
+        id: '\d+'
+            
 bookmark_node_remove:
     path: /node/bookmark/{id}/remove
     controller: App\Controller\BookmarksController::removeNode
-
+    requirements:
+        id: '\d+'
+        
 bookmark_paragraph_remove:
     path: /p/{id}/bookmark/remove
     controller: App\Controller\BookmarksController::removeParagraph    
-    
+    requirements:
+        id: '\d+'
+            
 search:
     path: /search
     controller: App\Controller\SearchController::search
@@ -53,9 +67,11 @@ term:
     controller: App\Controller\DictionaryController::term
     
 useredit:
-   path: /user/{id}/edit
-   controller: App\Controller\UserController::edit
-   
+    path: /user/{id}/edit
+    controller: App\Controller\UserController::edit
+    requirements:
+        id: '\d+'
+           
 app_login:
    path: /user/login
    controller: App\Controller\UserController::login
@@ -67,7 +83,9 @@ app_logout:
 paragraph_split:
    path: /p/{id}/split
    controller: App\Controller\TranslateController::paragraphSplit
-   
+   requirements:
+        id: '\d+' 
+           
 translation_edit:
    path: /translation/edit
    controller: App\Controller\TranslateController::translationEdit
@@ -87,32 +105,48 @@ quote_code:
 quote_sentences:
    path: /quote/sentenceid/{sentenceid}/{length}
    controller: App\Controller\QuoteController::quoteSentences 
-   
+   requirements:
+        sentenceid: '\d+'
+        length: '\d+'
+                   
 #that should be /node/{id}/table but deliberately made this way to disallow other paths in robots.txt   
 table_view:
    path: /node/table/{id}
    controller: App\Controller\ViewController::tableView
-
+   requirements:
+        id: '\d+' 
+        
 node_split:
    path: /node/{nodeid}/split
    controller: App\Controller\TranslateController::nodeSplit
-   
+   requirements:
+        nodeid: '\d+' 
+           
 translation_import:
    path: /translation/import/source/{sourceid}/node/{nodeid}
    controller: App\Controller\TranslateController::translationImport
-   
+   requirements:
+        nodeid: '\d+' 
+        sourceid: '\d+' 
+        
 join:
    path: /sentenceid/{sentenceid}/join
    controller: App\Controller\TranslateController::join
-        
+   requirements:
+        sentenceid: '\d+' 
+                
 shiftdown:
    path: /translationid/{translationid}/shiftdown  
    controller: App\Controller\TranslateController::shiftDown
+   requirements:
+        translationid: '\d+' 
    
 shiftup:
    path: /translationid/{translationid}/shiftup
    controller: App\Controller\TranslateController::shiftUp
-
+   requirements:
+        translationid: '\d+' 
+        
 sources_list:
    path: /sources/list
    controller: App\Controller\SourcesController::list     
@@ -128,11 +162,15 @@ source_edit:
 comments:
    path: /comments/sentenceid/{sentenceid}
    controller: App\Controller\CommentsController::listBySentence
-      
+   requirements:
+        sentenceid: '\d+' 
+              
 comment_delete:
    path: /comment/delete/{commentid}
    controller: App\Controller\CommentsController::commentDelete
-   
+   requirements:
+        commentid: '\d+' 
+           
 comments_feed:
    path: /feeds/comments.xml
    controller: App\Controller\CommentsController::commentsFeed
@@ -144,10 +182,14 @@ translations_feed:
 setlocale:
    path: /locale/{locale}/set
    controller: App\Controller\DefaultController::setlocale
+   requirements:
+        locale: '(en|ru)' 
    
 node_names:
    path: /node/{nodeid}/names
    controller: App\Controller\TOCController::listNodeNames
+   requirements:
+        nodeid: '\d+' 
    
 node_name_edit:
    path: /node/name/edit
@@ -160,23 +202,33 @@ toc:
 translation_toc_node:
     path: /toc/translations/{id}
     controller: App\Controller\TOCController::translationListById
-
+    requirements:
+        id: '\d+' 
+        
 node_edit:
     path: /node/{nodeid}/edit
     controller: App\Controller\TOCController::nodeEdit
-    
+    requirements:
+        nodeid: '\d+' 
+            
 table_enable:
    path: /node/{nodeid}/table/enable
    controller: App\Controller\TOCController::enableTableView
+   requirements:
+        nodeid: '\d+' 
    
 translation_view:
    path: /node/translation/{id}
    controller: App\Controller\ViewController::translationView
-      
+   requirements:
+        id: '\d+' 
+              
 node_tags:
    path: /node/tags/{nodeid}
    controller: App\Controller\TOCController::listNodeTags  
-   
+   requirements:
+        nodeid: '\d+' 
+           
 tag_edit:
    path: /tag/edit
    controller: App\Controller\TagsController::editTag
@@ -184,7 +236,10 @@ tag_edit:
 node_tag_remove:
    path: /node/{nodeid}/tag/{tagid}/remove
    controller: App\Controller\TOCController::removeNodeTag
-   
+   requirements:
+        nodeid: '\d+'
+        tagid: '\d+' 
+           
 toc_tags_list:
    path: /toc/tags
    controller: App\Controller\TagsController::tocTagsList
@@ -208,7 +263,9 @@ collection_item_edit:
 collection_item_names:
    path: /toc/collectionitem/{itemid}/names
    controller: App\Controller\CollectionController::namesList
-
+   requirements:
+        itemid: '\d+' 
+        
 collection_item_name_edit:
    path: /toc/collectionitemname/edit
    controller: App\Controller\CollectionController::nameEdit
@@ -216,14 +273,20 @@ collection_item_name_edit:
 sentence_edit:
    path: /sentenceid/{sentenceid}/edit
    controller: App\Controller\TranslateController::sentenceEdit
-      
+   requirements:
+        sentenceid: '\d+' 
+              
 sentence_shiftdown:
    path: /sentenceid/{sentenceid}/shiftdown
    controller: App\Controller\TranslateController::sentenceShiftDown
-
+   requirements:
+        sentenceid: '\d+' 
+        
 tag_names:
    path: /toc/tag/{tagid}/names/list
    controller: App\Controller\TagsController::listTagNames
+   requirements:
+        tagid: '\d+'
 
 tag_name_edit:  
    path: /toc/tag/name/edit
@@ -232,7 +295,9 @@ tag_name_edit:
 legacy_redirect:
    path: /comments/legacyid/{legacyid}
    controller: App\Controller\CommentsController::legacyRedirect
-   
+   requirements:
+        legacyid: '\d+'
+           
 paliword_tags:
    path: /dictionary/paliword/{paliword}/tags
    controller: App\Controller\DictionaryController::listPaliwordTags
@@ -240,7 +305,9 @@ paliword_tags:
 paliword_tag_remove:
    path: /dictionary/paliword/{paliword}/tag/{tagid}/remove
    controller: App\Controller\DictionaryController::removePaliwordTag
-
+   requirements:
+        tagid: '\d+'
+        
 dictionaryentry_edit:
    path: /dictionary/entry/edit
    controller: App\Controller\DictionaryController::editDictionaryEntry
@@ -260,11 +327,16 @@ userlist:
 paragraph_analyze:
     path: /p/{id}/analyze
     controller: App\Controller\ViewController::paragraphAnalyze
+    requirements:
+        id: '\d+'    
     
 paragraph_sentence_analyze:
     path: /p/{id}/analyze/sentence/{ordinal}
     controller: App\Controller\ViewController::paragraphSentenceAnalyze
-    
+    requirements:
+        id: '\d+'  
+        ordinal: '\d+'
+         
 statistics_log:
     path: /statistics/log
     controller: App\Controller\StatisticsController::logRequest
@@ -276,4 +348,6 @@ statistics_view_agg:
 clean_empty_rows:
    path: /node/{nodeid}/clean_empty_rows
    controller: App\Controller\TranslateController::cleanEmptyRows
-             
+   requirements:
+        nodeid: '\d+' 
+                     
