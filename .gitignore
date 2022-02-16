@@ -6,10 +6,6 @@
 /.project
 /.env.local
 /.env.test
-/public/favicon.png
-
-
-
 
 
 ###> symfony/phpunit-bridge ###
