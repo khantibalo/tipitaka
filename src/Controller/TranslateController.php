@@ -834,7 +834,7 @@ class TranslateController extends AbstractController
             
         $form->handleRequest($request);
         
-        $node=$sentenceRepository->getSentenceNodeId($sentenceid);
+        $node=$sentenceRepository->getNodeIdBySentenceId($sentenceid);
         
         if ($form->isSubmitted() && $form->isValid())
         {
