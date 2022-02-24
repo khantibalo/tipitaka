@@ -429,7 +429,15 @@ class TOCController extends AbstractController
                 $node=$tocRepository->find($nodeid);
                 $tag=$tagsRepository->find($form->get("tags")->getData());
                 
-                $tagsRepository->addTagToNode($node,$tag,$this->getUser());
+                try 
+                {
+                    $tagsRepository->addTagToNode($node,$tag,$this->getUser());
+                }
+                catch(\Exception $ex)
+                {
+                    //catch duplicate item index error
+                    //do nothing, because the item already exists
+                }
             }            
         }
         

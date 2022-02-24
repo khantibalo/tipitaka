@@ -22,7 +22,7 @@ class NativeRepository extends ServiceEntityRepository
         if($inTranslations)
         {
             $sql="SELECT toc.textpath,c.paragraphid, ".
-                "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext, ".
+                "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, s.sentencetext, ".
                 "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
                 "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
                 "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
@@ -30,6 +30,8 @@ class NativeRepository extends ServiceEntityRepository
                 "INNER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
                 "WHERE EXISTS(SELECT st.sentencetranslationid FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
                     "WHERE st.sentenceid=s.sentenceid) and MATCH (s.sentencetext) AGAINST (:ss in boolean mode)";
+            
+            
         }
         else
         {
@@ -47,6 +49,11 @@ class NativeRepository extends ServiceEntityRepository
         }
         
         $sql.=" ORDER BY score desc";
+        
+        if($inTranslations)
+        {
+            $sql="SELECT * FROM (".$sql.") DT1 WHERE DT1.translation!=''";
+        }
         
         $stmt = $conn->prepare($sql);
         $result=$stmt->executeQuery(['ss'=>mb_convert_case($searchString,MB_CASE_LOWER)]);
@@ -113,6 +120,7 @@ class NativeRepository extends ServiceEntityRepository
                 "INNER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
                 "WHERE EXISTS(SELECT st.sentencetranslationid FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
                     "WHERE st.sentenceid=s.sentenceid) and MATCH (s.sentencetext) AGAINST (:ss in boolean mode)";
+            
         }
         else
         {
@@ -144,6 +152,11 @@ class NativeRepository extends ServiceEntityRepository
         }
         
         $sql.=$query.") ORDER BY score desc";
+        
+        if($inTranslations)
+        {
+            $sql="SELECT * FROM (".$sql.") DT1 WHERE DT1.translation!=''";
+        }
         
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
