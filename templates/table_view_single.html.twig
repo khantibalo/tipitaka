@@ -50,6 +50,7 @@
 <p class="{{ node.typename }}">{{ node.trname ?? node.title }}
 {% if node.TranslationSourceID %}<a href="{{ path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
     <a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}original{% endtrans %}</a>
+    {% if is_granted(editorRole) and showAlign %}&nbsp;<a href="{{ path('node_names',{nodeid: node.nodeid }) }}">({% trans %}Edit names{% endtrans %})</a>{% endif %}
 </p>
 {% if sentences|length>0 %}
 {% set colWidth=90/(sources|length+(showPali ? 1 : 0)) %}

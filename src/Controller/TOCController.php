@@ -136,7 +136,7 @@ class TOCController extends AbstractController
             $response=$this->render('full_toc.html.twig',
                 ['child_nodes'=>$child_nodes,'path_nodes'=>$path_nodes,'ptsForm' => $ptsFormView,
                     'pageRangeMin'=>$pageRangeMin,'pageRangeMax'=>$pageRangeMax,'showForm'=>($ptsFormView!=NULL),
-                    'paraForm'=>$paraFormView,'paraFormMessage'=>$paraFormMessage,'authorRole'=>Roles::Author, 'expandRoute'=>'full_toc_node'
+                    'paraForm'=>$paraFormView,'paraFormMessage'=>$paraFormMessage,'editorRole'=>Roles::Editor, 'expandRoute'=>'full_toc_node'
                     ,'thisNode'=>$node]
                 );
         }
