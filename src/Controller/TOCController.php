@@ -29,7 +29,8 @@ class TOCController extends AbstractController
         
         
         return $this->render('full_toc.html.twig',
-            ['child_nodes'=>$nodes,'showForm'=>false,'authorRole'=>Roles::Author,'expandRoute'=>'full_toc_node']
+            ['child_nodes'=>$nodes,'showForm'=>false,'authorRole'=>Roles::Author,'expandRoute'=>'full_toc_node',
+                'editorRole'=>Roles::Editor]
             );
     }
            
