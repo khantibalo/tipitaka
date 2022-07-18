@@ -39,6 +39,9 @@
     </small></div>
     </div>    
     {%endfor%}
+    {% if app.user %}
+    <div><br/><a href="{{ path('comments_list_all',{pageid: 0}) }}">{% trans %}All comments{% endtrans %}</a></div>
+    {% endif %}
     <a href="{{ path("comments_feed") }}"><img src="{{ asset("feed.svg") }}"/></a>
 </td>
 </tr>

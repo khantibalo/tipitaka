@@ -178,5 +178,22 @@ class TipitakaCommentsRepository extends ServiceEntityRepository
         return $text;
     } 
     
+    public function listAll($pageid,$pageSize)
+    {
+        $firstResult=$pageid*$pageSize;
+        
+        $entityManager = $this->getEntityManager();
+        $query=$entityManager->createQueryBuilder()
+        ->select('c.commentid As CommentID,c.createddate As CreatedDate,u.username as AuthorName,c.commenttext As CommentText,u.userid As AuthorID,u.allowcommentshtml,c.authorname as UnregName,s.sentenceid')
+        ->from('App\Entity\TipitakaComments','c')
+        ->join('c.sentenceid','s')
+        ->leftJoin('c.authorid','u',Join::WITH,'c.authorid=u.userid')
+        ->orderBy('c.createddate','desc')
+        ->setFirstResult($firstResult)
+        ->setMaxResults($pageSize) 
+        ->getQuery();
+        
+        return $query->getResult();
+    }
 }
 

@@ -86,7 +86,7 @@ security:
       - { path: ^/p/\d+/analyze/sentence/\d+, roles: ROLE_USER }
       - { path: ^/statistics/view, roles: ROLE_EDITOR }
       - { path: ^/node/\d+/clean_empty_rows, roles: ROLE_AUTHOR }      
-      
+      - { path: ^/comments/list_all/pageid/\d+, roles: ROLE_USER }  
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

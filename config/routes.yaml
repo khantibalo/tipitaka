@@ -351,3 +351,9 @@ clean_empty_rows:
    requirements:
         nodeid: '\d+' 
                      
+comments_list_all:
+   path: /comments/list_all/pageid/{pageid}
+   controller: App\Controller\CommentsController::listAll
+   requirements:
+        pageid: '\d+' 
+                             

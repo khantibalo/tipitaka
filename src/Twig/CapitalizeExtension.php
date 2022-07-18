@@ -14,7 +14,7 @@ class CapitalizeExtension extends AbstractExtension
         ];
     }
     
-    public function capitalize($text,$caps)
+    public function capitalize($text,$caps="")
     {
         if($caps!="")
         {
