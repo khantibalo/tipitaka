@@ -427,7 +427,7 @@ class ViewController extends AbstractController
             $choicesAssoc[$source["sourcename"]." - ".$source["languagename"]]=$source["sourceid"];
         }
         
-        $form = $this->createFormBuilder()
+        $form = $this->createFormBuilder(null,  array('csrf_protection' => false))
         ->add('sources', ChoiceType::class,
             ['choices'  => $choicesAssoc,
                 'label' => false,

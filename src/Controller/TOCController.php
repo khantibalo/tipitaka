@@ -66,7 +66,7 @@ class TOCController extends AbstractController
                 $pageRangeMax=$node->getMaxPageNumber();                   
             }
             
-            $formPTS = $this->createFormBuilder()
+            $formPTS = $this->createFormBuilder(null,  array('csrf_protection' => false))
             ->add('volume', ChoiceType::class,
                 ['choices'  => $choices,
                     'label' => false,
