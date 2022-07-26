@@ -28,7 +28,7 @@ class SearchController extends AbstractController
         $languages=$sentencesRepository->listSearchLanguagesAssoc();
         $alllanguages=array_merge(['pali'=>SearchController::LanguagePali],$languages);
         
-        $form = $this->createFormBuilder($defaultData)
+        $form = $this->createFormBuilder($defaultData, array('csrf_protection' => false))
         ->add('searchString', TextType::class,['required' => true,'label' => false])
         ->add('scopeChoice', ChoiceType::class,
             ['choices'  => [

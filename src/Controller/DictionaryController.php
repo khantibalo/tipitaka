@@ -30,7 +30,7 @@ class DictionaryController extends AbstractController
         $dt=$dictionaryRepository->listDictionaryTypes();
         $dt[$translator->trans('allDictionaries')]='';
         
-        $form = $this->createFormBuilder($defaultData)
+        $form = $this->createFormBuilder($defaultData,  array('csrf_protection' => false))
         ->add('searchString', TextType::class,['required' => true,'label' => false])
         ->add('dictionaryChoice', ChoiceType::class,
             ['choices'  => $dt,
