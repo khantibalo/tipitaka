@@ -32,10 +32,9 @@ class CommentsController  extends AbstractController
             {
                 $nodeid=$node['nodeid'];                
             }
-            else 
-            {
-                $paragraphid=$sentence->getParagraphid()->getParagraphid();
-            }
+                        
+            $paragraphid=$sentence->getParagraphid()->getParagraphid();
+            
             
             $sentenceText=$sentence->getSentencetext();
             $translations=$sentenceRepository->listTranslationsBySentenceId($sentenceid);

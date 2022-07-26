@@ -12,10 +12,10 @@
 {% if node.notes %}
 <br><br>{{ node.notes|raw }}
 {% endif %}
-{% if child_nodes is defined and child_nodes|length>1 %}
+{% if nodes is defined and nodes|length>1 %}
     <ul>
-    {% for child_node in nodes %}
-    <li><a href="#{{ child_node.nodeid }}">{{ child_node.trname ?? child_node.title  }}</a></li>
+    {% for node in nodes %}
+    <li><a href="#{{ node.nodeid }}">{{ node.trname ?? node.title  }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}

@@ -27,7 +27,10 @@ security:
                 login_path: app_login
                 check_path: app_login 
                 enable_csrf: true  
-                use_referer: true         
+                use_referer: true 
+            remember_me:
+                secret:   '%kernel.secret%' # required
+                lifetime: 6048000 # 604800 - 1 week in seconds                        
             #custom_authenticator: App\Security\SecurityAuthenticator
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
