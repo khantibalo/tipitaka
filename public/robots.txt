@@ -10,3 +10,4 @@ Disallow: /term/
 Disallow: /statistics/
 Disallow: /search
 Disallow: /quote/sentenceid/
+Disallow: /user/
