@@ -85,6 +85,26 @@ class TipitakaTagsRepository extends ServiceEntityRepository
         return $query->getResult();
     }
     
+    public function listTocPaliTagsWithStats($locale)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('t.tagid,tn.title,ty.tagtypeid, COUNT(t.tagid) As TagCount,t.paliname')
+        ->from('App\Entity\TipitakaTagNames','tn')
+        ->innerJoin('tn.tagid', 't')
+        ->innerJoin('tn.languageid','l')
+        ->innerJoin('t.tagtypeid', 'ty')
+        ->join('App\Entity\TipitakaTocTags','tt',Join::WITH,'tt.tagid=t.tagid')
+        ->where('l.code=:locale')
+        ->andWhere('t.paliname is not null')
+        ->groupBy('t.tagid,tn.title,t.tagtypeid')
+        ->orderBy('t.paliname')
+        ->getQuery()
+        ->setParameter('locale', $locale);
+        
+        return $query->getResult();
+    }
+    
     public function getTocTagWithStats($locale,$tagid)
     {
         $entityManager = $this->getEntityManager();
@@ -105,7 +125,7 @@ class TipitakaTagsRepository extends ServiceEntityRepository
         
         return $query->getResult();
     }
-    
+        
     public function list($locale,$tagtypeid)
     {
         $entityManager = $this->getEntityManager();

@@ -46,6 +46,15 @@ class SearchController extends AbstractController
                 'multiple'=>false
             ])
         ->add('inTranslated', CheckboxType::class,['required' => false,'label' => false])
+        ->add('searchMode', ChoiceType::class,
+            ['choices'  => [
+                'SearchMode1' => '1',
+                'SearchMode2' => '2',
+                'SearchMode3' => '3'],
+                'label' => false,
+                'expanded'=>false,
+                'multiple'=>false
+            ])
         ->add('search', SubmitType::class,['label' => 'Search'])
         ->getForm();
         
@@ -86,6 +95,11 @@ class SearchController extends AbstractController
             {
                 $params["int"]=$data['inTranslated'];
             }
+            
+            if(!empty($data['searchMode']))
+            {
+                $params["mode"]=$data['searchMode'];
+            }
                                     
             $response=$this->redirectToRoute('search', $params);
         }
@@ -95,6 +109,7 @@ class SearchController extends AbstractController
             $scope=$request->get('scope');
             $lang=$request->get('lang');
             $inTranslated=$request->get('int',false);
+            $searchMode=$request->get('mode');
             
             if(!is_null($request->get('b')))
                 $bookmarks_str=$request->get('b');
@@ -105,6 +120,7 @@ class SearchController extends AbstractController
                 $form->get("scopeChoice")->setData($scope);
                 $form->get("lang")->setData($lang);
                 $form->get("inTranslated")->setData($inTranslated=="1" ? true : false);
+                $form->get("searchMode")->setData($searchMode);
                                 
                 if($scope=='toc')
                 {
@@ -125,7 +141,7 @@ class SearchController extends AbstractController
                     {
                         if($lang==SearchController::LanguagePali)
                         {
-                            $searchItems=$nativeRepository->searchGlobal($searchString,$inTranslated);
+                            $searchItems=$nativeRepository->searchGlobal($searchString,$inTranslated,$searchMode);
                         }
                         else
                         {
@@ -137,7 +153,7 @@ class SearchController extends AbstractController
                     {
                         if($lang==SearchController::LanguagePali)
                         {
-                            $searchItems=$nativeRepository->searchBookmarks($searchString,$bookmarks_str,$inTranslated);
+                            $searchItems=$nativeRepository->searchBookmarks($searchString,$bookmarks_str,$inTranslated,$searchMode);
                         }
                         else
                         {

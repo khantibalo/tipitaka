@@ -4,9 +4,10 @@
 {% block content %}
 {% set tocPage='tags' %}
 {{ include('_toc_navigation.html.twig') }}
-
-<ul>
+<div><a href="{{ path('toc_tags_list') }}">{% trans %}Top{% endtrans %}</a></div>
+<ul style="margin-top:0px">
 {% for tagType in tagTypes %}
+{% if tagtypeid is null or (not tagtypeid is null and  tagType.tagtypeid==tagtypeid) %}   
 <li><a href="{{ path('toc_tags_list',{tagtypeid: tagType.tagtypeid}) }}">{{ "TagType#{tagType.tagtypeid}" | trans }}</a>
     <ul>
     {% for tag in tags|filter(t=>t.tagtypeid==tagType.tagtypeid) %}
@@ -37,6 +38,39 @@
     {% endfor %}
     </ul>
 </li>
+{% endif %}
 {% endfor %}
+<li><a href="{{ path('toc_tags_list',{tagtypeid: -1}) }}">{{ "TagType-1" | trans }}</a>
+{% if tagtypeid==-1 %}  
+    <ul>
+    {% for tag in tags%}
+    <li>
+    <a href="{{ path('toc_tags_list',{tagid: tag.tagid,tagtypeid: -1}) }}">{% if tag.paliname %} {{ tag.paliname }}{% endif %} ({{ tag.title }})</a>&nbsp;({{ tag.TagCount }})
+    {% if is_granted(authorRole) %}   
+	<a href="{{ path('tag_edit',{tagid: tag.tagid}) }}">({% trans %}Edit{% endtrans %})</a>	
+	<a href="{{ path('tag_names',{tagid: tag.tagid}) }}">({% trans %}Edit names{% endtrans %})</a>
+	{% endif %} 
+        <ul>
+        {% for node in nodes %}
+            <li>
+            {% if node.canview %}
+                {% if node.HasTableView or not node.haschildnodes %}
+                    {% set route=node.TranslationSourceID ? 'translation_view' : (node.HasTableView ? 'table_view' : 'view_node') %}
+                    {% set label=node.TranslationSourceID ? 'translation'|trans : (node.HasTableView ? 'table'|trans : 'fragments'|trans) %}
+                    <a href="{{ path(route, {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+                {% else %}
+                    <a href="{{ path('view_node',{id: node.nodeid }) }}">{{ node.trname ?? node.title }}</a>
+                {% endif %}
+            {% else %}
+                {{ node.trname ?? node.title }}
+            {% endif %}
+        </li>
+        {% endfor %}
+    	</ul>
+    </li>
+    {% endfor %}
+    </ul>
+{% endif %}    
+</li>
 </ul>
 {% endblock %}

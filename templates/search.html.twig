@@ -5,7 +5,7 @@
 {{ form_start(form) }}
 <table>
 <tr>
-<td>
+<td style="width:220px">
 {{ form_label(form.searchString, 'SearchFieldLabel') }}
 </td>
 <td>
@@ -45,6 +45,14 @@
 {{ form_widget(form.inTranslated) }}
 </td>
 </tr>
+<tr>
+<td>
+{{ form_label(form.searchMode, 'Search mode') }}:
+</td>
+<td>
+{{ form_widget(form.searchMode) }}
+</td>
+</tr>
 </table>
 {{ form_widget(form.search, {'label': 'SearchButton'}) }}
 <a href="{{ path('search') }}">{% trans %}New search{% endtrans %}</a>
@@ -57,7 +65,7 @@
     {% for node in searchItems %}
         <tr {% if loop.index % 2 ==0 %}style="background-color:LightGrey"{% endif %}>
         <td>{{ loop.index }}</td>
-        <td style="width:50px">
+        <td style="width:250px">
         {% if node.canview %}
         <a href="{{ path('view_node', {id: node.nodeid}) }}">({% trans %}View{% endtrans %})</a>
         {% endif %}

@@ -162,7 +162,14 @@ class TagsController extends AbstractController
         
         if($tagtypeid)
         {
-            $tags=$tagsRepository->listTocTagsWithStats($request->getLocale(),$tagtypeid);
+            if($tagtypeid==-1)
+            {
+                $tags=$tagsRepository->listTocPaliTagsWithStats($request->getLocale());
+            }
+            else 
+            {
+                $tags=$tagsRepository->listTocTagsWithStats($request->getLocale(),$tagtypeid);
+            }
         }
         
         if($tagid)
@@ -171,7 +178,8 @@ class TagsController extends AbstractController
             $nodes=$tocRepository->listNodesByTag($tagid,$request->getLocale());
         }
         
-        return $this->render('toc_tags_list.html.twig', ['tags'=>$tags,'tagTypes'=>$tagTypes,'nodes'=>$nodes,'authorRole'=>Roles::Author]);
+        return $this->render('toc_tags_list.html.twig', ['tags'=>$tags,'tagTypes'=>$tagTypes,
+            'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>$tagtypeid]);
     }
     
     public function editTagName(TipitakaSentencesRepository $sentencesRepository,TranslatorInterface $translator,Request $request,

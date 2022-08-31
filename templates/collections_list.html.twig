@@ -11,6 +11,30 @@
 {% set tocPage='collections' %}
 {{ include('_toc_navigation.html.twig') }}
 
+{% if form is defined %}
+{{ form_start(form,{'attr' : {'style' : 'display: inline'}}) }}
+<table>
+<tr>
+<td colspan="2">
+<b>{% trans %}Print view{% endtrans %}</b>
+</td>
+</tr>
+<tr><td>
+{{ form_widget(form.table,{'label': 'PrintViewTable','attr' : {'style' : 'font-size:12px'}}) }}</td>
+<td><small>{% trans %}PrintViewTableDesc{% endtrans %}</small></td>
+</tr>
+<tr><td>
+{{ form_widget(form.paper,{'label': 'PrintViewPaper','attr' : {'style' : 'font-size:12px'}}) }}</td>
+<td><small>{% trans %}PrintViewPaperDesc{% endtrans %}</small></td>
+</tr>
+<tr><td>
+{{ form_widget(form.translation,{'label': 'PrintViewTranslation','attr' : {'style' : 'font-size:12px'}}) }}</td>
+<td><small>{% trans %}PrintViewTranslationDesc{% endtrans %}</small></td>
+</tr>
+</table>
+{{ form_end(form) }}
+{% endif %}
+
 {% if is_granted(authorRole) %}   
 <a href="{{ path('collection_item_edit') }}">{% trans %}New collection{% endtrans %}</a>
 {% endif %} 
@@ -24,16 +48,7 @@
 <a href="{{ path('collection_item_edit',{parentid: collection.collectionitemid,folder: 1}) }}">({% trans %}Add folder{% endtrans %})</a>
 <a href="{{ path('collection_item_edit',{parentid: collection.collectionitemid}) }}">({% trans %}Add item{% endtrans %})</a>
 {% endif %} 
-{% if form is defined %}
-{{ form_start(form,{'attr' : {'style' : 'display: inline'}}) }}
-<small>
-{% trans %}Print view{% endtrans %}
-{{ form_widget(form.table,{'label': 'PrintViewTable','attr' : {'style' : 'font-size:12px'}}) }}
-{{ form_widget(form.paper,{'label': 'PrintViewPaper','attr' : {'style' : 'font-size:12px'}}) }}
-{{ form_widget(form.translation,{'label': 'PrintViewTranslation','attr' : {'style' : 'font-size:12px'}}) }}
-{{ form_end(form) }}
-</small>
-{% endif %}
+
 	{% for item in collectionItems|filter(ci=>ci.parentid==collection.collectionitemid) %}
 		<div style="padding-left:{{ item.level*20 }}px">
 			{% if item.nodeid %}
