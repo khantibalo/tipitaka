@@ -179,7 +179,7 @@ class TagsController extends AbstractController
         }
         
         return $this->render('toc_tags_list.html.twig', ['tags'=>$tags,'tagTypes'=>$tagTypes,
-            'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>$tagtypeid]);
+            'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>$tagtypeid,'tagid'=>$tagid]);
     }
     
     public function editTagName(TipitakaSentencesRepository $sentencesRepository,TranslatorInterface $translator,Request $request,
