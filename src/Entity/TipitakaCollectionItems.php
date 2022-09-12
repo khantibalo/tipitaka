@@ -38,7 +38,7 @@ class TipitakaCollectionItems
     /**
      * @var string|null
      *
-     * @ORM\Column(name="limitrows", type="string", length=500, nullable=true)
+     * @ORM\Column(name="limitrows", type="string", length=1500, nullable=true)
      */
     private $limitrows;
 

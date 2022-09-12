@@ -1033,7 +1033,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
         //find sentences in this node with this source, sort and select
         
         $query = $entityManager->createQueryBuilder()
-        ->select('st.sentencetranslationid as id')
+        ->select('st.sentencetranslationid as id,s.sentenceid')
         ->from('App\Entity\TipitakaSentenceTranslations','st')
         ->innerJoin('st.sentenceid', 's')
         ->innerJoin('s.paragraphid', 'c')

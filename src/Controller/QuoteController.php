@@ -75,12 +75,12 @@ class QuoteController extends AbstractController
             $paraid=$request->get('paragraphid');
             $id=$request->get('paragraphid');                
             $paragraph=$paragraphsRepository->getParagraph($id);
-            $title=$paragraph['nodetitle'];
-            $id=[0=>['id'=>$request->get('sentencetranslation')]];
+            $title=$paragraph['nodetitle'];            
             $class_key='SentenceTransl';
             $function_name='getSentenceTranslation';
             $translation=$sentencesRepository->getTranslation($request->get('sentencetranslation'));
             $sentenceid=$translation->getSentenceid()->getSentenceid();
+            $id=[0=>['id'=>$request->get('sentencetranslation'),'sentenceid'=>$sentenceid]];
             
             $form = $this->createFormBuilder()
             ->add('rows', IntegerType::class,['required' => false,'label' => false])

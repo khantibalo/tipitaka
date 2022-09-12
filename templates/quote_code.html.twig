@@ -11,6 +11,7 @@
 {% if ids|length>0 %}
 {% trans %}url of this passage{% endtrans %}: <a href="{{ url('quote_sentences',{sentenceid: sentenceid,length: ids|length}) }}">{{ url('quote_sentences',{sentenceid: sentenceid,length: ids|length}) }}</a>
 {% endif %}
+<br/>SentenceID:<input type="text" value="{% for id in ids %}{{ id.sentenceid }}{% if not loop.last %},{% endif %}{% endfor %}" style="width:500px"> 
 <textarea rows="5" style="width:100%">
 {% autoescape 'html' %}
 <a href="{{ url('view_paragraph',{id: paraid}) }}">{{ title }}</a>
