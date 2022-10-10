@@ -2,11 +2,13 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Repository\TipitakaCollectionsRepository;
@@ -31,6 +33,16 @@ class CollectionController extends AbstractController
             $collections=$collectionsRepository->fetchCollection($itemid,$request->getLocale());
 
             $form = $this->createFormBuilder()
+            ->add('shownav', CheckboxType::class,['required' => false,'label' => false,'data'=>true])
+            ->add('rendermode', ChoiceType::class,
+                ['choices'  => [
+                    'display print view' => 'disp',
+                    'download print view' => 'down'],
+                    'label' => false,
+                    'expanded'=>true,
+                    'multiple'=>false,
+                    'data'=>'disp'
+                ])
             ->add('table', SubmitType::class)
             ->add('paper', SubmitType::class)
             ->add('translation', SubmitType::class);
@@ -177,10 +189,23 @@ class CollectionController extends AbstractController
                     }
                 }
                 
+
                 $response=$this->render($templates[$printviewtype], ['collection'=>$collections[0],
                     'collectionItems'=>$collectionItems,'paragraphs'=>$paragraphs,'sentences'=>$sentences,
-                    'paliTranslations'=>$paliTranslations,'otherTranslations'=>$otherTranslations,'comments'=>$comments
-                ]);                
+                    'paliTranslations'=>$paliTranslations,'otherTranslations'=>$otherTranslations,
+                    'comments'=>$comments,'shownav'=>$form->get("shownav")->getData()
+                ]);     
+                    
+                if($form->get("rendermode")->getData()=="down")
+                {
+                    $disposition = HeaderUtils::makeDisposition(
+                        HeaderUtils::DISPOSITION_ATTACHMENT,
+                        $collections[0]["name"].'.html',
+                        'collection.html'
+                        );
+                    
+                    $response->headers->set('Content-Disposition', $disposition);
+                }
             }
             else 
             {            
@@ -237,6 +262,11 @@ class CollectionController extends AbstractController
                 ->add('nodeid', IntegerType::class,['required' => true])
                 ->add('limitrows', TextareaType::class,['required' => false,'label' => false,'mapped'=>false]);
             }
+            
+            if($item->getParentid()==NULL)
+            {
+                $form=$form->add('notes', TextareaType::class,['required' => false]);                
+            }
         }
         else
         {//add new
@@ -259,7 +289,8 @@ class CollectionController extends AbstractController
             {//collection
                 $form=$form
                 ->add('name', TextType::class,['required' => true])
-                ->add('language', ChoiceType::class,$langOptions);
+                ->add('language', ChoiceType::class,$langOptions)
+                ->add('notes', TextareaType::class,['required' => false,'label' => false]);
             }
         }        
 
@@ -303,6 +334,11 @@ class CollectionController extends AbstractController
                 $item->setVieworder($form->get("vieworder")->getData());
                 $item->setLevel($form->get("level")->getData());
                 
+                if($form->has("notes"))
+                {
+                    $item->setNotes($form->get("notes")->getData());
+                }
+                
                 $collectionsRepository->updateCollectionItem($item);
                 
                 if($form->has("language"))
@@ -345,7 +381,12 @@ class CollectionController extends AbstractController
                 {
                     $form->get("nodeid")->setData($item->getNodeid()->getNodeid());
                     $form->get("limitrows")->setData($item->getLimitrows());
-                }                
+                }   
+                
+                if($item->getParentid()==NULL)
+                {
+                    $form->get("notes")->setData($item->getNotes());
+                }
             }
             
             $formView=$form->createView();

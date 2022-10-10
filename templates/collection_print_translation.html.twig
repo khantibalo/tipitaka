@@ -3,6 +3,7 @@
 <link href="{{ asset('styles.css') }}" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
+{% if shownav %}
 	{% for collectionItem in collectionItems %}
 		{% if collectionItem.level>0 %}
 			<div style="padding-left:{{collectionItem.level*20}}px">
@@ -16,11 +17,12 @@
 		{% endif %}
 		</div>
 	{% endfor %}
+{% endif %}		
 	{% for collectionItem in collectionItems %}
 		{% if collectionItem.nodeid %}		
-			<h2>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} - {{ collectionItem.altPaliName ?? collectionItem.title }}</h2>				
+			<h2>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h2>				
 		{% else %} 
-			<h{{collectionItem.level}}>{{ collectionItem.colItemName }}</h{{collectionItem.level}}>				
+			<h{{collectionItem.level}}>{{ collectionItem.colItemName }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
 		{% endif %}
 		<p></p>
 		{% if collectionItem.nodeid %}	

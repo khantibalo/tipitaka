@@ -1,5 +1,6 @@
 {% extends 'collection_print.html.twig' %}
 {% block content %}
+{% if shownav %}
 	{% for collectionItem in collectionItems %}
 		{% if collectionItem.level>0 %}
 			<div style="padding-left:{{collectionItem.level*20}}px">
@@ -13,6 +14,7 @@
 		{% endif %}
 		</div>
 	{% endfor %}
+{% endif %}	
 	<table border='1' style="width:100%">
 		{% for collectionItem in collectionItems %}
 			{% if loop.index0!=0 %}
@@ -20,12 +22,12 @@
 			{%endif%}	
 			<tr><td width="50%" class="tc_source">
 			<b>{{ collectionItem.altPaliName ?? collectionItem.title }}</b>
-			<a name="ch{{collectionItem.collectionitemid}}"></a>
-			<a href="#top">К началу</a>
+			{% if shownav %}<a name="ch{{collectionItem.collectionitemid}}"></a>
+			<a href="#top">К началу</a>{% endif %}	
 			</td>
 			<td>
 			{% if collectionItem.nodeid %}		
-				<b>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}</b>
+				<b><a href="{{ path('table_view', {id: collectionItem.nodeid}) }}">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}</a></b>
 			{% else %} 
 				<h{{collectionItem.level+1}}>{{ collectionItem.colItemName }}</h{{collectionItem.level+1}}>
 			{% endif %}

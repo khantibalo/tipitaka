@@ -35,7 +35,7 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('i.collectionitemid,cin.name')
+        ->select('i.collectionitemid,cin.name,i.notes')
         ->from('App\Entity\TipitakaCollectionItemNames','cin')
         ->innerJoin('cin.collectionitemid', 'i')
         ->innerJoin('cin.languageid', 'l')

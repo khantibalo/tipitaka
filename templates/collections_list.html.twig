@@ -10,13 +10,23 @@
 {% block content %}
 {% set tocPage='collections' %}
 {{ include('_toc_navigation.html.twig') }}
-
+{% if collections is defined and collections[0].notes is defined%}
+{{ collections[0].notes|raw }}
+{% endif %}
 {% if form is defined %}
 {{ form_start(form,{'attr' : {'style' : 'display: inline'}}) }}
 <table>
 <tr>
 <td colspan="2">
 <b>{% trans %}Print view{% endtrans %}</b>
+</td>
+</tr>
+<tr><td colspan="2">
+{{ form_widget(form.shownav) }}<small>{{ form_label(form.shownav, 'ShowNav') }}</small></td>
+</tr>
+<tr><td colspan="2">
+{{ form_widget(form.rendermode[0]) }}<small>{{ form_label(form.rendermode[0], 'display print view') }}</small><br>
+{{ form_widget(form.rendermode[1]) }}<small>{{ form_label(form.rendermode[1], 'download print view') }}</small><br>
 </td>
 </tr>
 <tr><td>

@@ -68,6 +68,13 @@ class TipitakaCollectionItems
      * @ORM\Column(name="level", type="integer", nullable=false)
      */
     private $level;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="notes", type="string", nullable=true)
+     */
+    private $notes;
 
     public function getCollectionitemid(): ?int
     {
@@ -143,6 +150,17 @@ class TipitakaCollectionItems
     {
         $this->level = $level;
         
+        return $this;
+    }
+    
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+    
+    public function setNotes(?string $notes): self
+    {
+        $this->notes = $notes;
         return $this;
     }
 }

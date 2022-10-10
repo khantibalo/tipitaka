@@ -23,6 +23,12 @@
 	<td>{{ form_widget(form.limitrows,{"attr" : {"style" : "width: 100%", "rows": 3, "maxlength" : 1500  }}) }}</td>
 	</tr>
 {% endif %}
+{% if form.notes  is defined %}
+<tr>
+<td>{{ form_label(form.notes, 'Notes') }}</td>
+<td>{{ form_widget(form.notes,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}</td>
+</tr>	
+{% endif %}
 <tr>
 <td style="width:200px">{{ form_label(form.level,'Level') }}:</td>
 <td>{{ form_widget(form.level) }}</td>
