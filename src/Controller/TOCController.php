@@ -25,7 +25,7 @@ class TOCController extends AbstractController
 {
     public function fullToc(TipitakaTocRepository $repository)
     {
-        $nodes=$repository->findBy(['parentid'=>NULL]);
+        $nodes=$repository->findBy(['parentid'=>NULL],['nodeid'=>'ASC']);
         
         
         return $this->render('full_toc.html.twig',
@@ -37,7 +37,7 @@ class TOCController extends AbstractController
     public function fullTocListById($id,TipitakaTocRepository $tocRepository,Request $request, 
         TipitakaParagraphsRepository $paragraphsRepository,TranslatorInterface $translator)
     {
-        $child_nodes=$tocRepository->findBy(['parentid'=>$id]);
+        $child_nodes=$tocRepository->findBy(['parentid'=>$id],['nodeid'=>'ASC']);
         
         $path_nodes=$tocRepository->listPathNodes($id);
 

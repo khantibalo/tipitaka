@@ -216,6 +216,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         if($parentid)
         {
             $query=$query->where('toc.parentid=:id and toc.HasTranslation=1')
+            ->orderBy('toc.nodeid')
             ->getQuery()
             ->setParameter('locale', $locale)
             ->setParameter('id', $parentid);
@@ -223,8 +224,9 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         else
         {
             $query=$query->where('toc.parentid is null')
-            ->setParameter('locale', $locale)
-            ->getQuery();
+            ->orderBy('toc.nodeid')            
+            ->getQuery()
+            ->setParameter('locale', $locale);
         }
         
         return $query->getResult();
