@@ -90,7 +90,7 @@ class CollectionController extends AbstractController
                 $long_oe[1]='/([oe])(ḷ)(?=[aiuoeāīū<])/si';
                 $long_oe[2]='/([oe])(ḷh)(?=[aiuoeāīū<])/si';
                 $long_oe[3]='/([oe])(ṇ)(?=[aiuoeāīū<])/si';
-                $long_oe[4]='/([oe])([};,:\. \]\)])/si';
+                $long_oe[4]='/([oe])([};,:\. \]\)\?])/si';
                 $long_oe[5]='/([oe])$/si';
                 $long_oe[6]='/([oe])(["\'].)(?=[aiuoeāīū<])/si';
                 
