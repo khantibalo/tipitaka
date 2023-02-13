@@ -11,7 +11,7 @@
 			<div>
 		{% endif %} 
 		{% if collectionItem.nodeid %}		
-			<a href="#ch{{collectionItem.collectionitemid}}">{{ collectionItem.nodeName ?? collectionItem.title }}</a>
+			<a href="#ch{{collectionItem.collectionitemid}}">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}</a>
 		{% else %} 
 			<a href="#ch{{collectionItem.collectionitemid}}">{{ collectionItem.colItemName }}</a>
 		{% endif %}
@@ -20,7 +20,7 @@
 {% endif %}		
 	{% for collectionItem in collectionItems %}
 		{% if collectionItem.nodeid %}		
-			<h2>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h2>				
+			<h2>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} {% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h2>				
 		{% else %} 
 			<h{{collectionItem.level}}>{{ collectionItem.colItemName }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
 		{% endif %}
