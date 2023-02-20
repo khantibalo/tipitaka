@@ -35,5 +35,6 @@
 {% if not nodeid and not paliword %}
 <a href="{{ path('collections_list') }}">{% trans %}Cancel{% endtrans %}</a>
 {% endif %}
+<br><font color="red">{{ message }}</font>
 {{ form_end(form) }}
 {% endblock %}

@@ -92,45 +92,56 @@ class TagsController extends AbstractController
             
             $tag->setPaliname($form->get("paliname")->getData());
             $tag->setTagtypeid($tagtype);
-            $tagsRepository->updateTag($tag);    
             
-            if($tagid==NULL)
-            {
-                $language=$sentencesRepository->getLanguage($form->get("language")->getData());
-                $tagName=new TipitakaTagNames();
-                $tagName->setLanguageid($language);
-                $tagName->setTitle($form->get("title")->getData());
-                $tagName->setTagid($tag);
-                $tagsRepository->updateTagName($tagName); 
-            }
-            
-            if($form->has('saveAndAssign') && $form->get('saveAndAssign')->isClicked())
-            {
+            try
+            {  
+                $tagsRepository->updateTag($tag);    
+                
+                if($tagid==NULL)
+                {
+                    $language=$sentencesRepository->getLanguage($form->get("language")->getData());
+                    $tagName=new TipitakaTagNames();
+                    $tagName->setLanguageid($language);
+                    $tagName->setTitle($form->get("title")->getData());
+                    $tagName->setTagid($tag);
+                    $tagsRepository->updateTagName($tagName); 
+                }
+                
+                if($form->has('saveAndAssign') && $form->get('saveAndAssign')->isClicked())
+                {
+                    if($nodeid)
+                    {
+                        $node=$tocRepository->find($nodeid);                    
+                        $tagsRepository->addTagToNode($node,$tag,$this->getUser());
+                    }
+                    
+                    if($paliword)
+                    {                                        
+                        $tagsRepository->addTagToPaliword($paliword,$tag,$this->getUser());
+                    }
+                }
+                            
                 if($nodeid)
                 {
-                    $node=$tocRepository->find($nodeid);                    
-                    $tagsRepository->addTagToNode($node,$tag,$this->getUser());
+                    $response=$this->redirectToRoute('node_tags',['nodeid'=>$nodeid]);
                 }
                 
                 if($paliword)
-                {                                        
-                    $tagsRepository->addTagToPaliword($paliword,$tag,$this->getUser());
+                {
+                    $response=$this->redirectToRoute('paliword_tags',['paliword'=>$paliword]);
+                }
+                
+                if(!isset($response))
+                {
+                    $response=$this->redirectToRoute('toc_tags_list');
                 }
             }
-                        
-            if($nodeid)
+            catch(\Exception $ex)
             {
-                $response=$this->redirectToRoute('node_tags',['nodeid'=>$nodeid]);
-            }
-            
-            if($paliword)
-            {
-                $response=$this->redirectToRoute('paliword_tags',['paliword'=>$paliword]);
-            }
-            
-            if(!isset($response))
-            {
-                $response=$this->redirectToRoute('toc_tags_list');
+                $formView=$form->createView();
+                $response=$this->render('tag_edit.html.twig',['nodeid'=>$nodeid, 'form' => $formView,'paliword'=>$paliword,
+                    'message'=>$translator->trans('This pali name already exists')
+                ]);
             }
         }
         else 
