@@ -17,11 +17,11 @@
 {% endif %}	
 		{% for collectionItem in collectionItems %}
 			{% if collectionItem.nodeid %}		
-				<h2 style="font-family:Ubuntu,Tahoma;font-size:23pt;">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h2>				
+				<h2 style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:23pt;">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h2>				
 			{% else %} 
-				<h{{collectionItem.level}} style="font-family:Ubuntu,Tahoma;font-size:30pt;">{{ collectionItem.colItemName }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
+				<h{{collectionItem.level}} style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:30pt;">{{ collectionItem.colItemName }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
 			{% endif %}	
-			<p style="font-family:Ubuntu,Tahoma;font-size:19pt;margin-bottom:0;margin-top:0"></p>
+			<p style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:19pt;margin-bottom:0;margin-top:0"></p>
 			{% if collectionItem.nodeid %}	
 				{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
 					{% for sentence in sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
@@ -32,17 +32,23 @@
 						{% set comment2=sentenceComments|filter(c=>c.forprint==2)|first %}
 						{% set comment3=sentenceComments|filter(c=>c.forprint==3)|first %}
 						{% set comment4=sentenceComments|filter(c=>c.forprint==4)|first %}		
-						{% if other|length>0 and pali|length>0 %}				
-							<p style="font-family:Ubuntu,Tahoma;font-size:19pt;margin-bottom:0;margin-top:0">
-								{% if comment1 or comment2 %}
-								<small>{% if comment1 %}{{comment1.commenttext}}{% endif %}{% if comment2 %}{{comment2.commenttext}}{% endif %}</small>{%if comment1 %}<br/>{% endif %}
-								{% endif %}						
+						{% if other|length>0 and pali|length>0 %}		
+							{% if comment1 %}
+							<p style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:10pt;margin-bottom:0;margin-top:0">{{comment1.commenttext}}</p>
+							{% endif %}				
+							<p style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:19pt;margin-bottom:0;margin-top:0">	
+								{% if comment2 %}
+								<span style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:10pt;margin-bottom:0;margin-top:0">{{comment2.commenttext}}</span>
+								{% endif %}								    			
 								{{ pali|length>0 ? (pali|first).translation|raw : sentence.sentencetext|raw }}
-								{% if comment3 or comment4 %}
-								{%if comment3%}<br/>{% endif %}<small>{% if comment3%}{{comment3.commenttext}}{% endif %}{% if comment4 %}{{comment4.commenttext}}{% endif %}</small>
+								{% if comment4 %}
+								<span style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:10pt;margin-bottom:0;margin-top:0">{{comment4.commenttext}}</span>
 								{% endif %}		
 							</p>
-							<p style="font-family:Liberation Sans,Times New Roman;font-size:12pt;margin-bottom:0;margin-top:0">{{ (other|first).translation }}</p>
+							{% if comment3 %}
+							<p style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:10pt;margin-bottom:0;margin-top:0">{{comment3.commenttext}}</p>
+							{% endif %}								
+							<p style="font-family:Times New Roman, Liberation Serif;font-size:12pt;margin-bottom:0;margin-top:0">{{ (other|first).translation }}</p>
 						{% endif %}
 					{% endfor %}
 				{% endfor %}
