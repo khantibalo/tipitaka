@@ -224,3 +224,10 @@ ShowNav: Show navigation
 display print view: display print view
 download print view: download print view
 This pali name already exists: This pali name already exists
+hide title in print view: Hide title in print view
+hide pali name in print view: Hide pali name in print view
+forprint0: Not for print view
+forprint1: Above text
+forprint2: before text
+forprint3: below text
+forprint4: after text

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TipitakaCollectionItems
  *
- * @ORM\Table(name="tipitaka_collection_items", indexes={@ORM\Index(name="AuthorID", columns={"authorid"}), @ORM\Index(name="NodeID", columns={"Nodeid"})})
+ * @ORM\Table(name="tipitaka_collection_items", indexes={@ORM\Index(name="AuthorID", columns={"authorid"}), @ORM\Index(name="NodeID", columns={"nodeid"})})
  * @ORM\Entity
  */
 class TipitakaCollectionItems
@@ -43,7 +43,35 @@ class TipitakaCollectionItems
     private $limitrows;
 
     /**
-     * @var TipitakaToc
+     * @var int
+     *
+     * @ORM\Column(name="level", type="integer", nullable=false)
+     */
+    private $level = '0';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="notes", type="text", length=65535, nullable=false)
+     */
+    private $notes;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="hidetitleprint", type="boolean", nullable=false)
+     */
+    private $hidetitleprint = '0';
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="hidepalinameprint", type="boolean", nullable=false)
+     */
+    private $hidepalinameprint = '0';
+
+    /**
+     * @var \TipitakaToc
      *
      * @ORM\ManyToOne(targetEntity="TipitakaToc")
      * @ORM\JoinColumns({
@@ -53,7 +81,7 @@ class TipitakaCollectionItems
     private $nodeid;
 
     /**
-     * @var TipitakaUsers
+     * @var \TipitakaUsers
      *
      * @ORM\ManyToOne(targetEntity="TipitakaUsers")
      * @ORM\JoinColumns({
@@ -61,20 +89,6 @@ class TipitakaCollectionItems
      * })
      */
     private $authorid;
-    
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="level", type="integer", nullable=false)
-     */
-    private $level;
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="notes", type="string", nullable=true)
-     */
-    private $notes;
 
     public function getCollectionitemid(): ?int
     {
@@ -117,6 +131,54 @@ class TipitakaCollectionItems
         return $this;
     }
 
+    public function getLevel(): ?int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(int $level): self
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(string $notes): self
+    {
+        $this->notes = $notes;
+
+        return $this;
+    }
+
+    public function getHidetitleprint(): ?bool
+    {
+        return $this->hidetitleprint;
+    }
+
+    public function setHidetitleprint(bool $hidetitleprint): self
+    {
+        $this->hidetitleprint = $hidetitleprint;
+
+        return $this;
+    }
+
+    public function getHidepalinameprint(): ?bool
+    {
+        return $this->hidepalinameprint;
+    }
+
+    public function setHidepalinameprint(bool $hidepalinameprint): self
+    {
+        $this->hidepalinameprint = $hidepalinameprint;
+
+        return $this;
+    }
+
     public function getNodeid(): ?TipitakaToc
     {
         return $this->nodeid;
@@ -141,26 +203,5 @@ class TipitakaCollectionItems
         return $this;
     }
 
-    public function getLevel(): ?int
-    {
-        return $this->level;
-    }
-    
-    public function setLevel(int $level): self
-    {
-        $this->level = $level;
-        
-        return $this;
-    }
-    
-    public function getNotes(): ?string
-    {
-        return $this->notes;
-    }
-    
-    public function setNotes(?string $notes): self
-    {
-        $this->notes = $notes;
-        return $this;
-    }
+
 }

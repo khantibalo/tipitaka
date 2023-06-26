@@ -260,7 +260,9 @@ class CollectionController extends AbstractController
             {//link
                 $form=$form
                 ->add('nodeid', IntegerType::class,['required' => true])
-                ->add('limitrows', TextareaType::class,['required' => false,'label' => false,'mapped'=>false]);
+                ->add('limitrows', TextareaType::class,['required' => false,'label' => false,'mapped'=>false])
+                ->add('hidetitleprint', CheckboxType::class,['label' => false,'required' => false])
+                ->add('hidepalinameprint', CheckboxType::class,['label' => false,'required' => false]);
             }
             
             if($item->getParentid()==NULL)
@@ -282,7 +284,9 @@ class CollectionController extends AbstractController
                 {
                     $form=$form
                     ->add('nodeid', IntegerType::class,['required' => true])
-                    ->add('limitrows', TextareaType::class,['required' => false,'label' => false,'mapped'=>false]);
+                    ->add('limitrows', TextareaType::class,['required' => false,'label' => false,'mapped'=>false])
+                    ->add('hidetitleprint', CheckboxType::class,['label' => false,'required' => false])
+                    ->add('hidepalinameprint', CheckboxType::class,['label' => false,'required' => false]);
                 }
             }
             else 
@@ -329,6 +333,8 @@ class CollectionController extends AbstractController
                     $node=$tipitakaTocRepository->find($form->get("nodeid")->getData());
                     $item->setNodeid($node);
                     $item->setLimitrows($form->get("limitrows")->getData());
+                    $item->setHidetitleprint($form->get("hidetitleprint")->getData());
+                    $item->setHidepalinameprint($form->get("hidepalinameprint")->getData());
                 }
                 
                 $item->setVieworder($form->get("vieworder")->getData());
@@ -381,6 +387,8 @@ class CollectionController extends AbstractController
                 {
                     $form->get("nodeid")->setData($item->getNodeid()->getNodeid());
                     $form->get("limitrows")->setData($item->getLimitrows());
+                    $form->get("hidetitleprint")->setData($item->getHidetitleprint());
+                    $form->get("hidepalinameprint")->setData($item->getHidepalinameprint());
                 }   
                 
                 if($item->getParentid()==NULL)

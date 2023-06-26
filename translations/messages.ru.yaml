@@ -224,3 +224,10 @@ ShowNav: Показывать средства навигации
 display print view: Вывести на экран
 download print view: Скачать файл
 This pali name already exists: Это палийское название уже есть
+hide title in print view: Скрывать название в виде для печати
+hide pali name in print view: Скрывать палийское название в виде для печати
+forprint0: Не выводить на печать
+forprint1: Над текстом
+forprint2: Перед текстом
+forprint3: Под текстом
+forprint4: После текста

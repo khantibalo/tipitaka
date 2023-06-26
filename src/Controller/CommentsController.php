@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,11 +13,13 @@ use App\Repository\TipitakaTocRepository;
 use App\Security\Roles;
 use App\Entity\TipitakaComments;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CommentsController  extends AbstractController
 {   
     public function listBySentence($sentenceid,TipitakaSentencesRepository $sentenceRepository,
-        TipitakaCommentsRepository $commentsRepository,Request $request,TipitakaTocRepository $tocRepository)
+        TipitakaCommentsRepository $commentsRepository,Request $request,TipitakaTocRepository $tocRepository,
+        TranslatorInterface $translator)
     {                
         $sentence=$sentenceRepository->find($sentenceid);
                 
@@ -40,10 +43,26 @@ class CommentsController  extends AbstractController
             $translations=$sentenceRepository->listTranslationsBySentenceId($sentenceid);
             $comments=$commentsRepository->listBySentenceId($sentenceid);
             
-            $form = $this->createFormBuilder()
-            ->add('comment', TextareaType::class,['required' => true,'label' => false,'mapped'=>false])
-            ->add('submit', SubmitType::class,['label' => 'save'])
-            ->getForm();
+            $fb = $this->createFormBuilder();
+            $fb->add('comment', TextareaType::class,['required' => true,'label' => false,'mapped'=>false]);
+            $fb->add('submit', SubmitType::class,['label' => 'save']);
+            
+            if($this->isGranted(Roles::Editor))
+            {
+                $fb->add('forprint', ChoiceType::class,
+                    ['choices'  => [$translator->trans('forprint0')=>'0',
+                        $translator->trans('forprint1')=>'1',
+                        $translator->trans('forprint2')=>'2',
+                        $translator->trans('forprint4')=>'4',
+                        $translator->trans('forprint3')=>'3'],
+                        'label' => true,
+                        'expanded'=>false,
+                        'multiple'=>false,
+                        'required' => true
+                    ]);
+            }
+                
+            $form=$fb->getForm();
             
             $form->handleRequest($request);
             
@@ -55,6 +74,11 @@ class CommentsController  extends AbstractController
                 $comment->setCreateddate(new \DateTime());                
                 $comment->setAuthorid($this->getUser());
                 $comment->setCommenttext($form->get('comment')->getData());
+                
+                if($this->isGranted(Roles::Editor) && $form->has('forprint') && $form->get('forprint')->getData()!='0')
+                {
+                    $comment->setForprint($form->get('forprint')->getData());
+                }
 
                 $commentsRepository->add($comment);
                 

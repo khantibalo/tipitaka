@@ -37,6 +37,16 @@
 <td>{{ form_label(form.vieworder,'View order') }}:</td>
 <td>{{ form_widget(form.vieworder) }}</td>
 </tr>
+{% if form.nodeid  is defined %}
+	<tr>
+	<td>{{ form_label(form.hidetitleprint,'hide title in print view') }}:</td>
+	<td>{{ form_widget(form.hidetitleprint) }}</td>
+	</tr>
+	<tr>
+	<td>{{ form_label(form.hidepalinameprint,'hide pali name in print view') }}:</td>
+	<td>{{ form_widget(form.hidepalinameprint) }}</td>
+	</tr>	
+{% endif %}
 </table>
 <table style="width:100%">
 <tr>
