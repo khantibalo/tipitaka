@@ -21,6 +21,14 @@
 {% if node.notes %}
 <br>{{ node.notes|raw }}
 {% endif %}
+<center>
+{% if not back_id is empty %}
+<a href="{{ path('table_view', {id: back_id}) }}">&lt;&lt; {% trans %}Back{% endtrans %}</a>
+{% endif %}
+{% if not next_id is empty %}
+<a href="{{ path('table_view', {id: next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+{% endif %}
+</center>
 {% if child_nodes|length>1 %}
     <ul>
     {% for child_node in child_nodes %}
@@ -77,6 +85,14 @@
 		</div>
 	{% endif %}	    
 {% endif %}    
+<center>
+{% if not back_id is empty %}
+<a href="{{ path('table_view', {id: back_id}) }}">&lt;&lt; {% trans %}Back{% endtrans %}</a>
+{% endif %}
+{% if not next_id is empty %}
+<a href="{{ path('table_view', {id: next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+{% endif %}
+</center>
 {% endblock %}
 {% block javascripts %}
     {% set showAlign=false %}

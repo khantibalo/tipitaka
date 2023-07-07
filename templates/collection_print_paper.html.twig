@@ -42,11 +42,11 @@
 							{% endif %}				
 							<p style="font-family:Times New Roman, Liberation Serif;font-size:19pt;margin-bottom:0;margin-top:0">	
 								{% if comment2 %}
-								<span style="font-family:Times New Roman, Liberation Serif;font-size:14pt;margin-bottom:0;margin-top:0">{{comment2.commenttext}}</span>
+								<span style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:11pt;margin-bottom:0;margin-top:0">{{comment2.commenttext}}</span>
 								{% endif %}								    			
 								{{ pali|length>0 ? (pali|first).translation|raw : sentence.sentencetext|raw }}
 								{% if comment4 %}
-								<span style="font-family:Times New Roman, Liberation Serif;font-size:14pt;margin-bottom:0;margin-top:0">{{comment4.commenttext}}</span>
+								<span style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:11pt;margin-bottom:0;margin-top:0">{{comment4.commenttext}}</span>
 								{% endif %}		
 							</p>
 							{% if comment3 %}

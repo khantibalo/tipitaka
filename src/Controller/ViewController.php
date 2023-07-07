@@ -400,6 +400,25 @@ class ViewController extends AbstractController
         $related=$tocRepository->listRelatedNodes($nodeid,$request->getLocale());
         
         $tags=$tagsRepository->listByOneNodeId($nodeid,$request->getLocale());
+        
+        
+        $back_id='';
+        $next_id='';
+        
+        $backnext=$tocRepository->getBackNextNodeWithTranslation($nodeid);
+        
+        if(sizeof($backnext)>0)
+        {
+            if($backnext[0]['Prev'])
+            {
+                $back_id=$backnext[0]['Prev'];
+            }
+            
+            if($backnext[0]['Next'])
+            {
+                $next_id=$backnext[0]['Next'];
+            }
+        }
                 
         $response=$this->render('table_view_multi.html.twig', ['node'=>$node,'path_nodes'=>$path_nodes,
             'child_sentences'=>$child_sentences,'translations'=>$translations,'sources'=>$filteredSources,
@@ -407,7 +426,7 @@ class ViewController extends AbstractController
             'userRole'=>Roles::User,'child_nodes'=>$child_nodes,'immediate_sentences'=>$immediate_sentences,
             'showAlign'=>false,'form' => $form->createView(),'allSources'=>$sources,'related'=>$related,
             'adminRole'=>Roles::Admin,'showPali'=>$form->get("pali")->getData(),'showComments'=>$form->get("comments")->getData(),
-            'tags'=>$tags,'editorRole'=>Roles::Editor
+            'tags'=>$tags,'editorRole'=>Roles::Editor, 'back_id'=>$back_id, 'next_id'=>$next_id
         ]);
         
         if ($form->isSubmitted() && $form->isValid())
@@ -559,9 +578,32 @@ class ViewController extends AbstractController
             
             $tags=$tagsRepository->listByOneNodeId($id,$request->getLocale());
             
+            $back_id='';
+            $next_id='';
+            
+            $backnext=$tocRepository->getBackNextNodeWithTranslation($id);
+            
+            //FIXME: this will always link to table view, hovewer, we are in translation mode and it should see
+            //if that is available for back or next node and if it does, link to that
+            
+            if(sizeof($backnext)>0)
+            {
+                if($backnext[0]['Prev'])
+                {
+                    $back_id=$backnext[0]['Prev'];
+                }
+                
+                if($backnext[0]['Next'])
+                {
+                    $next_id=$backnext[0]['Next'];
+                }
+            }
+            
             $response=$this->render('translation_view.html.twig', ['node'=>$node,'path_nodes'=>$path_nodes,
                 'paragraphs'=>$paragraphs,'nodes'=>$nodes,'translations'=>$translations,
-                'showsidebar'=>false,'source'=>$source,'related'=>$related,'tags'=>$tags,'authorRole'=>Roles::Author]);
+                'showsidebar'=>false,'source'=>$source,'related'=>$related,'tags'=>$tags,'authorRole'=>Roles::Author,
+                'back_id'=>$back_id, 'next_id'=>$next_id
+            ]);
         }
         else
         {
