@@ -363,18 +363,52 @@ class NativeRepository extends ServiceEntityRepository
             "LIMIT 0,20 ";
         */
         
+        //list nodes
+        /*
         $sql="SELECT DT.textpath,DT.title,MAX(DT.dateupdated) As updated,DT.nodeid,DT.hastableview as HasTableView,DT.translationsourceid as TranslationSourceID,".
             "(SELECT nn1.name FROM tipitaka_node_names nn1 INNER JOIN tipitaka_languages l ON nn1.languageid=l.languageid WHERE l.code=:locale AND DT.nodeid=nn1.nodeid) AS trname ".
             "FROM ( SELECT T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,T.hastableview,T.translationsourceid ".
-            "FROM (SELECT ST1.sentenceid,ST1.dateupdated FROM tipitaka_sentence_translations ST1 ORDER BY dateupdated DESC LIMIT 0,400) ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
-            "INNER JOIN tipitaka_paragraphs C ON S.paragraphid=C.paragraphid ".
-            "INNER JOIN tipitaka_toc T ON C.nodeid=T.nodeid ".
-            "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid) DT ".
+                    "FROM (SELECT ST1.sentenceid,ST1.dateupdated FROM tipitaka_sentence_translations ST1 ORDER BY dateupdated DESC LIMIT 0,400) ST ".
+                    "INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
+                    "INNER JOIN tipitaka_paragraphs C ON S.paragraphid=C.paragraphid ".
+                    "INNER JOIN tipitaka_toc T ON C.nodeid=T.nodeid ".
+                    "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid) DT ".
             "GROUP BY DT.textpath,DT.title,DT.nodeid,DT.hastableview,DT.translationsourceid ".
             "ORDER BY MAX(DT.dateupdated) DESC ".
             "LIMIT 0,$maxResults ";
+        */
+        $qb400LastTranslations=SqlQueryBuilder::getQueryBuilder()
+        ->select("ST1.sentenceid,ST1.dateupdated")
+        ->from("tipitaka_sentence_translations ST1")
+        ->orderBy("dateupdated DESC")
+        ->limit("0,400");
         
-        $stmt = $conn->prepare($sql);
+        $qbLastTranslationsWithDetails=SqlQueryBuilder::getQueryBuilder()
+        ->select("T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,T.hastableview,T.translationsourceid")
+        ->fromSubquery($qb400LastTranslations, "ST")
+        ->innerJoin("tipitaka_sentences S", "ST.sentenceid=S.sentenceid")
+        ->innerJoin("tipitaka_paragraphs C", "S.paragraphid=C.paragraphid")
+        ->innerJoin("tipitaka_toc T", "C.nodeid=T.nodeid")
+        ->innerJoin("tipitaka_toc T1", "T.parentid=T1.nodeid");
+        
+        $qbNodeNames=SqlQueryBuilder::getQueryBuilder()
+        ->select("nn1.name")
+        ->from("tipitaka_node_names nn1")
+        ->innerJoin("tipitaka_languages l", "nn1.languageid=l.languageid")
+        ->andWhere("l.code=:locale")
+        ->andWhere("DT.nodeid=nn1.nodeid");
+                
+        $qbLastTranslations=SqlQueryBuilder::getQueryBuilder()
+        ->select("DT.textpath,DT.title,MAX(DT.dateupdated) As updated,DT.nodeid,".
+            "DT.hastableview as HasTableView,DT.translationsourceid as TranslationSourceID")
+        ->selectSubquery($qbNodeNames, "trname")
+        ->fromSubquery($qbLastTranslationsWithDetails, "DT")
+        ->groupBy("DT.textpath,DT.title,DT.nodeid,DT.hastableview,DT.translationsourceid")
+        ->orderBy("MAX(DT.dateupdated) DESC")
+        ->limit("0,$maxResults");        
+        
+        //$stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($qbLastTranslations->getSql());
         $result=$stmt->executeQuery(['locale'=>$locale]);
         
         return $result->fetchAllAssociative();
@@ -384,19 +418,45 @@ class NativeRepository extends ServiceEntityRepository
     {
         
         $conn = $this->getEntityManager()->getConnection();
-        
+        /*
         $sql="SELECT DT.NodeID as nodeid, DT.textpath As description,DT.title,DT.paragraphid, MIN(DT.dateupdated) As pubDate,DT.username As creator ".
             "FROM ( SELECT T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,U.username ".
-            "FROM (SELECT ST1.sentenceid,ST1.dateupdated,ST1.userid FROM tipitaka_sentence_translations ST1 ORDER BY dateupdated DESC LIMIT 0,400) ST INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
-            "INNER JOIN tipitaka_paragraphs C ON S.paragraphid=C.paragraphid ".
-            "INNER JOIN tipitaka_toc T ON C.nodeid=T.nodeid ".
-            "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid ".
-            "INNER JOIN tipitaka_users U ON ST.userid=U.userid) DT ".
+                    "FROM (SELECT ST1.sentenceid,ST1.dateupdated,ST1.userid FROM tipitaka_sentence_translations ST1 ORDER BY dateupdated DESC LIMIT 0,400) ST ".
+                    "INNER JOIN tipitaka_sentences S ON ST.sentenceid=S.sentenceid ".
+                    "INNER JOIN tipitaka_paragraphs C ON S.paragraphid=C.paragraphid ".
+                    "INNER JOIN tipitaka_toc T ON C.nodeid=T.nodeid ".
+                    "INNER JOIN tipitaka_toc T1 ON T.parentid=T1.nodeid ".
+                    "INNER JOIN tipitaka_users U ON ST.userid=U.userid) DT ".
             "GROUP BY DT.nodeid,DT.textpath,DT.title,DT.paragraphid,DT.username ".
             "ORDER BY MAX(DT.dateupdated) DESC ".
             "LIMIT 0,$maxResults ";
+        */
         
-        $stmt = $conn->prepare($sql);
+        $qb400LastTranslations=SqlQueryBuilder::getQueryBuilder()
+        ->select("ST1.sentenceid,ST1.dateupdated,ST1.userid")
+        ->from("tipitaka_sentence_translations ST1")
+        ->orderBy("dateupdated DESC")
+        ->limit("0,400");
+        
+        $qbLastTranslationsWithDetails=SqlQueryBuilder::getQueryBuilder()
+        ->select("T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,U.username")
+        ->fromSubquery($qb400LastTranslations, "ST")
+        ->innerJoin("tipitaka_sentences S", "ST.sentenceid=S.sentenceid")
+        ->innerJoin("tipitaka_paragraphs C", "S.paragraphid=C.paragraphid")
+        ->innerJoin("tipitaka_toc T", "C.nodeid=T.nodeid")
+        ->innerJoin("tipitaka_toc T1", "T.parentid=T1.nodeid")
+        ->innerJoin("tipitaka_users U", "ST.userid=U.userid");
+        
+        $qbLastTranslationsFeed=SqlQueryBuilder::getQueryBuilder()
+        ->select("DT.NodeID as nodeid, DT.textpath As description,DT.title,DT.paragraphid, ".
+            "MIN(DT.dateupdated) As pubDate,DT.username As creator")
+        ->fromSubquery($qbLastTranslationsWithDetails, "DT")
+        ->groupBy("DT.nodeid,DT.textpath,DT.title,DT.paragraphid,DT.username")
+        ->orderBy("MAX(DT.dateupdated) DESC")
+        ->limit("0,$maxResults");
+        
+        //$stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($qbLastTranslationsFeed->getSql());
         $result=$stmt->executeQuery();
         
         return $result->fetchAllAssociative();
@@ -514,14 +574,38 @@ class NativeRepository extends ServiceEntityRepository
     {
         $conn = $this->getEntityManager()->getConnection();
         
+        /*
         $sql="SELECT s.paragraphid,s.sentencetext, ". 
              "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ". 
              "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
              "FROM `tipitaka_sentences` s WHERE s.sentenceid IN (SELECT sentenceid FROM tipitaka_sentence_translations) AND ".
              "MATCH (s.sentencetext) AGAINST (:st IN NATURAL LANGUAGE MODE) ".
              "LIMIT 0,$maxResults ";
+             */
         
-        $stmt = $conn->prepare($sql);
+        $qbTranslationSubquery=SqlQueryBuilder::getQueryBuilder()
+        ->select("translation")
+        ->from("tipitaka_sentence_translations st")
+        ->innerJoin("tipitaka_sources so", "st.sourceid=so.sourceid")
+        ->andWhere("st.sentenceid=s.sentenceid")
+        ->orderBy("so.languageid")
+        ->limit("0,1");
+        
+        $qbSentenceidSubquery=SqlQueryBuilder::getQueryBuilder()
+        ->select("sentenceid")
+        ->from("tipitaka_sentence_translations");
+        
+        $qbAnalyze=SqlQueryBuilder::getQueryBuilder()
+        ->select("s.paragraphid,s.sentencetext")
+        ->selectSubquery($qbTranslationSubquery, "translation")
+        ->from("tipitaka_sentences s")
+        ->andWhereSubquery("s.sentenceid IN", $qbSentenceidSubquery)
+        ->andWhere("MATCH (s.sentencetext) AGAINST (:st IN NATURAL LANGUAGE MODE)")
+        ->limit("0,$maxResults");
+        
+        
+        //$stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($qbAnalyze->getSql());
         $result=$stmt->executeQuery(['st'=>$sentenceText]);
         
         return $result->fetchAllAssociative();
