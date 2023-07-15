@@ -501,6 +501,8 @@ class NativeRepository extends ServiceEntityRepository
         
         
         $conn = $this->getEntityManager()->getConnection();
+        
+        /*
         $sql="SELECT paliword As UniquePaliword ".
             "FROM tipitaka_dictionaryentries ";
         
@@ -524,8 +526,41 @@ class NativeRepository extends ServiceEntityRepository
         $sql="SELECT T1.UniquePaliword, ".
             "(SELECT d2.explanation_plain FROM tipitaka_dictionaryentries d2 WHERE d2.paliword=T1.uniquepaliword COLLATE 'utf8_bin' AND d2.dictionarytypeid=2) As Buddhadatta ".
             "FROM ($sql) T1";
+        */
         
-        $stmt = $conn->prepare($sql);
+        $qbSearchSubquery=SqlQueryBuilder::getQueryBuilder()
+        ->select("paliword As UniquePaliword")
+        ->from("tipitaka_dictionaryentries");
+        
+        if(empty($ignoreDiac))
+        {
+            $qbSearchSubquery->andWhere("paliword LIKE :keyword");
+        }
+        else
+        {
+            $qbSearchSubquery->andWhere("paliwordnodiac LIKE :keyword");
+        }
+        
+        if(!empty($dictionaryTypeID))
+        {
+            $qbSearchSubquery->andWhere("DictionaryTypeID=:dtid");
+        }
+        
+        $qbSearchSubquery->groupBy("paliword");
+        
+        $qbBuddhadatta=SqlQueryBuilder::getQueryBuilder()
+        ->select("d2.explanation_plain")
+        ->from("tipitaka_dictionaryentries d2")
+        ->andWhere("d2.paliword=T1.uniquepaliword COLLATE 'utf8_bin'")
+        ->andWhere("d2.dictionarytypeid=2");
+        
+        $qbFinal=SqlQueryBuilder::getQueryBuilder()
+        ->select("T1.UniquePaliword")
+        ->selectSubquery($qbBuddhadatta,"Buddhadatta")
+        ->fromSubquery($qbSearchSubquery,"T1");
+        
+        
+        $stmt = $conn->prepare($qbFinal->getSql());
         
         if(!empty($ignoreDiac))
         {
@@ -614,6 +649,7 @@ class NativeRepository extends ServiceEntityRepository
     public function listSentencesForQuote($nodeid,$sentenceid,$length)
     {
         $conn = $this->getEntityManager()->getConnection();
+        /*
         $sql="SELECT DT.sentenceid,DT.sentencetext,DT.commentcount,DT.lastcomment ".
         "FROM (SELECT s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,p.paragraphid ".
             "FROM tipitaka_sentences s INNER JOIN tipitaka_paragraphs p on s.paragraphid=p.paragraphid ".
@@ -621,8 +657,24 @@ class NativeRepository extends ServiceEntityRepository
         "WHERE DT.sentenceid>=:sentenceid ".
         "ORDER BY DT.paragraphid,DT.sentenceid ".
         "LIMIT 0,$length ";
+        */
+        
+        $qbNodeSentences=SqlQueryBuilder::getQueryBuilder()
+        ->select("s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,p.paragraphid")
+        ->from("tipitaka_sentences s")
+        ->innerJoin("tipitaka_paragraphs p", "s.paragraphid=p.paragraphid")
+        ->andWhere("p.nodeid=:nodeid")
+        ->orderBy("p.paragraphid,s.sentenceid");
+        
+        $qbQuoteSentences=SqlQueryBuilder::getQueryBuilder()
+        ->select("DT.sentenceid,DT.sentencetext,DT.commentcount,DT.lastcomment")
+        ->fromSubquery($qbNodeSentences, "DT")
+        ->andWhere("DT.sentenceid>=:sentenceid")
+        ->orderBy("DT.paragraphid,DT.sentenceid")
+        ->limit("0,$length");        
                 
-        $stmt = $conn->prepare($sql);
+        //$stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($qbQuoteSentences->getSql());
         $result=$stmt->executeQuery(['nodeid'=>$nodeid,'sentenceid'=>$sentenceid]);
         
         return $result->fetchAllAssociative();
