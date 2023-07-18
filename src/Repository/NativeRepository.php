@@ -9,33 +9,88 @@ use Doctrine\Persistence\ManagerRegistry;
 //if you want to use another DBMS, you should review them
 class NativeRepository extends ServiceEntityRepository
 {
-    private const translationSearchBaseQuery="SELECT toc.textpath,c.paragraphid, s.sentencetext, ".
+    private function getTranslationSelectSubquery(): SqlQueryBuilder
+    {
+        $qbTranslationSelectSubquery=SqlQueryBuilder::getQueryBuilder()
+        ->select("translation")
+        ->from("tipitaka_sentence_translations st")
+        ->innerJoin("tipitaka_sources so", "st.sourceid=so.sourceid")
+        ->andWhere("st.sentenceid=s.sentenceid")
+        ->orderBy("so.languageid")
+        ->limit("0,1");
+        
+        return $qbTranslationSelectSubquery;
+    }
+    
+    private function getTranslationWhereSubquery(): SqlQueryBuilder
+    {
+        $qbTranslationWhereSubquery=SqlQueryBuilder::getQueryBuilder()
+        ->select("st.sentencetranslationid")
+        ->from("tipitaka_sentence_translations st")
+        ->innerJoin("tipitaka_sources so", "st.sourceid=so.sourceid")
+        ->andWhere("st.sentenceid=s.sentenceid");
+        
+        return $qbTranslationWhereSubquery;
+    }
+    
+    private function getTranslationSearchBaseQuery(): SqlQueryBuilder
+    {               
+        $qbFinalQuery=SqlQueryBuilder::getQueryBuilder()
+        ->select("toc.textpath,c.paragraphid, s.sentencetext")
+        ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
+        ->from("tipitaka_toc toc")
+        ->innerJoin("tipitaka_paragraphs c ", "toc.nodeid=c.nodeid")
+        ->innerJoin("tipitaka_paragraphtypes ct", "c.paragraphtypeid=ct.paragraphtypeid")
+        ->innerJoin("tipitaka_sentences s", "s.paragraphid=c.paragraphid")
+        ->andWhereSubquery("EXISTS", $this->getTranslationWhereSubquery());
+        
+        return $qbFinalQuery;
+    }
+    
+/*     private const translationSearchBaseQuery="SELECT toc.textpath,c.paragraphid, s.sentencetext, ".
         "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
         "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
-        "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
+        "FROM tipitaka_toc toc ".
+        "INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
         "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid  ".
         "INNER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
         "WHERE EXISTS(SELECT st.sentencetranslationid FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
-        "WHERE st.sentenceid=s.sentenceid) ";
+        "WHERE st.sentenceid=s.sentenceid) "; */
     
-    private const globalSearchBaseQuery="SELECT c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation, ".
+    private function getGlobalSearchBaseQuery(): SqlQueryBuilder
+    {
+        $qbFinalQuery=SqlQueryBuilder::getQueryBuilder()
+        ->select("c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,".
+         "c.hastranslation,toc.textpath,s.sentencetext")
+        ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
+        ->from("tipitaka_toc toc")
+        ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
+        ->innerJoin("tipitaka_paragraphtypes ct", "c.paragraphtypeid=ct.paragraphtypeid")
+        ->leftJoin("tipitaka_sentences s", "s.paragraphid=c.paragraphid");
+        
+        return $qbFinalQuery;
+    }
+    
+/*     private const globalSearchBaseQuery="SELECT c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation, ".
         "toc.textpath,s.sentencetext, ".
         "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
         "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
-        "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
+        "FROM tipitaka_toc toc ".
+        "INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
         "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid  ".
         "LEFT OUTER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ";
-    
+        
     private const translationSearchBaseQueryFullText="SELECT toc.textpath,c.paragraphid, ".
         "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, s.sentencetext, ".
         "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
         "WHERE st.sentenceid=s.sentenceid ORDER BY so.languageid LIMIT 0,1) As translation ".
-        "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
+        "FROM tipitaka_toc toc ".
+        "INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
         "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid  ".
         "INNER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
         "WHERE EXISTS(SELECT st.sentencetranslationid FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
                     "WHERE st.sentenceid=s.sentenceid) and MATCH (s.sentencetext) AGAINST (:ss in boolean mode) ";
-    
+        
     private const globalSearchBaseQueryFullText="SELECT c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation, ".
         "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext, ".
         "(SELECT translation FROM tipitaka_sentence_translations st INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
@@ -43,82 +98,116 @@ class NativeRepository extends ServiceEntityRepository
         "FROM tipitaka_toc toc INNER JOIN tipitaka_paragraphs c ON toc.nodeid=c.nodeid  ".
         "INNER JOIN tipitaka_paragraphtypes ct ON c.paragraphtypeid=ct.paragraphtypeid  ".
         "LEFT OUTER JOIN tipitaka_sentences s ON s.paragraphid=c.paragraphid ".
-        "WHERE MATCH (c.text) AGAINST (:ss in boolean mode) ";
+        "WHERE MATCH (c.text) AGAINST (:ss in boolean mode) "; */
     
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, TipitakaParagraphs::class);
     }
     
-    //this is possible to do with DQL, but the result is very slow query
-    public function searchGlobal($searchString,$inTranslations,$searchMode)
+    private function getSearchBaseQuery($searchString,$inTranslations,$searchMode) : SqlQueryBuilder
     {
-        $conn = $this->getEntityManager()->getConnection();
-
         if($inTranslations)
-        {            
+        {
             switch($searchMode)
             {
                 case 2:
-                {
-                    $sql=NativeRepository::translationSearchBaseQuery." and s.sentencetext LIKE :ss"; 
-                    
-                    $searchString="%$searchString%";
-                    break;
-                }
+                    {                        
+                        $finalQuery=$this->getTranslationSearchBaseQuery()
+                        ->andWhere("s.sentencetext LIKE :ss");
+                        
+                        $searchString="%$searchString%";
+                        break;
+                    }
                 case 3:
-                {
-                    $sql=NativeRepository::translationSearchBaseQuery." and s.sentencetext REGEXP CONCAT('\\\\w', :ss, '\\\\b')";
-                    
-                    $searchString=preg_quote($searchString);
-                    break;
-                }
+                    {
+                        $finalQuery=$this->getTranslationSearchBaseQuery()
+                        ->andWhere("s.sentencetext REGEXP CONCAT('\\\\w', :ss, '\\\\b')");
+                        
+                        $searchString=preg_quote($searchString);
+                        break;
+                    }
                 default:
-                {
-                    $sql=NativeRepository::translationSearchBaseQueryFullText;
-                    break;
-                }
-            }                                    
+                    {
+                        $finalQuery=SqlQueryBuilder::getQueryBuilder()
+                        ->select("toc.textpath,c.paragraphid, ".
+                            "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, s.sentencetext")
+                            ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
+                            ->from("tipitaka_toc toc")
+                            ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
+                            ->innerJoin("tipitaka_paragraphtypes ct", "c.paragraphtypeid=ct.paragraphtypeid")
+                            ->innerJoin("tipitaka_sentences s", "s.paragraphid=c.paragraphid")
+                            ->andWhereSubquery("EXISTS", $this->getTranslationWhereSubquery())
+                            ->andWhere("MATCH (s.sentencetext) AGAINST (:ss in boolean mode)");
+                        
+                        break;
+                    }
+            }
         }
         else
-        {            
+        {
             switch($searchMode)
             {
                 case 2:
-                {
-                    $sql=NativeRepository::globalSearchBaseQuery." WHERE c.text LIKE :ss";
-                    
-                    $searchString="%$searchString%";
-                    break;
-                }
+                    {
+                        $finalQuery=$this->getGlobalSearchBaseQuery()
+                        ->andWhere("c.text LIKE :ss");
+                        
+                        $searchString="%$searchString%";
+                        break;
+                    }
                 case 3:
-                {
-                    $sql=NativeRepository::globalSearchBaseQuery." WHERE c.text REGEXP CONCAT('\\\\w', :ss, '\\\\b')";
-                    
-                    $searchString=preg_quote($searchString);
-                    break;
-                }
+                    {                        
+                        $finalQuery=$this->getGlobalSearchBaseQuery()
+                        ->andWhere("c.text REGEXP CONCAT('\\\\w', :ss, '\\\\b')");
+                        
+                        $searchString=preg_quote($searchString);
+                        break;
+                    }
                 default:
-                {
-                    $sql=NativeRepository::globalSearchBaseQueryFullText;
-                    break;
-                }
+                    {                                                
+                        $finalQuery=SqlQueryBuilder::getQueryBuilder()
+                        ->select("c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation, ".
+                            "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext")
+                            ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
+                            ->from("tipitaka_toc toc")
+                            ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
+                            ->innerJoin("tipitaka_paragraphtypes ct", "c.paragraphtypeid=ct.paragraphtypeid")
+                            ->leftJoin("tipitaka_sentences s", "s.paragraphid=c.paragraphid")
+                            ->andWhere("MATCH (c.text) AGAINST (:ss in boolean mode)");
+                        
+                        break;
+                    }
             }
-                    
-            //$sql.=" AND c.hastranslation=1 ";
+            
         }
         
         if($searchMode==1)
-        {
-            $sql.=" ORDER BY score desc";
+        {            
+            $finalQuery->orderBy("score DESC");
         }
+        
+        return $finalQuery;
+    }
+    
+    //this is possible to do with DQL, but the result is very slow query
+    public function searchGlobal($searchString,$inTranslations,$searchMode)
+    {
+        $qbFinalQuery=$this->getSearchBaseQuery($searchString,$inTranslations,$searchMode);                
         
         if($inTranslations)
         {
-            $sql="SELECT * FROM (".$sql.") DT1 WHERE DT1.translation!=''";
+           // $sql="SELECT * FROM (".$sql.") DT1 WHERE DT1.translation!=''";
+            $qbFinalQueryWithTranslation=SqlQueryBuilder::getQueryBuilder()
+            ->select("*")
+            ->fromSubquery($qbFinalQuery->clone(),"DT1")
+            ->andWhere("DT1.translation!=''");
+            
+            $qbFinalQuery=$qbFinalQueryWithTranslation;
         }
         
-        $stmt = $conn->prepare($sql);
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($qbFinalQuery->getSql());
         $result=$stmt->executeQuery(['ss'=>mb_convert_case($searchString,MB_CASE_LOWER)]);
         
         return $result->fetchAllAssociative();
@@ -172,91 +261,52 @@ class NativeRepository extends ServiceEntityRepository
         
         $paragraph_line=implode(",",$paragraph_ids);
         
-        if($inTranslations)
-        {           
-            switch($searchMode)
-            {
-                case 2:
-                    {
-                        $sql=NativeRepository::translationSearchBaseQuery." and s.sentencetext LIKE :ss ";
-                        
-                        $searchString="%$searchString%";
-                        break;
-                    }
-                case 3:
-                    {
-                        $sql=NativeRepository::translationSearchBaseQuery." and s.sentencetext REGEXP CONCAT('\\\\w', :ss, '\\\\b') ";
-                        
-                        $searchString=preg_quote($searchString);
-                        break;
-                    }
-                default:
-                    {
-                        $sql=NativeRepository::translationSearchBaseQueryFullText;
-                        break;
-                    }
-            }            
-        }
-        else
-        {           
-            switch($searchMode)
-            {
-                case 2:
-                    {
-                        $sql=NativeRepository::globalSearchBaseQuery." WHERE c.text LIKE :ss ";  
-                        
-                        $searchString="%$searchString%";
-                        break;
-                    }
-                case 3:
-                    {
-                        $sql=NativeRepository::globalSearchBaseQuery." WHERE c.text REGEXP CONCAT('\\\\w', :ss, '\\\\b') ";  
-                        
-                        $searchString=preg_quote($searchString);
-                        break;
-                    }
-                default:
-                    {
-                        $sql=NativeRepository::globalSearchBaseQueryFullText;  
-                        break;
-                    }
-            }
-      
-        }
+        $qbFinalQuery=$this->getSearchBaseQuery($searchString,$inTranslations,$searchMode);
         
-        $sql.=" AND (";
-        $query="";
+        $orArray=array();
+        
+        //$sql.=" AND (";
+        //$query="";
         if(sizeof($paragraph_ids)>0)
         {
-            $query=" c.paragraphid IN($paragraph_line)";
+            //$query=" c.paragraphid IN($paragraph_line)";
+            
+            $orArray[]="c.paragraphid IN($paragraph_line)";
         }
         
         if(sizeof($node_ids)>0)
         {
-            if(!empty($query))
-            {
-                $query.=" OR ";
-            }
+            //if(!empty($query))
+            //{
+            //    $query.=" OR ";
+            //}
                 
-            $query.=$path_line;
+            //$query.=$path_line;
+            
+            $orArray[]=$path_line;
         }
         
-        if($searchMode==1)
-        {
-            $sql.=$query.") ORDER BY score desc";
-        }
-        else 
-        {
-            $sql.=$query.") ";
-        }
+        $qbFinalQuery->andWhereOrArray($orArray);
+        
+//        else 
+//        {
+//            $sql.=$query.") ";
+//        }
         
         if($inTranslations)
         {
-            $sql="SELECT * FROM (".$sql.") DT1 WHERE DT1.translation!=''";
+            //$sql="SELECT * FROM (".$sql.") DT1 WHERE DT1.translation!=''";
+            
+            $qbFinalQueryWithTranslation=SqlQueryBuilder::getQueryBuilder()
+            ->select("*")
+            ->fromSubquery($qbFinalQuery->clone(),"DT1")
+            ->andWhere("DT1.translation!=''");
+            
+            $qbFinalQuery=$qbFinalQueryWithTranslation;
         }
         
         $conn = $this->getEntityManager()->getConnection();
-        $stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($qbFinalQuery->getSql());
         $result=$stmt->executeQuery(['ss'=>mb_convert_case($searchString,MB_CASE_LOWER)]);
         
         return $result->fetchAllAssociative();
@@ -310,6 +360,7 @@ class NativeRepository extends ServiceEntityRepository
         
         $paragraph_line=implode(",",$paragraph_ids);
                 
+        /*
         $sql="SELECT st.translation,c.paragraphid,toc.textpath,se.sentencetext ".
             "FROM tipitaka_sentence_translations st ".
             "INNER JOIN tipitaka_sources so ON st.sourceid=so.sourceid ".
@@ -317,9 +368,20 @@ class NativeRepository extends ServiceEntityRepository
             "INNER JOIN tipitaka_sentences se ON st.sentenceid=se.sentenceid ".
             "INNER JOIN tipitaka_paragraphs c ON c.paragraphid=se.paragraphid ".
             "INNER JOIN tipitaka_toc toc ON toc.nodeid=c.nodeid ".
-            "WHERE st.translation LIKE :ss AND l.languageid=:lid";
+            "WHERE st.translation LIKE :ss AND l.languageid=:lid"; */
         
-        $sql.=" AND (";
+        $qbFinalQuery=SqlQueryBuilder::getQueryBuilder()
+        ->select("st.translation,c.paragraphid,toc.textpath,se.sentencetext")
+        ->from("tipitaka_sentence_translations st")
+        ->innerJoin("tipitaka_sources so", "st.sourceid=so.sourceid")
+        ->innerJoin("tipitaka_languages l", "so.languageid=l.languageid")
+        ->innerJoin("tipitaka_sentences se", "st.sentenceid=se.sentenceid")
+        ->innerJoin("tipitaka_paragraphs c", "c.paragraphid=se.paragraphid")
+        ->innerJoin("tipitaka_toc toc", "toc.nodeid=c.nodeid")
+        ->andWhere("st.translation LIKE :ss")
+        ->andWhere("l.languageid=:lid");
+        
+/*         $sql.=" AND (";
         $query="";
         if(sizeof($paragraph_ids)>0)
         {
@@ -334,10 +396,25 @@ class NativeRepository extends ServiceEntityRepository
                 $query.=$path_line;
         }
         
-        $sql.=$query.")";
+        $sql.=$query.")"; */
+        
+        $orArray=array();
+
+        if(sizeof($paragraph_ids)>0)
+        {            
+            $orArray[]="c.paragraphid IN($paragraph_line)";
+        }
+        
+        if(sizeof($node_ids)>0)
+        {
+            $orArray[]=$path_line;
+        }
+        
+        $qbFinalQuery->andWhereOrArray($orArray);
+        
         
         $conn = $this->getEntityManager()->getConnection();
-        $stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($qbFinalQuery->getSql());
         $result=$stmt->executeQuery(['ss'=>'%'.$searchString.'%','lid'=>$languageid]);
         
         return $result->fetchAllAssociative();
@@ -346,7 +423,7 @@ class NativeRepository extends ServiceEntityRepository
     
     public function listByLastUpdTranslation($maxResults,$locale)
     {            
-        $conn = $this->getEntityManager()->getConnection();
+        
         
         //list paragraphs
         /*
@@ -408,6 +485,7 @@ class NativeRepository extends ServiceEntityRepository
         ->limit("0,$maxResults");        
         
         //$stmt = $conn->prepare($sql);
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($qbLastTranslations->getSql());
         $result=$stmt->executeQuery(['locale'=>$locale]);
         
@@ -417,7 +495,7 @@ class NativeRepository extends ServiceEntityRepository
     public function listLastUpdTranslationFeed($maxResults)
     {
         
-        $conn = $this->getEntityManager()->getConnection();
+        
         /*
         $sql="SELECT DT.NodeID as nodeid, DT.textpath As description,DT.title,DT.paragraphid, MIN(DT.dateupdated) As pubDate,DT.username As creator ".
             "FROM ( SELECT T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,U.username ".
@@ -456,6 +534,7 @@ class NativeRepository extends ServiceEntityRepository
         ->limit("0,$maxResults");
         
         //$stmt = $conn->prepare($sql);
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($qbLastTranslationsFeed->getSql());
         $result=$stmt->executeQuery();
         
@@ -500,7 +579,7 @@ class NativeRepository extends ServiceEntityRepository
         
         
         
-        $conn = $this->getEntityManager()->getConnection();
+        
         
         /*
         $sql="SELECT paliword As UniquePaliword ".
@@ -559,7 +638,7 @@ class NativeRepository extends ServiceEntityRepository
         ->selectSubquery($qbBuddhadatta,"Buddhadatta")
         ->fromSubquery($qbSearchSubquery,"T1");
         
-        
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($qbFinal->getSql());
         
         if(!empty($ignoreDiac))
