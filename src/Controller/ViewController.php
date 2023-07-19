@@ -16,6 +16,7 @@ use App\Repository\TipitakaSourcesRepository;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\Cookie;
 use App\Repository\TipitakaTagsRepository;
+use App\Repository\TipitakaCollectionsRepository;
 
 class ViewController extends AbstractController
 {
@@ -274,7 +275,7 @@ class ViewController extends AbstractController
     }
     
     public function tableView($id,TipitakaTocRepository $tocRepository,TipitakaSentencesRepository $sentencesRepository,Request $request,
-        TipitakaTagsRepository $tagsRepository)
+        TipitakaTagsRepository $tagsRepository,TipitakaCollectionsRepository $collectionsRepository)
     {                
         $node=$tocRepository->getNodeWithNameTranslation($id,$request->getLocale());
         
@@ -284,7 +285,8 @@ class ViewController extends AbstractController
             
             if($prologue)
             {
-                $response=$this->tableViewSingle($id,$node,$tocRepository,$sentencesRepository,$request,$prologue,$tagsRepository);
+                $response=$this->tableViewSingle($id,$node,$tocRepository,$sentencesRepository,$request,
+                    $prologue,$tagsRepository,$collectionsRepository);
             }
             else 
             {
@@ -294,7 +296,8 @@ class ViewController extends AbstractController
                 }
                 else
                 {
-                    $response=$this->tableViewSingle($id,$node,$tocRepository,$sentencesRepository,$request,$prologue,$tagsRepository);
+                    $response=$this->tableViewSingle($id,$node,$tocRepository,$sentencesRepository,$request,
+                        $prologue,$tagsRepository,$collectionsRepository);
                 }
             }
         }
@@ -306,8 +309,10 @@ class ViewController extends AbstractController
         return $response;
     }
     
-    private function tableViewSingle($nodeid,$node,TipitakaTocRepository $tocRepository,TipitakaSentencesRepository $sentencesRepository,
-        Request $request,$prologue,TipitakaTagsRepository $tagsRepository)
+    private function tableViewSingle($nodeid,$node,TipitakaTocRepository $tocRepository,
+        TipitakaSentencesRepository $sentencesRepository,
+        Request $request,$prologue,TipitakaTagsRepository $tagsRepository,
+        TipitakaCollectionsRepository $collectionsRepository)
     {
         $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($nodeid,$request->getLocale());
 
@@ -347,6 +352,23 @@ class ViewController extends AbstractController
                 }
             }
         }
+
+// a cookie approach will not work since a node can be a member of a collection more than once
+// this will work only if we provide the collectionitemid in the URL. 
+// but this will make additional urls for the same content
+
+//         $coll_name=NULL;
+//         $coll_back_id=NULL;
+//         $coll_next_id=NULL;
+//         $collectionid=$request->cookies->get("collectionid");
+//         if($collectionid)
+//         {
+//             $coll_backnext=$collectionsRepository->getBackNextCollectionItem($collectionid, $nodeid);
+//             $coll_back_id=$coll_backnext[0]["back_id"];
+//             $coll_next_id=$coll_backnext[0]["next_id"];
+//             $collection=$collectionsRepository->fetchCollection($collectionid, $request->getLocale());
+//             $coll_name=$collection[0]["name"];
+//         }        
         
         $sentences=$sentencesRepository->listByNodeId($nodeid);
         
@@ -368,7 +390,8 @@ class ViewController extends AbstractController
             'showAlign'=>$request->query->get('showAlign'),'userRole'=>Roles::User,
             'form' => $form->createView(),'allSources'=>$sources,'related'=>$related,
             'adminRole'=>Roles::Admin,'showPali'=>$form->get("pali")->getData(),'showComments'=>$form->get("comments")->getData(),
-            'backPrologue'=>$back_prologue,'tags'=>$tags,'editorRole'=>Roles::Editor
+            'backPrologue'=>$back_prologue,'tags'=>$tags,'editorRole'=>Roles::Editor,
+            //'coll_name'=>$coll_name,'coll_back_id'=>$coll_back_id,'coll_next_id'=>$coll_next_id
         ]);
         
         if ($form->isSubmitted() && $form->isValid())

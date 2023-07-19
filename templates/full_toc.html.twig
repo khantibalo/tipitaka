@@ -39,4 +39,8 @@
     <span style="color:red">{{ paraFormMessage }}</span>
     {{ form_end(paraForm) }}
 {% endif %}
+{% if is_granted(editorRole) and path_nodes is defined %}  
+    <br>
+    <a href="{{ path('pali_import', {parentid: thisNode.nodeid}) }}">{% trans %}Pali import{% endtrans %}</a>
+{% endif %}
 {% endblock %}

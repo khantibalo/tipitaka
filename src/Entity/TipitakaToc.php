@@ -175,6 +175,13 @@ class TipitakaToc
      * @ORM\Column(name="disabletranslalign", type="boolean", nullable=false, options={"default"="0"})
      */
     private $disabletranslalign;
+        
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="allowptspage", type="boolean", nullable=false, options={"default"="0"})
+     */
+    private $allowptspage;
     
     /**
      * @return \App\Entity\TipitakaSources

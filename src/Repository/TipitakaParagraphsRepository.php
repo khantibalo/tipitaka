@@ -5,6 +5,7 @@ use App\Entity\TipitakaParagraphs;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
+use App\Entity\TipitakaParagraphtypes;
 
 class TipitakaParagraphsRepository extends ServiceEntityRepository
 {
@@ -207,6 +208,19 @@ class TipitakaParagraphsRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         $entityManager->persist($paragraph);
         $entityManager->flush();
+    }
+    
+    public function getParagraphType($paragraphtypeid): TipitakaParagraphtypes
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('pt')
+        ->from('App\Entity\TipitakaParagraphtypes','pt')
+        ->where("pt.paragraphtypeid=:ptid")
+        ->getQuery()
+        ->setParameter("ptid", $paragraphtypeid);
+        
+        return $query->getSingleResult();
     }
 }
 

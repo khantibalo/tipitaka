@@ -18,6 +18,7 @@ use App\Entity\TipitakaCollectionItems;
 use App\Repository\TipitakaTocRepository;
 use App\Entity\TipitakaCollectionItemNames;
 use App\Enums\Languages;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class CollectionController extends AbstractController
 {
@@ -208,7 +209,7 @@ class CollectionController extends AbstractController
                 }
             }
             else 
-            {            
+            {//view collection           
                 $formView=$form->createView();
                 
                 $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
@@ -216,7 +217,7 @@ class CollectionController extends AbstractController
             }
         }
         else
-        {
+        {//list collections
             $collections=$collectionsRepository->listCollections($request->getLocale());
             $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
                 'authorRole'=>Roles::Author]);

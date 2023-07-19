@@ -356,4 +356,10 @@ comments_list_all:
    controller: App\Controller\CommentsController::listAll
    requirements:
         pageid: '\d+' 
-                             
+
+pali_import:
+   path: /node/{parentid}/pali_import
+   controller: App\Controller\PaliController::import
+   requirements:
+        nodeid: '\d+'
+           

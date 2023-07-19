@@ -1,0 +1,26 @@
+{#
+{% if coll_name is defined and not coll_name is empty %}
+    <div>
+    <center>
+    {% if not coll_back_id is empty %}
+    <a href="{{ path('table_view', {id: coll_back_id}) }}">&lt;&lt; {% trans %}Back{% endtrans %}</a>
+    {% endif %}
+    {{ coll_name }}
+    {% if not coll_next_id is empty %}
+    <a href="{{ path('table_view', {id: coll_next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+    {% endif %}
+    </center>	
+    </div>
+{% endif %}
+#}
+<div>
+<center>
+{% if not back_id is empty %}
+{% if backPrologue is defined %}<a href="{{ path('table_view', {id: back_id, prologue: 1}) }}">{% else %}<a href="{{ path('table_view', {id: back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>
+{% endif %}
+{% set last_path_node= path_nodes[path_nodes | length-2] %}{{ last_path_node.trname ?? last_path_node.title }}
+{% if not next_id is empty %}
+<a href="{{ path('table_view', {id: next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+{% endif %}
+</center>	
+</div>	

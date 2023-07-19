@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block title %}Import{% endblock %}
+{% block content %}
+{% if message %}
+<font color="blue">{{ message }}</font> Link here: <a href="{{ path('view_node',{id: nodeid }) }}">{{ node_title }}</a><br>
+{% endif %}
+{{ form_start(form) }}
+{{ form_label(form.title, 'Title') }} {{ form_widget(form.title) }}<br>
+{{ form_label(form.titlenodiac, 'TitleNoDiac') }} {{ form_widget(form.titlenodiac) }}<br>
+{{ form_label(form.palitext, 'Pali text') }}<br>
+{{ form_widget(form.palitext,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}<br>
+{{ form_widget(form.save,{'label': 'Save'}) }}
+{{ form_end(form) }}
+{% endblock %}

@@ -6,6 +6,7 @@ use App\Enums\TagTypes;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
+use App\Entity\TipitakaTitletypes;
 
 
 class TipitakaTocRepository  extends ServiceEntityRepository
@@ -433,6 +434,17 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         return $query->getResult();
     }
     
-
+    public function getTitleType($titletypeid): TipitakaTitletypes
+    {
+        $entityManager = $this->getEntityManager();
+        $query=$entityManager->createQueryBuilder()
+        ->select("tt")
+        ->from("App\Entity\TipitakaTitletypes", "tt")
+        ->where("tt.titletypeid=:ttid")
+        ->getQuery()
+        ->setParameter("ttid", $titletypeid);
+        
+        return $query->getOneOrNullResult();
+    }
 }
 

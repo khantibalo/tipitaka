@@ -213,5 +213,24 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         
         return $query->getResult();
     }
+    
+//     public function getBackNextCollectionItem($collectionid,$nodeid)
+//     {
+//         $entityManager = $this->getEntityManager();
+//         $query = $entityManager->createQueryBuilder()
+//         ->select('MAX(CASE WHEN toc.nodeid<:nid THEN toc.nodeid ELSE :nul END) as back_id',
+//             'MIN(CASE WHEN toc.nodeid>:nid THEN toc.nodeid ELSE :nul END) As next_id')
+//             ->from('App\Entity\TipitakaCollectionItems','ci')
+//             ->innerJoin('ci.nodeid', 'toc')
+//             ->where('ci.nodeid is not null')
+//             ->andWhere('ci.parentid=:collectionid')
+//             ->orderBy('ci.vieworder')
+//             ->getQuery()
+//             ->setParameter('nid', $nodeid)
+//             ->setParameter('nul', NULL)
+//             ->setParameter('collectionid', $collectionid);
+            
+//             return $query->getResult();
+//     }
 }
 
