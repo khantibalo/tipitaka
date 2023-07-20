@@ -30,7 +30,7 @@
 				{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
 					{% for sentence in sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
 						{% set pali=collectionItem.nodeid in paliTranslations|keys ? paliTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) : "" %}
-						{% set other=otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) %}
+						{% set other=otherTranslations[collectionItem.nodeid] is empty ? [] :  otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) %}
 						{% set sentenceComments=comments|filter(c=>c.sentenceid==sentence.sentenceid) %}
 						{% set comment1=sentenceComments|filter(c=>c.forprint==1)|first %}
 						{% set comment2=sentenceComments|filter(c=>c.forprint==2)|first %}
