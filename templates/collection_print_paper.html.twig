@@ -9,7 +9,7 @@
     			<div>
     		{% endif %} 
     		{% if collectionItem.nodeid %}		
-    			<a href="#ch{{collectionItem.collectionitemid}}">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} - {{ collectionItem.altPaliName ?? collectionItem.title }}</a>
+    			<a href="#ch{{collectionItem.collectionitemid}}">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}{% if not collectionItem.hidepalinameprint %} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% endif %}</a>
     		{% else %} 
     			<a href="#ch{{collectionItem.collectionitemid}}">{{ collectionItem.colItemName }}</a>
     		{% endif %}
@@ -50,7 +50,7 @@
 								{% endif %}		
 							</p>
 							{% if comment3 %}
-							<p style="font-family:Times New Roman, Liberation Serif;font-size:14pt;margin-bottom:0;margin-top:0">{{comment3.commenttext}}</p>
+							<p style="font-family:Times New Roman, Liberation Serif;font-size:14pt;margin-bottom:0;margin-top:0;font-style: italic;">{{comment3.commenttext}}</p>
 							{% endif %}								
 							<p style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:12pt;margin-bottom:0;margin-top:0">{{ (other|first).translation }}</p>
 						{% endif %}

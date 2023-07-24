@@ -363,3 +363,9 @@ pali_import:
    requirements:
         nodeid: '\d+'
            
+collection_view:
+   path: /toc/collections/{itemid}
+   controller: App\Controller\CollectionController::view
+   requirements:   
+        itemid: '\d+'
+        

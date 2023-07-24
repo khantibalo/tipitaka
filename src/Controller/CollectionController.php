@@ -18,209 +18,212 @@ use App\Entity\TipitakaCollectionItems;
 use App\Repository\TipitakaTocRepository;
 use App\Entity\TipitakaCollectionItemNames;
 use App\Enums\Languages;
-use Symfony\Component\HttpFoundation\Cookie;
 
 class CollectionController extends AbstractController
 {
     public function list(Request $request,TipitakaCollectionsRepository $collectionsRepository,TranslatorInterface $translator,
         TipitakaSentencesRepository $sentencesRepository)
-    {                
-        $itemid=$request->query->get('itemid');
+    {
         $collectionItems=array();
         
-        if($itemid)
-        {
-            $collectionItems=$collectionsRepository->listCollectionItems($itemid,$request->getLocale());
-            $collections=$collectionsRepository->fetchCollection($itemid,$request->getLocale());
+        $collections=$collectionsRepository->listCollections($request->getLocale());
+        $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
+            'authorRole'=>Roles::Author]);
+        
+        return $response;
+    }
+    
+    
+    public function view($itemid,Request $request,TipitakaCollectionsRepository $collectionsRepository,
+        TranslatorInterface $translator,
+        TipitakaSentencesRepository $sentencesRepository)
+    {                
+        $collectionItems=array();
+    
+        $collectionItems=$collectionsRepository->listCollectionItems($itemid,$request->getLocale());
+        $collections=$collectionsRepository->fetchCollection($itemid,$request->getLocale());
 
-            $form = $this->createFormBuilder()
-            ->add('shownav', CheckboxType::class,['required' => false,'label' => false,'data'=>true])
-            ->add('rendermode', ChoiceType::class,
-                ['choices'  => [
-                    'display print view' => 'disp',
-                    'download print view' => 'down'],
-                    'label' => false,
-                    'expanded'=>true,
-                    'multiple'=>false,
-                    'data'=>'disp'
-                ])
-            ->add('table', SubmitType::class)
-            ->add('paper', SubmitType::class)
-            ->add('translation', SubmitType::class);
+        $form = $this->createFormBuilder()
+        ->add('shownav', CheckboxType::class,['required' => false,'label' => false,'data'=>true])
+        ->add('rendermode', ChoiceType::class,
+            ['choices'  => [
+                'display print view' => 'disp',
+                'download print view' => 'down'],
+                'label' => false,
+                'expanded'=>true,
+                'multiple'=>false,
+                'data'=>'disp'
+            ])
+        ->add('table', SubmitType::class)
+        ->add('paper', SubmitType::class)
+        ->add('translation', SubmitType::class);
+        
+        $form=$form->getForm();
+        
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $printviewtype="table";
             
-            $form=$form->getForm();
-            
-            $form->handleRequest($request);
-            
-            if ($form->isSubmitted() && $form->isValid())
+            if($form->get("table")->isClicked())
             {
                 $printviewtype="table";
-                
-                if($form->get("table")->isClicked())
+            }
+            
+            if($form->get("paper")->isClicked())
+            {
+                $printviewtype="paper";
+            }
+            
+            if($form->get("translation")->isClicked())
+            {
+                $printviewtype="translation";
+            }
+            
+            $templates=["table"=>"collection_print_table.html.twig",
+                "paper"=>"collection_print_paper.html.twig",                    
+                "translation"=>"collection_print_translation.html.twig"];               
+            
+            //all paragraphs that belong to nodes in this collection
+            //all sentences that belong to these paragraphs
+            //sentencetranslations for these sentences - we need to find which sourceids are needed
+            $paragraphs=$collectionsRepository->listParagraphs($itemid);                               
+            $sentences=array();//$collectionsRepository->listSentences($itemid);
+            $comments=$collectionsRepository->listCommentsByCollectionIdForPrint($itemid);
+            $language=$sentencesRepository->getLanguageByCode($request->getLocale());
+            
+            $paliTranslations=array();
+            $otherTranslations=array();
+            
+            $long_oe=array();
+            $long_oe[0]='/([oe])(.)(?=[aiuoeāīū<])/si';
+            $long_oe[1]='/([oe])(ḷ)(?=[aiuoeāīū<])/si';
+            $long_oe[2]='/([oe])(ḷh)(?=[aiuoeāīū<])/si';
+            $long_oe[3]='/([oe])(ṇ)(?=[aiuoeāīū<])/si';
+            $long_oe[4]='/([oe])([};,:\. \]\)\?])/si';
+            $long_oe[5]='/([oe])$/si';
+            $long_oe[6]='/([oe])(["\'].)(?=[aiuoeāīū<])/si';
+            
+            foreach($collectionItems as $collectionItem)
+            {
+                if($collectionItem['nodeid'])
                 {
-                    $printviewtype="table";
-                }
-                
-                if($form->get("paper")->isClicked())
-                {
-                    $printviewtype="paper";
-                }
-                
-                if($form->get("translation")->isClicked())
-                {
-                    $printviewtype="translation";
-                }
-                
-                $templates=["table"=>"collection_print_table.html.twig",
-                    "paper"=>"collection_print_paper.html.twig",                    
-                    "translation"=>"collection_print_translation.html.twig"];               
-                
-                //all paragraphs that belong to nodes in this collection
-                //all sentences that belong to these paragraphs
-                //sentencetranslations for these sentences - we need to find which sourceids are needed
-                $paragraphs=$collectionsRepository->listParagraphs($itemid);                               
-                $sentences=array();//$collectionsRepository->listSentences($itemid);
-                $comments=$collectionsRepository->listCommentsByCollectionIdForPrint($itemid);
-                $language=$sentencesRepository->getLanguageByCode($request->getLocale());
-                
-                $paliTranslations=array();
-                $otherTranslations=array();
-                
-                $long_oe=array();
-                $long_oe[0]='/([oe])(.)(?=[aiuoeāīū<])/si';
-                $long_oe[1]='/([oe])(ḷ)(?=[aiuoeāīū<])/si';
-                $long_oe[2]='/([oe])(ḷh)(?=[aiuoeāīū<])/si';
-                $long_oe[3]='/([oe])(ṇ)(?=[aiuoeāīū<])/si';
-                $long_oe[4]='/([oe])([};,:\. \]\)\?])/si';
-                $long_oe[5]='/([oe])$/si';
-                $long_oe[6]='/([oe])(["\'].)(?=[aiuoeāīū<])/si';
-                
-                foreach($collectionItems as $collectionItem)
-                {
-                    if($collectionItem['nodeid'])
+                    $paliSource=NULL;
+                    $translSource=NULL;
+                    
+                    $sources=$sentencesRepository->listNodeSources($collectionItem['nodeid']);
+                    foreach($sources as $source)
                     {
-                        $paliSource=NULL;
-                        $translSource=NULL;
-                        
-                        $sources=$sentencesRepository->listNodeSources($collectionItem['nodeid']);
-                        foreach($sources as $source)
+                        if($source['languageid']==Languages::Pali)
                         {
-                            if($source['languageid']==Languages::Pali)
-                            {
-                                if($paliSource)
-                                {//we have already found a pali source
-                                    if($source['hasformatting'])
-                                    {//we found a source with formatting - use it instead
-                                        $paliSource=$source;
-                                    }
-                                }
-                                else
-                                {//this is the first pali source we have found - use it
+                            if($paliSource)
+                            {//we have already found a pali source
+                                if($source['hasformatting'])
+                                {//we found a source with formatting - use it instead
                                     $paliSource=$source;
                                 }
                             }
-                            
-                            if($source['languageid']==$language->getLanguageid())
+                            else
+                            {//this is the first pali source we have found - use it
+                                $paliSource=$source;
+                            }
+                        }
+                        
+                        if($source['languageid']==$language->getLanguageid())
+                        {
+                            if($translSource)
                             {
-                                if($translSource)
-                                {
-                                    if(mb_stristr($source['sourcename'], "khantibalo")!=FALSE)
-                                    {//this will give priority for sources that have "khantibalo" in their names
-                                        $translSource=$source;
-                                    }
-                                }
-                                else
-                                {//this is the first translation source we have found - use it
+                                if(mb_stristr($source['sourcename'], "khantibalo")!=FALSE)
+                                {//this will give priority for sources that have "khantibalo" in their names
                                     $translSource=$source;
                                 }
                             }
-                        }
-                                                
-                        if($paliSource)
-                        {
-                            //find in this node all translations of this source
-                            $pali=$sentencesRepository->listTranslationsBySourceId($collectionItem['nodeid'],'none',$paliSource['sourceid']);  
-                            
-                            $HasFormatting=$paliSource['hasformatting'];
-                        }
-                        else
-                        {//no pali source found among translations, use the one that in sentences
-                            $pali=$sentencesRepository->listSentencesAsTranslations($collectionItem['nodeid']);        
-                            $HasFormatting=false;
-                        }
-                        
-                        for($i=0;$i<sizeof($pali);$i++)
-                        {
-                            $pali[$i]["translation"]=$this->formatPali($pali[$i]["translation"], $long_oe,$HasFormatting);
-                        }
-                        
-                        $paliTranslations[$collectionItem['nodeid']]=$pali;
-                        
-                            
-                        if($translSource)
-                        {
-                            //find in this node all translations of this source
-                            $other=$sentencesRepository->listTranslationsBySourceId($collectionItem['nodeid'],'none',$translSource['sourceid']);
-                            $otherTranslations[$collectionItem['nodeid']]=$other;
-                        }
-                        
-                        if($collectionItem['limitrows'] && trim($collectionItem['limitrows'])!="")
-                        {
-                            $nodeSentences=$collectionsRepository->listSentences($collectionItem['nodeid'],$collectionItem['limitrows']);
-                        }
-                        else
-                        {
-                            $nodeSentences=$sentencesRepository->listByNodeId($collectionItem['nodeid']);
-                        }
-                        
-                        if($paliSource==NULL)
-                        {
-                            for($i=0;$i<sizeof($nodeSentences);$i++)
-                            {
-                                $nodeSentences[$i]["sentencetext"]=$this->formatPali($nodeSentences[$i]["sentencetext"], $long_oe,false);
+                            else
+                            {//this is the first translation source we have found - use it
+                                $translSource=$source;
                             }
                         }
+                    }
+                                            
+                    if($paliSource)
+                    {
+                        //find in this node all translations of this source
+                        $pali=$sentencesRepository->listTranslationsBySourceId($collectionItem['nodeid'],'none',$paliSource['sourceid']);  
                         
+                        $HasFormatting=$paliSource['hasformatting'];
+                    }
+                    else
+                    {//no pali source found among translations, use the one that in sentences
+                        $pali=$sentencesRepository->listSentencesAsTranslations($collectionItem['nodeid']);        
+                        $HasFormatting=false;
+                    }
+                    
+                    for($i=0;$i<sizeof($pali);$i++)
+                    {
+                        $pali[$i]["translation"]=$this->formatPali($pali[$i]["translation"], $long_oe,$HasFormatting);
+                    }
+                    
+                    $paliTranslations[$collectionItem['nodeid']]=$pali;
+                    
+                        
+                    if($translSource)
+                    {
+                        //find in this node all translations of this source
+                        $other=$sentencesRepository->listTranslationsBySourceId($collectionItem['nodeid'],'none',$translSource['sourceid']);
+                        $otherTranslations[$collectionItem['nodeid']]=$other;
+                    }
+                    
+                    if($collectionItem['limitrows'] && trim($collectionItem['limitrows'])!="")
+                    {
+                        $nodeSentences=$collectionsRepository->listSentences($collectionItem['nodeid'],$collectionItem['limitrows']);
+                    }
+                    else
+                    {
+                        $nodeSentences=$sentencesRepository->listByNodeId($collectionItem['nodeid']);
+                    }
+                    
+                    if($paliSource==NULL)
+                    {
                         for($i=0;$i<sizeof($nodeSentences);$i++)
                         {
-                            $nodeSentences[$i]["collectionitemid"]=$collectionItem["collectionitemid"];
+                            $nodeSentences[$i]["sentencetext"]=$this->formatPali($nodeSentences[$i]["sentencetext"], $long_oe,false);
                         }
-                        
-                        $sentences=array_merge($sentences,$nodeSentences);
                     }
-                }
-                
-
-                $response=$this->render($templates[$printviewtype], ['collection'=>$collections[0],
-                    'collectionItems'=>$collectionItems,'paragraphs'=>$paragraphs,'sentences'=>$sentences,
-                    'paliTranslations'=>$paliTranslations,'otherTranslations'=>$otherTranslations,
-                    'comments'=>$comments,'shownav'=>$form->get("shownav")->getData()
-                ]);     
                     
-                if($form->get("rendermode")->getData()=="down")
-                {
-                    $disposition = HeaderUtils::makeDisposition(
-                        HeaderUtils::DISPOSITION_ATTACHMENT,
-                        $collections[0]["name"].'.html',
-                        'collection.html'
-                        );
+                    for($i=0;$i<sizeof($nodeSentences);$i++)
+                    {
+                        $nodeSentences[$i]["collectionitemid"]=$collectionItem["collectionitemid"];
+                    }
                     
-                    $response->headers->set('Content-Disposition', $disposition);
+                    $sentences=array_merge($sentences,$nodeSentences);
                 }
             }
-            else 
-            {//view collection           
-                $formView=$form->createView();
+            
+
+            $response=$this->render($templates[$printviewtype], ['collection'=>$collections[0],
+                'collectionItems'=>$collectionItems,'paragraphs'=>$paragraphs,'sentences'=>$sentences,
+                'paliTranslations'=>$paliTranslations,'otherTranslations'=>$otherTranslations,
+                'comments'=>$comments,'shownav'=>$form->get("shownav")->getData()
+            ]);     
                 
-                $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
-                    'authorRole'=>Roles::Author,'form' => $formView]);
+            if($form->get("rendermode")->getData()=="down")
+            {
+                $disposition = HeaderUtils::makeDisposition(
+                    HeaderUtils::DISPOSITION_ATTACHMENT,
+                    $collections[0]["name"].'.html',
+                    'collection.html'
+                    );
+                
+                $response->headers->set('Content-Disposition', $disposition);
             }
         }
-        else
-        {//list collections
-            $collections=$collectionsRepository->listCollections($request->getLocale());
+        else 
+        {//view collection           
+            $formView=$form->createView();
+            
             $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
-                'authorRole'=>Roles::Author]);
+                'authorRole'=>Roles::Author,'form' => $formView]);
         }
         
         return $response;

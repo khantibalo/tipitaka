@@ -10,8 +10,8 @@
 		<a name="top"></a>
 		<center><h1>{{ collection.name }}</h1></center>
 		<center>{% trans %}Publisher{% endtrans %}</center><br/>
+		<center>{% trans %}Collection URL{% endtrans %} <a href="{{ url('collection_view',{itemid: collection.collectionitemid}) }}">{{ url('collection_view',{itemid: collection.collectionitemid}) }}</a></center><br/>	
 		<center>{% trans %}Retrieved{% endtrans %} {{ "now"|date("d.m.Y") }}</center>
-
         {% block content %}{% endblock %}
     </body>
 </html>
