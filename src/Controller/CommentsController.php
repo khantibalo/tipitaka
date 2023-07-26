@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Repository\TipitakaCollectionsRepository;
 use App\Repository\TipitakaCommentsRepository;
 use App\Repository\TipitakaSentencesRepository;
 use App\Repository\TipitakaTocRepository;
@@ -19,7 +20,7 @@ class CommentsController  extends AbstractController
 {   
     public function listBySentence($sentenceid,TipitakaSentencesRepository $sentenceRepository,
         TipitakaCommentsRepository $commentsRepository,Request $request,TipitakaTocRepository $tocRepository,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator, TipitakaCollectionsRepository $collectionsRepository)
     {                
         $sentence=$sentenceRepository->find($sentenceid);
                 
@@ -28,12 +29,29 @@ class CommentsController  extends AbstractController
             $paragraphid=NULL;
             $nodeid=NULL;
             $return=$request->query->get('return');
+            $collectionitemid=$request->query->get('collectionitemid');
+            
             $node=$sentenceRepository->getNodeIdBySentenceId($sentenceid);
             $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($node['nodeid'],$request->getLocale());
             
             if($return=='node')
             {
                 $nodeid=$node['nodeid'];                
+            }
+            
+            $collectionItemName=NULL;
+            $collection=NULL;
+            
+            if($collectionitemid)
+            {
+                $collectionItem=$collectionsRepository->find($collectionitemid);
+                $collections=$collectionsRepository->fetchCollection($collectionItem->getParentid(),$request->getLocale());
+                $collection=$collections[0];
+                $collectionItemNameResult=$collectionsRepository->getCollectionItemName($collectionitemid,$request->getLocale());
+                if($collectionItemNameResult)
+                {
+                    $collectionItemName=$collectionItemNameResult["name"];
+                }   
             }
                         
             $paragraphid=$sentence->getParagraphid()->getParagraphid();
@@ -89,6 +107,11 @@ class CommentsController  extends AbstractController
                     $params['return']=$return;
                 }
                 
+                if($collectionitemid)
+                {
+                    $params['collectionitemid']=$collectionitemid;
+                }
+                
                 $response=$this->redirectToRoute('comments',$params);
             }
             else 
@@ -102,7 +125,9 @@ class CommentsController  extends AbstractController
                 $response=$this->render('comments.html.twig', ['form' => $form->createView(),
                     'sentenceText'=>$sentenceText,'path_nodes'=>$path_nodes,'paragraphid'=>$paragraphid,'nodeid'=>$nodeid,
                     'translations'=>$translations,'comments'=>$comments,'userRole'=>Roles::User,'adminRole'=>Roles::Admin,
-                    'userid'=>$userid,'sentenceid'=>$sentenceid,'return'=>$return
+                    'userid'=>$userid,'sentenceid'=>$sentenceid,'return'=>$return,'collection'=>$collection,
+                    'collectionItemName'=>$collectionItemName,'collectionitemid'=>$collectionitemid,
+                    'node'=>$path_nodes[sizeof($path_nodes)-1]
                 ]);
             }
         }

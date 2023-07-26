@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+{% set showT=false %}
+{% block title %}{{ node.trname ?? node.title }}{% endblock %}
+{% block navigation %}
+{{ include('_navigation.html.twig') }}
+{% endblock %}
+{% block content %}
+<div>
+{% trans %}Location{% endtrans %}
+<a href="{{ path('toc') }}">{% trans %}Table of contents{% endtrans %}</a>
+&gt;&gt;
+<a href="{{ path('collections_list') }}">{% trans %}Collections{% endtrans %}</a>
+&gt;&gt;
+<a href="{{ path('collection_view',{collectionid: collection.collectionitemid}) }}">{{ collection.name }}</a>
+</div>
+{% if node.notes %}
+<br>{{ node.notes|raw }}
+{% endif %}
+    <div>
+    <center>
+    {% if not coll_back_id is empty %}
+    <a href="{{ path('collection_item_view', {collectionitemid: coll_back_id}) }}">&lt;&lt; {% trans %}Back{% endtrans %}</a>
+    {% endif %}
+    {% if not coll_next_id is empty %}
+    <a href="{{ path('collection_item_view', {collectionitemid: coll_next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+    {% endif %}
+    </center>	
+    </div>
+<p class="{{ node.typename }}">{{ collectionItemName ?? (node.trname ?? node.title) }} <a href="{{ path('table_view',{id: node.nodeid}) }}">{% trans %}This text in the library{% endtrans %}</a></p>
+
+    {% if sentences|length>0 %}
+    {% set colWidth=90/(sources|length+1) %}
+        <table class="bordercell" style="width:100%">
+        <tr>
+        <td style="width:{{ colWidth }}%">{% trans %}Pali{% endtrans %}</td>
+        {% if sources|length>0 %}
+            {% for source in sources %}
+            	<td style="width:{{ colWidth }}%">{{ source.sourcename }} - {{ source.languagename }}
+            	</td>
+            {% endfor %}
+        {% endif %}
+        <td>{% trans %}Comments{% endtrans %}</td>
+        </tr>
+        {% for sentence in sentences %}
+        <tr>
+            	<td style="vertical-align: top;"><a name="sent{{ sentence.sentenceid }}"></a>
+    {{ sentence.sentencetext }}    
+    	        </td>
+            {% if sources|length>0 %}
+                {% for source in sources %}
+                <td style="vertical-align: top;">
+                    {% set translation=translations|filter(t=>t.sentenceid==sentence.sentenceid and t.sourceid==source.sourceid)|first %}
+                    {% if translation %}
+                    	<span id="et{{ translation.sentencetranslationid }}">{{ source.hasformatting ? translation.translation|raw : translation.translation }}</span>
+                        {% if is_granted(userRole) %}
+                        	<span id="ec{{ translation.sentencetranslationid }}">
+                        	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>
+    	                    {% if is_granted(editorRole) or (is_granted(authorRole) and translation.userid==app.user.userid) or (is_granted(authorRole) and source.userid==app.user.userid) %}
+    	                        <a href="javascript:QTEdit({{ translation.sentencetranslationid }});">{% trans %}Quick Edit{% endtrans %}</a>
+    	                    {% endif %}
+                            </span>
+                        {% endif %}
+                    {% else %}
+                        {% if is_granted(editorRole) or (is_granted(authorRole) and source.userid==app.user.userid)  %}
+                        	<span id="ncse{{ sentence.sentenceid }}so{{ source.sourceid }}">
+                    		<a href="javascript:QTNew({{ sentence.sentenceid }},{{ source.sourceid }});">{% trans %}Quick Edit{% endtrans %}</a>  
+                    		</span>             		
+                    	{% endif %}
+                    {% endif %}
+                </td>
+                {% endfor %}
+            {% endif %}
+    			<td>
+    			{% if sentence.commentcount>0 %}
+    			    {{ sentence.lastcomment }}<br>
+    				<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'collection',collectionitemid: collectionItem.collectionitemid }) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+    			{% else %}
+    			    {% if is_granted(userRole) %}
+    					<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'collection',collectionitemid: collectionItem.collectionitemid}) }}">{% trans %}Add new comment{% endtrans %}</a>
+    				{% endif %}
+    			{% endif %}
+    			</td>    	   
+        </tr>
+        {% endfor %}
+        </table> 
+    	{% endif %}  
+{#    	
+{% if collection.defaultview==1 %}    	
+{% endif %} 	
+{% if collection.defaultview==2 %}
+    {% for paragraph in paragraphs|filter(i=>i.nodeid==node.nodeid) %}
+        <p class="{{ paragraph.typename }}">
+        {% if not paragraph.paranum is empty %}
+        <span class="paranum">{{ paragraph.paranum }}</span><span class="dot">.</span>
+        {% endif %}  
+        {% for sentence in translations|filter(t=>t.paragraphid==paragraph.paragraphid) %}
+        {{ sentence.translation }} 
+        {% endfor %}
+        </p>
+    {% endfor %}
+{% endif %}
+#}
+
+{% endblock %}
+{% block javascripts %}
+    {% if is_granted(authorRole) %}
+        {{ include('_quick_edit_scripts.html.twig') }}
+    {% endif %}
+{% endblock %}

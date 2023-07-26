@@ -68,6 +68,13 @@ class TipitakaSources
      * })
      */
     private $userid;
+    
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="priority", type="integer", nullable=false)
+     */
+    private $priority='0';
 
     public function getSourceid(): ?int
     {

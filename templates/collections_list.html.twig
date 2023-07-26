@@ -51,7 +51,7 @@
 <div><a href="{{ path('collections_list') }}">{% trans %}Top{% endtrans %}</a></div>
 <ul style="margin-top:0px">
 {% for collection in collections %}
-<li><a href="{{ path('collection_view',{itemid: collection.collectionitemid}) }}">{{ collection.name }}</a>
+<li><a href="{{ path('collection_view',{collectionid: collection.collectionitemid}) }}">{{ collection.name }}</a>
 {% if is_granted(authorRole) %}   
 <a href="{{ path('collection_item_edit',{itemid: collection.collectionitemid}) }}">({% trans %}Edit{% endtrans %})</a>	
 <a href="{{ path('collection_item_names',{itemid: collection.collectionitemid}) }}">({% trans %}Edit names{% endtrans %})</a>
@@ -61,13 +61,8 @@
 
 	{% for item in collectionItems|filter(ci=>ci.parentid==collection.collectionitemid) %}
 		<div style="padding-left:{{ item.level*20 }}px">
-			{% if item.nodeid %}
-		        {% if item.HasTableView %}
-		            {% set route=item.TranslationSourceID ? 'translation_view' : (item.HasTableView ? 'table_view' : 'view_node') %}		            
-		            <a href="{{ path(route, {id: item.nodeid}) }}">{{ item.colItemName ?? (item.nodeName ?? item.title) }}</a>
-		        {% else %}
-		        	<a href="{{ path('view_node', {id: item.nodeid}) }}">{{ item.colItemName ?? (item.nodeName ?? item.title) }}</a>
-		        {% endif %}
+			{% if item.nodeid %}		        
+		        <a href="{{ path('collection_item_view', {collectionitemid: item.collectionitemid}) }}">{{ item.colItemName ?? (item.nodeName ?? item.title) }}</a>
 			{% else %} 
 				{{ item.colItemName }}
 			{% endif %}

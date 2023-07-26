@@ -11,3 +11,4 @@ Disallow: /statistics/
 Disallow: /search
 Disallow: /quote/sentenceid/
 Disallow: /user/
+Disallow: /toc/collections/item/

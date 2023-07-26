@@ -31,11 +31,11 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         return $query->getResult();
     }
     
-    public function fetchCollection($collectionid,$locale)
+    public function fetchCollection($collectionitemid,$locale)
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('i.collectionitemid,cin.name,i.notes')
+        ->select('i.collectionitemid,cin.name,i.notes,i.defaultview')
         ->from('App\Entity\TipitakaCollectionItemNames','cin')
         ->innerJoin('cin.collectionitemid', 'i')
         ->innerJoin('cin.languageid', 'l')
@@ -45,9 +45,27 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         ->orderBy('i.vieworder')
         ->getQuery()
         ->setParameter('locale', $locale)
-        ->setParameter('cid', $collectionid);
+        ->setParameter('cid', $collectionitemid);
         
         return $query->getResult();
+    }
+    
+    public function getCollectionItemName($collectionitemid,$locale)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('i.collectionitemid,cin.name')
+        ->from('App\Entity\TipitakaCollectionItemNames','cin')
+        ->innerJoin('cin.collectionitemid', 'i')
+        ->innerJoin('cin.languageid', 'l')
+        ->where('l.code=:locale')
+        ->andWhere('i.collectionitemid=:cid')
+        ->orderBy('i.vieworder')
+        ->getQuery()
+        ->setParameter('locale', $locale)
+        ->setParameter('cid', $collectionitemid);
+        
+        return $query->getOneOrNullResult();
     }
     
     public function updateCollectionItem(TipitakaCollectionItems $item)
@@ -183,7 +201,7 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         
         $query = $entityManager->createQueryBuilder()
-        ->select('c.paragraphid,s.sentenceid,s.sentencetext')
+        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment')
         ->from('App\Entity\TipitakaSentences','s')
         ->innerJoin('s.paragraphid', 'c')
         ->innerJoin('c.nodeid', 'toc')
@@ -214,23 +232,46 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         return $query->getResult();
     }
     
-//     public function getBackNextCollectionItem($collectionid,$nodeid)
-//     {
-//         $entityManager = $this->getEntityManager();
-//         $query = $entityManager->createQueryBuilder()
-//         ->select('MAX(CASE WHEN toc.nodeid<:nid THEN toc.nodeid ELSE :nul END) as back_id',
-//             'MIN(CASE WHEN toc.nodeid>:nid THEN toc.nodeid ELSE :nul END) As next_id')
-//             ->from('App\Entity\TipitakaCollectionItems','ci')
-//             ->innerJoin('ci.nodeid', 'toc')
-//             ->where('ci.nodeid is not null')
-//             ->andWhere('ci.parentid=:collectionid')
-//             ->orderBy('ci.vieworder')
-//             ->getQuery()
-//             ->setParameter('nid', $nodeid)
-//             ->setParameter('nul', NULL)
-//             ->setParameter('collectionid', $collectionid);
-            
-//             return $query->getResult();
-//     }
+    public function getBackNextCollectionItem($collectionitemid)
+    {
+        $entityManager = $this->getEntityManager();        
+                       
+        $collectionItem=$this->find($collectionitemid);
+        
+        //FIXME: better way of doing this proivided we can have items with the same vieworder
+        
+        $results = $entityManager->createQueryBuilder()
+        ->select("ci.collectionitemid")
+        ->from('App\Entity\TipitakaCollectionItems','ci')
+        ->where('ci.parentid=:collectionid')
+        ->andWhere('ci.nodeid is not null')
+        ->addOrderBy('ci.vieworder')
+        ->getQuery()
+        ->setParameter('collectionid', $collectionItem->getParentid())
+        ->getResult();
+        
+        $backid=null;
+        $nextid=null;
+        
+        for($i=0;$i<sizeof($results);$i++)
+        {
+            if($results[$i]["collectionitemid"]==$collectionitemid)
+            {
+                if($i!=0)
+                {
+                    $backid=$results[$i-1]["collectionitemid"];
+                }
+                
+                if($i!=sizeof($results)-1)
+                {
+                    $nextid=$results[$i+1]["collectionitemid"];
+                }
+                
+                break;
+            }
+        }
+                
+        return ['back_id'=>$backid,'next_id'=>$nextid];
+    }
 }
 

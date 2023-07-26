@@ -352,23 +352,6 @@ class ViewController extends AbstractController
                 }
             }
         }
-
-// a cookie approach will not work since a node can be a member of a collection more than once
-// this will work only if we provide the collectionitemid in the URL. 
-// but this will make additional urls for the same content
-
-//         $coll_name=NULL;
-//         $coll_back_id=NULL;
-//         $coll_next_id=NULL;
-//         $collectionid=$request->cookies->get("collectionid");
-//         if($collectionid)
-//         {
-//             $coll_backnext=$collectionsRepository->getBackNextCollectionItem($collectionid, $nodeid);
-//             $coll_back_id=$coll_backnext[0]["back_id"];
-//             $coll_next_id=$coll_backnext[0]["next_id"];
-//             $collection=$collectionsRepository->fetchCollection($collectionid, $request->getLocale());
-//             $coll_name=$collection[0]["name"];
-//         }        
         
         $sentences=$sentencesRepository->listByNodeId($nodeid);
         
@@ -391,7 +374,6 @@ class ViewController extends AbstractController
             'form' => $form->createView(),'allSources'=>$sources,'related'=>$related,
             'adminRole'=>Roles::Admin,'showPali'=>$form->get("pali")->getData(),'showComments'=>$form->get("comments")->getData(),
             'backPrologue'=>$back_prologue,'tags'=>$tags,'editorRole'=>Roles::Editor,
-            //'coll_name'=>$coll_name,'coll_back_id'=>$coll_back_id,'coll_next_id'=>$coll_next_id
         ]);
         
         if ($form->isSubmitted() && $form->isValid())

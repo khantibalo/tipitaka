@@ -89,6 +89,15 @@ class TipitakaCollectionItems
      * })
      */
     private $authorid;
+    
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="default_view", type="integer", nullable=false)
+     */
+    private $defaultview='1';
+    
+    
 
     public function getCollectionitemid(): ?int
     {
@@ -203,5 +212,15 @@ class TipitakaCollectionItems
         return $this;
     }
 
-
+    public function getDefaultview(): ?int
+    {
+        return $this->defaultview;
+    }
+    
+    public function setDefaultview(int $defaultview): self
+    {
+        $this->defaultview = $defaultview;
+        
+        return $this;
+    }
 }

@@ -11,13 +11,16 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Repository\NativeRepository;
 use App\Repository\TipitakaCollectionsRepository;
+use App\Repository\TipitakaParagraphsRepository;
 use App\Repository\TipitakaSentencesRepository;
 use App\Security\Roles;
 use App\Entity\TipitakaCollectionItems;
 use App\Repository\TipitakaTocRepository;
 use App\Entity\TipitakaCollectionItemNames;
 use App\Enums\Languages;
+use Symfony\Component\HttpFoundation\Response;
 
 class CollectionController extends AbstractController
 {
@@ -34,14 +37,14 @@ class CollectionController extends AbstractController
     }
     
     
-    public function view($itemid,Request $request,TipitakaCollectionsRepository $collectionsRepository,
+    public function viewCollection($collectionid,Request $request,TipitakaCollectionsRepository $collectionsRepository,
         TranslatorInterface $translator,
         TipitakaSentencesRepository $sentencesRepository)
     {                
         $collectionItems=array();
     
-        $collectionItems=$collectionsRepository->listCollectionItems($itemid,$request->getLocale());
-        $collections=$collectionsRepository->fetchCollection($itemid,$request->getLocale());
+        $collectionItems=$collectionsRepository->listCollectionItems($collectionid,$request->getLocale());
+        $collections=$collectionsRepository->fetchCollection($collectionid,$request->getLocale());
 
         $form = $this->createFormBuilder()
         ->add('shownav', CheckboxType::class,['required' => false,'label' => false,'data'=>true])
@@ -88,9 +91,9 @@ class CollectionController extends AbstractController
             //all paragraphs that belong to nodes in this collection
             //all sentences that belong to these paragraphs
             //sentencetranslations for these sentences - we need to find which sourceids are needed
-            $paragraphs=$collectionsRepository->listParagraphs($itemid);                               
+            $paragraphs=$collectionsRepository->listParagraphs($collectionid);                               
             $sentences=array();//$collectionsRepository->listSentences($itemid);
-            $comments=$collectionsRepository->listCommentsByCollectionIdForPrint($itemid);
+            $comments=$collectionsRepository->listCommentsByCollectionIdForPrint($collectionid);
             $language=$sentencesRepository->getLanguageByCode($request->getLocale());
             
             $paliTranslations=array();
@@ -535,6 +538,69 @@ class CollectionController extends AbstractController
         $formatted=preg_replace('/(ā|ī|ū)/si', '<b>$1</b>', $formatted);        
 
         return $formatted;
+    }
+    
+    public function viewCollectionItem($collectionitemid,TipitakaTocRepository $tocRepository,
+        TipitakaParagraphsRepository $paragraphsRepository, NativeRepository $nativeRepository,
+        TipitakaSentencesRepository $sentencesRepository,Request $request,
+        TipitakaCollectionsRepository $collectionsRepository)
+    {
+        $collectionItem=$collectionsRepository->find($collectionitemid);
+
+        if($collectionItem->getParentid() && $collectionItem->getNodeid())
+        {
+            $collections=$collectionsRepository->fetchCollection($collectionItem->getParentid(),$request->getLocale());
+            $collectionItemName=NULL;
+            $collectionItemNameResult=$collectionsRepository->getCollectionItemName($collectionitemid,$request->getLocale());
+            if($collectionItemNameResult)
+            {
+                $collectionItemName=$collectionItemNameResult["name"];
+            }            
+            
+            $nodeid=$collectionItem->getNodeid();
+            $node=$tocRepository->getNodeWithNameTranslation($nodeid,$request->getLocale());
+            $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($nodeid,$request->getLocale());
+                        
+            if($collectionItem->getLimitrows() && trim($collectionItem->getLimitrows())!="")
+            {
+                $sentences=$collectionsRepository->listSentences($collectionItem->getNodeid(),$collectionItem->getLimitrows());
+            }
+            else
+            {
+                $sentences=$sentencesRepository->listByNodeId($collectionItem->getNodeid());
+            }
+            
+            //if($collections[0]["defaultview"]==1)
+            //{
+                $translations=$sentencesRepository->listTranslationsByNodeId($nodeid);    
+            //}
+            //else 
+            //{
+            //    $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],$node['TranslationSourceID']);
+            //}
+            
+            $sources=$sentencesRepository->listNodeSources($nodeid);
+            //$nodeObj=$tocRepository->find($nodeid);
+            //$paragraphs=$paragraphsRepository->listByNode($nodeObj);
+            
+            $coll_backnext=$collectionsRepository->getBackNextCollectionItem($collectionitemid);
+            $coll_back_id=$coll_backnext["back_id"];
+            $coll_next_id=$coll_backnext["next_id"];
+            
+            $response=$this->render('collection_item_view.html.twig', ['node'=>$node,'path_nodes'=>$path_nodes,
+                'sentences'=>$sentences,'translations'=>$translations, 'authorRole'=>Roles::Author, 'userRole'=>Roles::User,
+                'editorRole'=>Roles::Editor, 'sources'=>$sources,'collection'=>$collections[0],
+                'coll_back_id'=>$coll_back_id,'coll_next_id'=>$coll_next_id,'collectionItem'=>$collectionItem,
+                'showCode'=>false,'showAlign'=>false,'collectionItemName'=>$collectionItemName
+                //'paragraphs'=>$paragraphs
+            ]);
+        }
+        else
+        {
+            $response=new Response('not found',404);
+        }
+        
+        return $response;
     }
 }
 
