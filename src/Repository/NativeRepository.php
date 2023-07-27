@@ -16,7 +16,7 @@ class NativeRepository extends ServiceEntityRepository
         ->from("tipitaka_sentence_translations st")
         ->innerJoin("tipitaka_sources so", "st.sourceid=so.sourceid")
         ->andWhere("st.sentenceid=s.sentenceid")
-        ->orderBy("so.languageid")
+        ->orderBy("so.priority desc")
         ->limit("0,1");
         
         return $qbTranslationSelectSubquery;

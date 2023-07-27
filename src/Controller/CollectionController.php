@@ -113,7 +113,8 @@ class CollectionController extends AbstractController
                 if($collectionItem['nodeid'])
                 {
                     $paliSource=NULL;
-                    $translSource=NULL;
+                    
+                    $translSource=$sentencesRepository->getNodeSourceTopPriority($collectionItem['nodeid']);
                     
                     $sources=$sentencesRepository->listNodeSources($collectionItem['nodeid']);
                     foreach($sources as $source)
@@ -133,20 +134,20 @@ class CollectionController extends AbstractController
                             }
                         }
                         
-                        if($source['languageid']==$language->getLanguageid())
-                        {
-                            if($translSource)
-                            {
-                                if(mb_stristr($source['sourcename'], "khantibalo")!=FALSE)
-                                {//this will give priority for sources that have "khantibalo" in their names
-                                    $translSource=$source;
-                                }
-                            }
-                            else
-                            {//this is the first translation source we have found - use it
-                                $translSource=$source;
-                            }
-                        }
+//                         if($source['languageid']==$language->getLanguageid())
+//                         {
+//                             if($translSource)
+//                             {
+//                                 if(mb_stristr($source['sourcename'], "khantibalo")!=FALSE)
+//                                 {//this will give priority for sources that have "khantibalo" in their names
+//                                     $translSource=$source;
+//                                 }
+//                             }
+//                             else
+//                             {//this is the first translation source we have found - use it
+//                                 $translSource=$source;
+//                             }
+//                         }
                     }
                                             
                     if($paliSource)
@@ -581,8 +582,8 @@ class CollectionController extends AbstractController
             }
             else 
             {
-                $translationsourceid=$sentencesRepository->getNodeSourceTopPriority($nodeid);
-                $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],$translationsourceid['sourceid']);
+                $translationsource=$sentencesRepository->getNodeSourceTopPriority($nodeid);
+                $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],$translationsource['sourceid']);
                 $nodeObj=$tocRepository->find($nodeid);
                 $paragraphs=$paragraphsRepository->listByNode($nodeObj);
             }
