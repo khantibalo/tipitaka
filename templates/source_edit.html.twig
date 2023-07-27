@@ -27,6 +27,10 @@
 <td>{{ form_label(form.userid,'User') }}:</td>
 <td>{{ form_widget(form.userid) }}</td>
 </tr>
+<tr>
+<td>{{ form_label(form.priority,'Priority') }}:</td>
+<td>{{ form_widget(form.priority) }}</td>
+</tr>
 </table>
 {{ form_widget(form.save,{'label': 'Save'}) }}
 <a href="{{ path('sources_list') }}">{% trans %}Cancel{% endtrans %}</a>

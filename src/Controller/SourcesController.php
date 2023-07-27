@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\TipitakaSources;
 use App\Entity\TipitakaUsers;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class SourcesController extends AbstractController
 {
@@ -70,6 +71,7 @@ class SourcesController extends AbstractController
         ->add('excludefromsearch', CheckboxType::class,['required' => false])
         ->add('hasformatting', CheckboxType::class,['required' => false])
         ->add('userid', ChoiceType::class,$userOptions)
+        ->add('priority', IntegerType::class)
         ->add('save', SubmitType::class,['label' => 'save'])
         ->getForm();
             

@@ -1149,4 +1149,24 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
             }
         }
     }
+    
+    public function getNodeSourceTopPriority($nodeid)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('so.sourceid')
+        ->from('App\Entity\TipitakaSentenceTranslations','st')
+        ->innerJoin('st.sentenceid','s')
+        ->innerJoin('st.sourceid','so')
+        ->innerJoin('s.paragraphid', 'c')
+        ->innerJoin('c.nodeid', 'toc')
+        ->where('toc.nodeid=:id')
+        ->groupBy('so.sourceid')
+        ->orderBy('so.priority','desc')
+        ->setMaxResults(1)
+        ->getQuery()
+        ->setParameter('id',$nodeid);
+        
+        return $query->getSingleResult();
+    }
 }

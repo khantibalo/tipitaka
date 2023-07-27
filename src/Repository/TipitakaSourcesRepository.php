@@ -18,7 +18,7 @@ class TipitakaSourcesRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
         ->select('s.sourceid','s.name','l.name as language','s.ishidden','u.username',
-           's.excludefromsearch','s.hasformatting')
+           's.excludefromsearch','s.hasformatting','s.priority')
         ->from('App\Entity\TipitakaSources','s')
         ->innerJoin('s.languageid','l')
         ->leftJoin('App\Entity\TipitakaUsers', 'u', Join::WITH,'s.userid=u.userid')

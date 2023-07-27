@@ -274,7 +274,8 @@ class CollectionController extends AbstractController
             
             if($item->getParentid()==NULL)
             {
-                $form=$form->add('notes', TextareaType::class,['required' => false]);                
+                $form=$form->add('notes', TextareaType::class,['required' => false])
+                ->add('defaultview',IntegerType::class);                
             }
         }
         else
@@ -350,6 +351,7 @@ class CollectionController extends AbstractController
                 if($form->has("notes"))
                 {
                     $item->setNotes($form->get("notes")->getData());
+                    $item->setDefaultview($form->get("defaultview")->getData());
                 }
                 
                 $collectionsRepository->updateCollectionItem($item);
@@ -401,6 +403,7 @@ class CollectionController extends AbstractController
                 if($item->getParentid()==NULL)
                 {
                     $form->get("notes")->setData($item->getNotes());
+                    $form->get("defaultview")->setData($item->getDefaultview());
                 }
             }
             
@@ -570,18 +573,21 @@ class CollectionController extends AbstractController
                 $sentences=$sentencesRepository->listByNodeId($collectionItem->getNodeid());
             }
             
-            //if($collections[0]["defaultview"]==1)
-            //{
+            $paragraphs=NULL;
+            
+            if($collections[0]["defaultview"]==1)
+            {
                 $translations=$sentencesRepository->listTranslationsByNodeId($nodeid);    
-            //}
-            //else 
-            //{
-            //    $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],$node['TranslationSourceID']);
-            //}
+            }
+            else 
+            {
+                $translationsourceid=$sentencesRepository->getNodeSourceTopPriority($nodeid);
+                $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],$translationsourceid['sourceid']);
+                $nodeObj=$tocRepository->find($nodeid);
+                $paragraphs=$paragraphsRepository->listByNode($nodeObj);
+            }
             
             $sources=$sentencesRepository->listNodeSources($nodeid);
-            //$nodeObj=$tocRepository->find($nodeid);
-            //$paragraphs=$paragraphsRepository->listByNode($nodeObj);
             
             $coll_backnext=$collectionsRepository->getBackNextCollectionItem($collectionitemid);
             $coll_back_id=$coll_backnext["back_id"];
@@ -591,8 +597,8 @@ class CollectionController extends AbstractController
                 'sentences'=>$sentences,'translations'=>$translations, 'authorRole'=>Roles::Author, 'userRole'=>Roles::User,
                 'editorRole'=>Roles::Editor, 'sources'=>$sources,'collection'=>$collections[0],
                 'coll_back_id'=>$coll_back_id,'coll_next_id'=>$coll_next_id,'collectionItem'=>$collectionItem,
-                'showCode'=>false,'showAlign'=>false,'collectionItemName'=>$collectionItemName
-                //'paragraphs'=>$paragraphs
+                'showCode'=>false,'showAlign'=>false,'collectionItemName'=>$collectionItemName,
+                'paragraphs'=>$paragraphs
             ]);
         }
         else

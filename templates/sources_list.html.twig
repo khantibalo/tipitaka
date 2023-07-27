@@ -13,6 +13,7 @@
 <td>{% trans %}Exclude from search{% endtrans %}</td>
 <td>{% trans %}Contains formatting{% endtrans %}</td>
 <td>{% trans %}User{% endtrans %}</td>
+<td>{% trans %}Priority{% endtrans %}</td>
 <td></td>
 </tr>
 {% for source in sources %}
@@ -23,6 +24,7 @@
 <td>{{ source.excludefromsearch ? 'yes'|trans : 'no'|trans }}</td>
 <td>{{ source.hasformatting ? 'yes'|trans : 'no'|trans }}</td>
 <td>{{ source.username }}</td>
+<td>{{ source.priority }}</td>
 <td><a href="{{ path('source_edit',{'sourceid': source.sourceid}) }}">{% trans %}Edit{% endtrans %}</a></td>
 </tr>
 {% endfor %}

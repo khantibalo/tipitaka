@@ -233,3 +233,5 @@ forprint3: Под текстом
 forprint4: После текста
 Collection URL: "Этот материал доступен по адресу"
 This text in the library: (Этот текст в библиотеке)
+Priority: Приоритет
+Default view: Представление по умолчанию
