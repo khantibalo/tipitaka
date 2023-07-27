@@ -590,6 +590,8 @@ class CollectionController extends AbstractController
             
             $sources=$sentencesRepository->listNodeSources($nodeid);
             
+            $related=$tocRepository->listRelatedNodes($nodeid,$request->getLocale());
+            
             $coll_backnext=$collectionsRepository->getBackNextCollectionItem($collectionitemid);
             $coll_back_id=$coll_backnext["back_id"];
             $coll_next_id=$coll_backnext["next_id"];
@@ -599,7 +601,7 @@ class CollectionController extends AbstractController
                 'editorRole'=>Roles::Editor, 'sources'=>$sources,'collection'=>$collections[0],
                 'coll_back_id'=>$coll_back_id,'coll_next_id'=>$coll_next_id,'collectionItem'=>$collectionItem,
                 'showCode'=>false,'showAlign'=>false,'collectionItemName'=>$collectionItemName,
-                'paragraphs'=>$paragraphs
+                'paragraphs'=>$paragraphs,'related'=>$related
             ]);
         }
         else

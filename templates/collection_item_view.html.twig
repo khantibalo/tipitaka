@@ -23,6 +23,7 @@
 {% endif %}
 </center>	
 </div>
+{{ include('_related_nodes.html.twig') }}
 <p class="{{ node.typename }}">{{ collectionItemName ?? (node.trname ?? node.title) }} <a href="{{ path('table_view',{id: node.nodeid}) }}">{% trans %}This text in the library{% endtrans %}</a></p>
 {% if collection.defaultview==1 %}   
     {% if sentences|length>0 %}
