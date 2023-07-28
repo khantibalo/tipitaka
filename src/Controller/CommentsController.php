@@ -143,6 +143,7 @@ class CommentsController  extends AbstractController
     {        
         $return=$request->query->get('return');
         $comment=$commentsRepository->find($commentid);
+        $collectionitemid=$request->query->get('collectionitemid');
         
         if($comment)
         {//comment author or admin
@@ -156,6 +157,11 @@ class CommentsController  extends AbstractController
             if($return)
             {
                 $params['return']=$return;
+            }
+            
+            if($collectionitemid)
+            {
+                $params['collectionitemid']=$collectionitemid;
             }
             
             $response=$this->redirectToRoute('comments',$params);

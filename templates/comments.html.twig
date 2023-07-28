@@ -53,7 +53,7 @@
  <b>{% trans %}by{% endtrans %}</b> {{ commentItem.AuthorName}}
 {% endif %}	
 {% if commentItem.AuthorID==userid or is_granted(adminRole) %}
-<a href="{{ path('comment_delete',{commentid: commentItem.CommentID, 'return': return}) }}">{% trans %}Delete{% endtrans %}</a>
+<a href="{{ path('comment_delete',{commentid: commentItem.CommentID, 'return': return, 'collectionitemid' : collectionitemid}) }}">{% trans %}Delete{% endtrans %}</a>
 {% endif %}
 </div>
 <div>
