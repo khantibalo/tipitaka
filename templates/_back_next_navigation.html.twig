@@ -1,7 +1,7 @@
 <div>
 <center>
 {% if not back_id is empty %}
-{% if backPrologue is defined %}<a href="{{ path('table_view', {id: back_id, prologue: 1}) }}">{% else %}<a href="{{ path('table_view', {id: back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>
+{% if backPrologue is defined and backPrologue %}<a href="{{ path('table_view', {id: back_id, prologue: 1}) }}">{% else %}<a href="{{ path('table_view', {id: back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>
 {% endif %}
 {% set last_path_node= path_nodes[path_nodes | length-2] %}{{ last_path_node.trname ?? last_path_node.title }}
 {% if not next_id is empty %}

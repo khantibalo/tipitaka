@@ -14,7 +14,7 @@
     &gt;&gt;
     <a href="{{ path('collection_view',{collectionid: collection.collectionitemid}) }}">{{ collection.name }}</a>
     &gt;&gt;
-    <a href="{{ path('collection_item_view', {collectionitemid: collectionitemid}) }}">{{ collectionItemName ?? (node.trname ?? node.title)  }}</a>
+    <a href="{{ path('collection_item_view', {collectionitemid: collectionitemid, _fragment: "sent#{sentenceid}" }) }}">{{ collectionItemName ?? (node.trname ?? node.title)  }}</a>
     </div>
 {% else %}
     <div>
