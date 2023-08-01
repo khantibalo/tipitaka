@@ -5,7 +5,7 @@
     <ul>
     {% for relatedNode in related %}
     {% set route=relatedNode.TranslationSourceID ? 'translation_view' : (relatedNode.HasTableView ? 'table_view' : 'view_node') %}
-    <li><a href="{{ path(route,{id: relatedNode.nodeid}) }}">{{ relatedNode.trname ?? relatedNode.title  }}</a></li>
+    <li><a href="{{ path(route,{id: relatedNode.nodeid}) }}"{% if target is defined %}{{ 'target="'~target~'"' }}{% endif %}>{{ relatedNode.trname ?? relatedNode.title  }}</a></li>
     {% endfor %}
     </ul>
 </div>
