@@ -227,7 +227,7 @@ class CollectionController extends AbstractController
             $formView=$form->createView();
             
             $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
-                'authorRole'=>Roles::Author,'form' => $formView, 'editorRole'=>Roles::Editor]);
+                'authorRole'=>Roles::Author,'form' => $formView, 'editorRole'=>Roles::Editor, 'collectionid'=> $collectionid]);
         }
         
         return $response;

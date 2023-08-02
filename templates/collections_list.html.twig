@@ -45,7 +45,7 @@
 {{ form_end(form) }}
 {% endif %}
 
-{% if is_granted(editorRole) and collection is defined %}   
+{% if is_granted(editorRole) and not collectionid is defined %}   
 <a href="{{ path('collection_item_edit') }}">{% trans %}New collection{% endtrans %}</a>
 {% endif %} 
 <div><a href="{{ path('collections_list') }}">{% trans %}Top{% endtrans %}</a></div>
