@@ -303,7 +303,8 @@ class CollectionController extends AbstractController
                 $form=$form
                 ->add('name', TextType::class,['required' => true])
                 ->add('language', ChoiceType::class,$langOptions)
-                ->add('notes', TextareaType::class,['required' => false,'label' => false]);
+                ->add('notes', TextareaType::class,['required' => false,'label' => false])
+                ->add('defaultview',IntegerType::class);   
             }
         }        
 

@@ -52,7 +52,7 @@ class TipitakaCollectionItems
     /**
      * @var string
      *
-     * @ORM\Column(name="notes", type="text", length=65535, nullable=false)
+     * @ORM\Column(name="notes", type="text", length=65535, nullable=true)
      */
     private $notes;
 
@@ -157,7 +157,7 @@ class TipitakaCollectionItems
         return $this->notes;
     }
 
-    public function setNotes(string $notes): self
+    public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
 
