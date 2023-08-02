@@ -31,7 +31,7 @@ class CollectionController extends AbstractController
         
         $collections=$collectionsRepository->listCollections($request->getLocale());
         $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
-            'authorRole'=>Roles::Author]);
+            'authorRole'=>Roles::Author, 'editorRole'=>Roles::Editor]);
         
         return $response;
     }
@@ -94,7 +94,7 @@ class CollectionController extends AbstractController
             $paragraphs=$collectionsRepository->listParagraphs($collectionid);                               
             $sentences=array();//$collectionsRepository->listSentences($itemid);
             $comments=$collectionsRepository->listCommentsByCollectionIdForPrint($collectionid);
-            $language=$sentencesRepository->getLanguageByCode($request->getLocale());
+ //           $language=$sentencesRepository->getLanguageByCode($request->getLocale());
             
             $paliTranslations=array();
             $otherTranslations=array();
@@ -227,7 +227,7 @@ class CollectionController extends AbstractController
             $formView=$form->createView();
             
             $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
-                'authorRole'=>Roles::Author,'form' => $formView]);
+                'authorRole'=>Roles::Author,'form' => $formView, 'editorRole'=>Roles::Editor]);
         }
         
         return $response;

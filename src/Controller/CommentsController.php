@@ -127,7 +127,7 @@ class CommentsController  extends AbstractController
                     'translations'=>$translations,'comments'=>$comments,'userRole'=>Roles::User,'adminRole'=>Roles::Admin,
                     'userid'=>$userid,'sentenceid'=>$sentenceid,'return'=>$return,'collection'=>$collection,
                     'collectionItemName'=>$collectionItemName,'collectionitemid'=>$collectionitemid,
-                    'node'=>$path_nodes[sizeof($path_nodes)-1]
+                    'node'=>$path_nodes[sizeof($path_nodes)-1],'editorRole'=>Roles::Editor
                 ]);
             }
         }

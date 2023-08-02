@@ -45,14 +45,14 @@
 {{ form_end(form) }}
 {% endif %}
 
-{% if is_granted(authorRole) %}   
+{% if is_granted(editorRole) and collection is defined %}   
 <a href="{{ path('collection_item_edit') }}">{% trans %}New collection{% endtrans %}</a>
 {% endif %} 
 <div><a href="{{ path('collections_list') }}">{% trans %}Top{% endtrans %}</a></div>
 <ul style="margin-top:0px">
 {% for collection in collections %}
 <li><a href="{{ path('collection_view',{collectionid: collection.collectionitemid}) }}">{{ collection.name }}</a>
-{% if is_granted(authorRole) %}   
+{% if is_granted(editorRole) %}   
 <a href="{{ path('collection_item_edit',{itemid: collection.collectionitemid}) }}">({% trans %}Edit{% endtrans %})</a>	
 <a href="{{ path('collection_item_names',{itemid: collection.collectionitemid}) }}">({% trans %}Edit names{% endtrans %})</a>
 <a href="{{ path('collection_item_edit',{parentid: collection.collectionitemid,folder: 1}) }}">({% trans %}Add folder{% endtrans %})</a>
@@ -66,7 +66,7 @@
 			{% else %} 
 				{{ item.colItemName }}
 			{% endif %}
-			{% if is_granted(authorRole) %}   
+			{% if is_granted(editorRole) %}   
 			{{ item.vieworder }}
 			<a href="{{ path('collection_item_edit',{itemid: item.collectionitemid}) }}">({% trans %}Edit{% endtrans %})</a>
 			<a href="{{ path('collection_item_names',{itemid: item.collectionitemid}) }}">({% trans %}Edit names{% endtrans %})</a>	
