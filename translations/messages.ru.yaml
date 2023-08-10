@@ -146,8 +146,8 @@ In translated: Искать в переведённом (для пали)
 Collections: Подборки
 New collection: Новая подборка
 View order: Порядок просмотра
-Add folder: Добавить папку
-Add item: Добавить ссылку
+Add folder: Добавить заголовок
+Add item: Добавить текст
 Level: Уровень
 Limit rows: Только эти строки (sentenceid)
 ConfirmScript: "javascript: return confirm('Вы уверены');"
@@ -235,3 +235,6 @@ Collection URL: "Этот материал доступен по адресу"
 This text in the library: (Этот текст в библиотеке)
 Priority: Приоритет
 Default view: Представление по умолчанию
+Pali import: Импорт палийского текста
+Pali text: Палийский текст
+TitleNoDiac: Палийское название без диакритики

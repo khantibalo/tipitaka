@@ -76,7 +76,22 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         ->setParameter('id', $nodeid)
         ->setParameter('nul', NULL);
         
-        return $query->getResult();
+        $result=$query->getResult();
+        
+        if(sizeof($result)>0)
+        {
+            if(!$result[0]['Prev'])
+            {
+                $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',false);
+            }
+            
+            if(!$result[0]['Next'])
+            {
+                $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',false);
+            }
+        }
+        
+        return $result;
     }
     
     public function getBackNextNodeWithTranslation($nodeid)
@@ -84,17 +99,112 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
         ->select('MAX(CASE WHEN toc1.nodeid<:id THEN toc1.nodeid ELSE :nul END) as Prev',
-            'MIN(CASE WHEN toc1.nodeid>:id THEN toc1.nodeid ELSE :nul END) As Next')
-            ->from('App\Entity\TipitakaToc','toc1')
-            ->innerJoin('App\Entity\TipitakaToc', 'toc2',Join::WITH,'toc1.parentid=toc2.parentid')
-            ->where('toc2.nodeid=:id')
-            ->andWhere('toc1.HasTableView=1')
-            ->orderBy('toc1.nodeid')
-            ->getQuery()
-            ->setParameter('id', $nodeid)
-            ->setParameter('nul', NULL);
+        'MIN(CASE WHEN toc1.nodeid>:id THEN toc1.nodeid ELSE :nul END) As Next')
+        ->from('App\Entity\TipitakaToc','toc1')
+        ->innerJoin('App\Entity\TipitakaToc', 'toc2',Join::WITH,'toc1.parentid=toc2.parentid')
+        ->where('toc2.nodeid=:id')
+        ->andWhere('toc1.HasTableView=1')
+        ->orderBy('toc1.nodeid')
+        ->getQuery()
+        ->setParameter('id', $nodeid)
+        ->setParameter('nul', NULL);
+        
+        $result=$query->getResult();
+        
+        if(sizeof($result)>0)
+        {
+            if(!$result[0]['Prev'])
+            {
+                $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',true);
+            }
             
-            return $query->getResult();
+            if(!$result[0]['Next'])
+            {
+                $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',true);
+            }
+        }
+            
+        return $result;
+    }
+    
+    private function findBackNextNodeWithHiddenParent($nodeid,$pos,$hasTableView)
+    {
+        $backnextnodeid=NULL;
+        
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('parent.IsHidden, node.path')
+        ->from('App\Entity\TipitakaToc','node')
+        ->innerJoin('App\Entity\TipitakaToc', 'parent',Join::WITH,'node.parentid=parent.nodeid')
+        ->where('node.nodeid=:id')
+        ->getQuery()
+        ->setParameter('id', $nodeid);
+        
+        $result1=$query->getSingleResult();
+        
+        if($result1['IsHidden'])
+        {//continue only if parent is hidden
+            //1. find first non-hidden parent
+            $parent_nodes=str_replace("\\",",",trim($result1['path'],"\\"));
+            
+            $query = $entityManager->createQueryBuilder()
+            ->select('toc.path')
+            ->from('App\Entity\TipitakaToc','toc')
+            ->where('toc.nodeid IN (:pn)')
+            ->andWhere('toc.nodeid<>:nodeid')
+            ->andWhere('toc.IsHidden=0')
+            ->orderBy('toc.nodeid','DESC')
+            ->getQuery()
+            ->setParameter('pn', explode(',',$parent_nodes))
+            ->setParameter('nodeid', $nodeid)
+            ->setMaxResults(1);   
+            
+            $result2=$query->getSingleResult();
+            
+            //find level
+            $level=strlen($result1['path'])-strlen(str_replace("\\","",$result1['path']));
+            
+            //2. Find all child nodes of this parent node with the same level as the original node
+            //find back or next node in them
+            $query = $entityManager->createQueryBuilder()
+            ->select('toc.nodeid')
+            ->from('App\Entity\TipitakaToc','toc')
+            ->where('toc.path LIKE :path')
+            ->andWhere("LENGTH(toc.path) - LENGTH(REPLACE(toc.path, '\\', ''))=:level");
+            
+            if($hasTableView)
+            {
+                $query = $query->andWhere('toc.HasTableView=1');
+            }
+            
+            if($pos=='Prev')
+            {
+                $query = $query->andWhere('toc.nodeid<:nodeid')
+                ->orderBy('toc.nodeid','DESC');
+            }
+            
+            if($pos=='Next')
+            {
+                $query = $query->andWhere('toc.nodeid>:nodeid')
+                ->orderBy('toc.nodeid','ASC');
+            }
+                        
+            $path=str_replace("\\","\\\\",$result2['path'])."%";
+            $query = $query->getQuery()
+            ->setMaxResults(1)
+            ->setParameter('path', $path)
+            ->setParameter('nodeid', $nodeid)
+            ->setParameter("level", $level);
+            
+            $result3=$query->getOneOrNullResult();
+            
+            if($result3)
+            {
+                $backnextnodeid=$result3["nodeid"];
+            }
+        }        
+        
+        return $backnextnodeid;
     }
     
     
