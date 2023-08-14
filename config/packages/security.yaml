@@ -65,7 +65,7 @@ security:
       - { path: ^/fill_nst, roles: ROLE_ADMIN }
       - { path: ^/node/\d+/edit, roles: ROLE_EDITOR }
       - { path: ^/node/\d+/table/enable, roles: ROLE_EDITOR }
-      - { path: ^/node/\d+/tags, roles: ROLE_EDITOR }
+      - { path: ^/node/tags/\d+, roles: ROLE_AUTHOR }
       - { path: ^/tag/edit, roles: ROLE_EDITOR }
       - { path: ^/node/\d+/tag/\d+/remove, roles: ROLE_EDITOR }
       - { path: ^/ajax/translation/update, roles: ROLE_AUTHOR }

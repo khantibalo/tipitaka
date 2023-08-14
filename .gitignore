@@ -13,3 +13,9 @@
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 /database.sql
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+/database.sql.zip

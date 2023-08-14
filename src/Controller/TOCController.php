@@ -448,7 +448,8 @@ class TOCController extends AbstractController
         $tags=$tagsRepository->listByNode($nodeid);
         $names=$tagsRepository->listNamesByNode($nodeid);
         
-        return $this->render('node_tags.html.twig',['node'=>$node,'tags'=>$tags,'names'=>$names,'form' => $formView]);
+        return $this->render('node_tags.html.twig',['node'=>$node,'tags'=>$tags,'names'=>$names,
+            'form' => $formView, 'editorRole'=>Roles::Editor]);
     }
     
     public function removeNodeTag($nodeid,$tagid,TipitakaTagsRepository $tagsRepository,Request $request)

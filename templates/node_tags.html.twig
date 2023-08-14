@@ -7,7 +7,7 @@
 {{ form_widget(form.tagtypes) }}
 {{ form_widget(form.update,{'label': 'Update'}) }}
 {{ form_widget(form.tags) }}
-{{ form_widget(form.save,{'label': 'Add'}) }} {% trans %}Or{% endtrans %} <a href="{{ path('tag_edit',{nodeid: node.nodeid}) }}">{% trans %}Create new tag{% endtrans %}</a>
+{{ form_widget(form.save,{'label': 'Add'}) }}{% if is_granted(editorRole) %} {% trans %}Or{% endtrans %} <a href="{{ path('tag_edit',{nodeid: node.nodeid}) }}">{% trans %}Create new tag{% endtrans %}</a>{% endif %}
 {{ form_end(form) }}
 <table class="bordercell">
 <tr>
@@ -16,8 +16,10 @@
 <td>{% trans %}Applied on{% endtrans %}</td>
 <td>{% trans %}Applied by{% endtrans %}</td>
 <td></td>
+{% if is_granted(editorRole) %}
 <td></td>
 <td></td>
+{% endif %}
 </tr>
 {% for tag in tags %}
 <tr>
@@ -27,11 +29,13 @@
 <td>{{ tag.username }}</td>
 <td>
 {% for name in names|filter(n=>n.nodetagid==tag.nodetagid) %}
-<div>{{ name.title }}<a href="{{ path('tag_name_edit',{tagnameid: name.tagnameid, nodeid: node.nodeid}) }}">{% trans %}Edit{% endtrans %}</a></div>
+<div>{{ name.title }}{% if is_granted(editorRole) %}<a href="{{ path('tag_name_edit',{tagnameid: name.tagnameid, nodeid: node.nodeid}) }}">{% trans %}Edit{% endtrans %}</a>{% endif %}</div>
 {% endfor %}
 </td>
+{% if is_granted(editorRole) %}
 <td><a href="{{ path('tag_edit',{tagid: tag.tagid, nodeid: node.nodeid}) }}">{% trans %}Edit{% endtrans %}</a></td>
 <td><a href="{{ path('node_tag_remove',{tagid:tag.tagid, nodeid: node.nodeid}) }}">{% trans %}Remove{% endtrans %}</a></td>
+{% endif %}
 </tr>
 {% endfor %}
 </table>
