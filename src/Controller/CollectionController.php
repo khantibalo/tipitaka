@@ -21,6 +21,7 @@ use App\Repository\TipitakaTocRepository;
 use App\Entity\TipitakaCollectionItemNames;
 use App\Enums\Languages;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class CollectionController extends AbstractController
 {
@@ -575,18 +576,40 @@ class CollectionController extends AbstractController
                 $sentences=$sentencesRepository->listByNodeId($collectionItem->getNodeid());
             }
             
+            $coll_view_mode=$request->cookies->get('coll_view_mode'.$collections[0]["collectionitemid"],
+                $collections[0]["defaultview"]);
+            $form = $this->createFormBuilder(null,  array('csrf_protection' => false))
+            ->add('update', SubmitType::class)
+            ->getForm();
+            
+            $form->handleRequest($request);
+            
+            if ($form->isSubmitted() && $form->isValid())
+            {
+                switch($coll_view_mode)
+                {
+                    case 1:
+                        $coll_view_mode=2;
+                        break;
+                    case 2:
+                        $coll_view_mode=1;
+                        break;
+                }
+            }
+                        
             $paragraphs=NULL;
             
-            if($collections[0]["defaultview"]==1)
+            switch($coll_view_mode)
             {
-                $translations=$sentencesRepository->listTranslationsByNodeId($nodeid);    
-            }
-            else 
-            {
-                $translationsource=$sentencesRepository->getNodeSourceTopPriority($nodeid);
-                $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],$translationsource['sourceid']);
-                $nodeObj=$tocRepository->find($nodeid);
-                $paragraphs=$paragraphsRepository->listByNode($nodeObj);
+                case 1:                
+                    $translations=$sentencesRepository->listTranslationsByNodeId($nodeid);    
+                    break;                
+                case 2:
+                    $translationsource=$sentencesRepository->getNodeSourceTopPriority($nodeid);
+                    $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],$translationsource['sourceid']);
+                    $nodeObj=$tocRepository->find($nodeid);
+                    $paragraphs=$paragraphsRepository->listByNode($nodeObj);
+                    break;
             }
             
             $sources=$sentencesRepository->listNodeSources($nodeid);
@@ -602,8 +625,11 @@ class CollectionController extends AbstractController
                 'editorRole'=>Roles::Editor, 'sources'=>$sources,'collection'=>$collections[0],
                 'coll_back_id'=>$coll_back_id,'coll_next_id'=>$coll_next_id,'collectionItem'=>$collectionItem,
                 'showCode'=>false,'showAlign'=>false,'collectionItemName'=>$collectionItemName,
-                'paragraphs'=>$paragraphs,'related'=>$related
-            ]);
+                'paragraphs'=>$paragraphs,'related'=>$related,'coll_view_mode' => $coll_view_mode,
+                'form' => $form->createView()
+            ]);   
+            $response->headers->setCookie(new Cookie('coll_view_mode'.$collections[0]["collectionitemid"],
+                $coll_view_mode,time() + (3600 * 24*365)));
         }
         else
         {
@@ -612,5 +638,6 @@ class CollectionController extends AbstractController
         
         return $response;
     }
+    
 }
 

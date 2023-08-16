@@ -238,3 +238,8 @@ Default view: Представление по умолчанию
 Pali import: Импорт палийского текста
 Pali text: Палийский текст
 TitleNoDiac: Палийское название без диакритики
+Collection view mode: Режим просмотра подборки
+coll_view_mode1: Таблица
+coll_view_mode2: Перевод
+coll_view_mode_change1: Изменить на перевод
+coll_view_mode_change2: Изменить на таблицу

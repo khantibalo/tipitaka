@@ -238,3 +238,8 @@ Default view: Default view
 Pali import: Pali import
 Pali text: Pali text
 TitleNoDiac: Pali title without diacritics
+Collection view mode: Collection view mode
+coll_view_mode1: Table
+coll_view_mode2: Translation
+coll_view_mode_change1: Change to translation
+coll_view_mode_change2: Change to table
