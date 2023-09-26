@@ -27,7 +27,7 @@
 			</td>
 			<td>
 			{% if collectionItem.nodeid %}		
-				<b><a href="{{ path('table_view', {id: collectionItem.nodeid}) }}">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}</a></b>
+				<b><a href="{{ path('collection_item_view', {collectionitemid: collectionItem.collectionitemid}) }}">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}</a></b>
 			{% else %} 
 				<h{{collectionItem.level+1}}>{{ collectionItem.colItemName }}</h{{collectionItem.level+1}}>
 			{% endif %}
