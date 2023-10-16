@@ -725,5 +725,16 @@ class ViewController extends AbstractController
                 'editorRole'=>Roles::Editor,'analysisResults'=>$analysisResults,'origsentencetext'=>$sentenceText
             ]);
     }
+    
+    public function tableRedirect($id)
+    {
+        return $this->redirectToRoute('table_view',['id'=>$id],301);
+    }
+    
+    public function nodePaliRedirect($id)
+    {
+        return $this->redirectToRoute('view_node',['id'=>$id],301);
+    }
+    
 }
 

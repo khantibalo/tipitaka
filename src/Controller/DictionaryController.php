@@ -379,5 +379,16 @@ class DictionaryController extends AbstractController
         
         return $response;
     }
+    
+    public function dictionaryRedirect(Request $request)
+    {
+        return $this->redirectToRoute('dictionary',$request->query->all(),301);
+    }
+    
+    public function termRedirect(Request $request)
+    {
+        return $this->redirectToRoute('term',$request->query->all(),301);
+    }
+    
 }
 

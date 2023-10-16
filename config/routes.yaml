@@ -252,6 +252,11 @@ ajax_translation_add:
    path: /ajax/translation/add
    controller: App\Controller\TranslateController::ajaxTranslationAdd
    
+redir_collections:
+    path: /toc/collections  
+    controller: App\Controller\CollectionController::collectionRedirect     
+    condition: "request.query.get('itemid')!=null"
+   
 collections_list:
    path: /toc/collections
    controller: App\Controller\CollectionController::list
@@ -374,4 +379,31 @@ collection_item_view:
    controller: App\Controller\CollectionController::viewCollectionItem
    requirements:   
         collectionitemid: '\d+'        
-        
+
+redir_dictionary_php:
+    path: /dictionary.php
+    controller: App\Controller\DictionaryController::dictionaryRedirect
+
+redir_term_php:
+    path: /term.php      
+    controller: App\Controller\DictionaryController::termRedirect
+
+redir_search_php:
+    path: /search.php      
+    controller: App\Controller\SearchController::searchRedirect
+
+redir_table_view:
+    path: /table_view/node/{id}  
+    controller: App\Controller\ViewController::tableRedirect
+    
+redir_node_pali:
+    path: /node/{id}  
+    controller: App\Controller\ViewController::nodePaliRedirect    
+    requirements:   
+        id: '\d+'
+
+#not all redirects could be implemented here.
+#some, e.g. index.php?NodeID=X can only be implemented on the web server side
+
+     
+    

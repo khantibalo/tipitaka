@@ -639,5 +639,9 @@ class CollectionController extends AbstractController
         return $response;
     }
     
+    public function collectionRedirect(Request $request)
+    {
+        return $this->redirectToRoute('collection_view',['collectionid'=>$request->query->get("itemid")],301);
+    }
 }
 

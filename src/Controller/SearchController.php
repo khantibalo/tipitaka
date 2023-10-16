@@ -202,5 +202,9 @@ class SearchController extends AbstractController
         return $response;
     }
     
+    public function searchRedirect(Request $request)
+    {
+        return $this->redirectToRoute('search',$request->query->all(),301);
+    }
 }
 
