@@ -11,7 +11,7 @@ class LocaleSubscriber implements EventSubscriberInterface
 {
     private $defaultLocale;
     
-    public function __construct($defaultLocale = '',ContainerBagInterface $params)
+    public function __construct(ContainerBagInterface $params,$defaultLocale = '')
     {
         if(!$defaultLocale)
         {
