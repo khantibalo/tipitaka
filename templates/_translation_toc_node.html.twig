@@ -16,7 +16,7 @@
     {% endif %}
     {% for tag in tags|filter(t=>t.nodeid==node.nodeid) %}
         {% if loop.first %}{% trans %}Tags{% endtrans %}:{% endif %}
-        <a href="{{ path('toc_tags_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>
+        <a href="{{ path('toc_tag_nodes_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>
     {% endfor %}
 {% endif %}
 </div>

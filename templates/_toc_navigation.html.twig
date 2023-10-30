@@ -14,7 +14,7 @@
 </td>
 <td style="text-align:center;width:25%">
 {% set isTags= tocPage is defined and tocPage=='tags' %}
-{% if not isTags %}<a href="{{ path('toc_tags_list') }}">{% endif %}    	
+{% if not isTags %}<a href="{{ path('toc_tag_types_list') }}">{% endif %}    	
 {% trans %}Tags{% endtrans %}
 {% if not isTags %}</a>{% endif %}
 </td>

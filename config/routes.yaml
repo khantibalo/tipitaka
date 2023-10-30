@@ -239,10 +239,28 @@ node_tag_remove:
    requirements:
         nodeid: '\d+'
         tagid: '\d+' 
+
+redir_toc_tags_list:
+    path: /toc/tags  
+    controller: App\Controller\TagsController::tagsRedirect     
+    condition: "request.query.get('tagid')!=null or request.query.get('tagtypeid')!=null"
+
+toc_tag_types_list:
+   path: /toc/tags
+   controller: App\Controller\TagsController::tocTagTypesList
            
 toc_tags_list:
-   path: /toc/tags
+   path: /toc/tags/type/{tagtypeid}
    controller: App\Controller\TagsController::tocTagsList
+   requirements:
+        tagtypeid: '-?\d+'
+
+toc_tag_nodes_list:
+   path: /toc/tags/{tagid}
+   controller: App\Controller\TagsController::tocTagNodesList
+   requirements:
+        tagid: '\d+'
+           
    
 ajax_translation_update:
    path: /ajax/translation/update

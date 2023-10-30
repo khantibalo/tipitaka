@@ -145,7 +145,7 @@
 	{% if tags|length>0 %}		
 		{% trans %}Tags{% endtrans %}:
 	    {% for tag in tags %}
-	        <a href="{{ path('toc_tags_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>&nbsp;
+	        <a href="{{ path('toc_tag_nodes_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>&nbsp;
 	    {% endfor %}
 	{% endif %}	
 	{% if is_granted(authorRole) %}

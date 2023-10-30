@@ -155,42 +155,54 @@ class TagsController extends AbstractController
             }            
             
             $formView=$form->createView();
-            $response=$this->render('tag_edit.html.twig',['nodeid'=>$nodeid, 'form' => $formView,'paliword'=>$paliword]);
+            $response=$this->render('tag_edit.html.twig',['nodeid'=>$nodeid, 'form' => $formView,'paliword'=>$paliword,
+                'message'=>NULL
+            ]);
         }        
         
         return $response;
     }
            
-    public function tocTagsList(Request $request,TipitakaTagsRepository $tagsRepository,
+    public function tocTagTypesList(Request $request,TipitakaTagsRepository $tagsRepository,
         TipitakaTocRepository $tocRepository)
     {
-        $tagtypeid=$request->query->get('tagtypeid');
-        $tagid=$request->query->get('tagid');
-        
         $tagTypes=$tagsRepository->listTagTypes();
         $tags=array();
-        $nodes=array();
-        
-        if($tagtypeid)
-        {
-            if($tagtypeid==-1)
-            {
-                $tags=$tagsRepository->listTocPaliTagsWithStats($request->getLocale());
-            }
-            else 
-            {
-                $tags=$tagsRepository->listTocTagsWithStats($request->getLocale(),$tagtypeid);
-            }
-        }
-        
-        if($tagid)
-        {
-            $tags=$tagsRepository->getTocTagWithStats($request->getLocale(),$tagid);
-            $nodes=$tocRepository->listNodesByTag($tagid,$request->getLocale());
-        }
+        $nodes=array(); 
         
         return $this->render('toc_tags_list.html.twig', ['tags'=>$tags,'tagTypes'=>$tagTypes,
-            'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>$tagtypeid,'tagid'=>$tagid]);
+            'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>NULL,'tagid'=>NULL]);
+    }
+    
+    public function tocTagsList($tagtypeid, Request $request,TipitakaTagsRepository $tagsRepository,
+        TipitakaTocRepository $tocRepository)
+    {        
+        $tagTypes=$tagsRepository->listTagTypes();
+        $tags=array();
+        $nodes=array();        
+
+        if($tagtypeid==-1)
+        {
+            $tags=$tagsRepository->listTocPaliTagsWithStats($request->getLocale());
+        }
+        else 
+        {
+            $tags=$tagsRepository->listTocTagsWithStats($request->getLocale(),$tagtypeid);
+        }               
+        
+        return $this->render('toc_tags_list.html.twig', ['tags'=>$tags,'tagTypes'=>$tagTypes,
+            'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>$tagtypeid,'tagid'=>NULL]);
+    }    
+    
+    public function tocTagNodesList($tagid, Request $request,TipitakaTagsRepository $tagsRepository,
+        TipitakaTocRepository $tocRepository)
+    {       
+        $tagTypes=$tagsRepository->listTagTypes();        
+        $tags=$tagsRepository->getTocTagWithStats($request->getLocale(),$tagid);
+        $nodes=$tocRepository->listNodesByTag($tagid,$request->getLocale());
+        
+        return $this->render('toc_tags_list.html.twig', ['tags'=>$tags,'tagTypes'=>$tagTypes,
+            'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>NULL,'tagid'=>$tagid]);
     }
     
     public function editTagName(TipitakaSentencesRepository $sentencesRepository,TranslatorInterface $translator,Request $request,
@@ -277,6 +289,24 @@ class TagsController extends AbstractController
         $names=$tagsRepository->listNamesByTag($tagid);
         
         return $this->render('tag_names.html.twig', ['tag'=>$tag,'names'=>$names]);
+    }
+    
+    public function tagsRedirect(Request $request)
+    {
+        $tagid=$request->query->get('tagid');
+        $tagtypeid=$request->query->get('tagtypeid');
+        
+        if($tagid)
+        {
+            $response=$this->redirectToRoute('toc_tag_nodes_list',['tagid'=>$tagid],301);
+        }
+        
+        if($tagtypeid)
+        {
+            $response=$this->redirectToRoute('toc_tags_list',['tagtypeid'=>$tagtypeid],301);
+        }
+        
+        return $response;
     }
 }
 
