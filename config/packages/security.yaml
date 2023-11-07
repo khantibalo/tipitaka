@@ -70,9 +70,11 @@ security:
       - { path: ^/node/\d+/tag/\d+/remove, roles: ROLE_EDITOR }
       - { path: ^/ajax/translation/update, roles: ROLE_AUTHOR }
       - { path: ^/ajax/translation/add, roles: ROLE_AUTHOR }
-      - { path: ^/toc/collectionitem/edit, roles: ROLE_EDITOR }
-      - { path: ^/toc/collectionitem/\d+/names, roles: ROLE_EDITOR }
-      - { path: ^/toc/collectionitemname/edit, roles: ROLE_EDITOR }
+      - { path: ^/toc/collection/item/edit, roles: ROLE_EDITOR }
+      - { path: ^/toc/collection/item/\d+/names, roles: ROLE_EDITOR }
+      - { path: ^/toc/collection/item/name/edit, roles: ROLE_EDITOR }
+      - { path: ^/toc/collection/edit, roles: ROLE_EDITOR }
+      - { path: ^/toc/collection/folder/edit, roles: ROLE_EDITOR }            
       - { path: ^/sentenceid/\d+/edit, roles: ROLE_ADMIN }
       - { path: ^/sentenceid/\d+/shiftdown, roles: ROLE_ADMIN }
       - { path: ^/toc/tag/\d+/names/list, roles: ROLE_EDITOR }
@@ -91,6 +93,8 @@ security:
       - { path: ^/node/\d+/clean_empty_rows, roles: ROLE_AUTHOR }      
       - { path: ^/comments/list_all/pageid/\d+, roles: ROLE_USER }  
       - { path: ^/node/\d+/pali_import, roles: ROLE_EDITOR } 
+
+      
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

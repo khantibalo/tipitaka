@@ -145,7 +145,7 @@ Sign in: Sign in
 In translated: In translated only
 Collections: Collections
 New collection: New collection
-View order: View order
+View order: Weight
 Add folder: Add folder
 Add item: Add item
 Level: Level
@@ -246,4 +246,7 @@ coll_view_mode_change2: Change to table
 Top links: >
    <br><center><a href="mailto:info@theravada.su">Contact us</a>&nbsp;&nbsp;<a href="https://github.com/khantibalo/tipitaka">GitHub</a></center>
 Introduction: >
-   <hr/>Quick links: <a href="/toc/translations/1098">DN</a> <a href="/toc/translations/1549">MN</a> <a href="/toc/translations/1746">SN</a> <a href="/toc/translations/3803">AN</a> <a href="/toc/translations/5350">KN</a><hr/> 
+   <hr/>Quick links: <a href="/toc/translations/1098">DN</a> <a href="/toc/translations/1549">MN</a> <a href="/toc/translations/1746">SN</a> <a href="/toc/translations/3803">AN</a> <a href="/toc/translations/5350">KN</a><hr/>
+Title language: Title language
+Weight note: light items go up, heavy items sink down
+   

@@ -280,18 +280,26 @@ collections_list:
    controller: App\Controller\CollectionController::list
    
 collection_item_edit:
-   path: /toc/collectionitem/edit
-   controller: App\Controller\CollectionController::edit
+   path: /toc/collection/item/edit
+   controller: App\Controller\CollectionController::editItem
 
 collection_item_names:
-   path: /toc/collectionitem/{itemid}/names
+   path: /toc/collection/item/{itemid}/names
    controller: App\Controller\CollectionController::namesList
    requirements:
         itemid: '\d+' 
         
 collection_item_name_edit:
-   path: /toc/collectionitemname/edit
+   path: /toc/collection/item/name/edit
    controller: App\Controller\CollectionController::nameEdit
+   
+collection_edit:
+   path: /toc/collection/edit
+   controller: App\Controller\CollectionController::editCollection   
+
+collection_folder_edit:
+   path: /toc/collection/folder/edit
+   controller: App\Controller\CollectionController::editFolder   
    
 sentence_edit:
    path: /sentenceid/{sentenceid}/edit

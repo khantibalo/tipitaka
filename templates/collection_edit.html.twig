@@ -3,30 +3,28 @@
 {% block content %}
 {{ form_start(form) }}
 <table style="width:100%">
+{% if form.name is defined %}
+	<tr>
+	<td>{{ form_label(form.name,'Title') }}:</td>
+	<td>{{ form_widget(form.name,{"attr" : {"style" : "width: 500px", "maxlength" : 255 }}) }}</td>
+	</tr>
+	<tr>
+	<td>{{ form_label(form.language,'Title language') }}:</td>
+	<td>{{ form_widget(form.language) }}</td>
+	</tr>
+{% endif %}
 <tr>
-<td>NodeID:</td>
-<td>{{ url('index') }}node/pali/{{ form_widget(form.nodeid) }}</td>
-</tr>
+<td style="width:200px">{{ form_label(form.notes, 'Notes') }}:</td>
+<td>{{ form_widget(form.notes,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}</td>
+</tr>	
 <tr>
-<td>{{ form_label(form.limitrows,'Limit rows') }}:</td>
-<td>{{ form_widget(form.limitrows,{"attr" : {"style" : "width: 100%", "rows": 3, "maxlength" : 1500  }}) }}</td>
-</tr>
-<tr>
-<td style="width:200px">{{ form_label(form.level,'Level') }}:</td>
-<td>{{ form_widget(form.level) }}</td>
+<td>{{ form_label(form.defaultview, 'Default view') }}:</td>
+<td>{{ form_widget(form.defaultview ) }}</td>
 </tr>
 <tr>
 <td>{{ form_label(form.vieworder,'View order') }}:</td>
 <td>{{ form_widget(form.vieworder) }}{% trans %}Weight note{% endtrans %}</td>
 </tr>
-<tr>
-<td>{{ form_label(form.hidetitleprint,'hide title in print view') }}:</td>
-<td>{{ form_widget(form.hidetitleprint) }}</td>
-</tr>
-<tr>
-<td>{{ form_label(form.hidepalinameprint,'hide pali name in print view') }}:</td>
-<td>{{ form_widget(form.hidepalinameprint) }}</td>
-</tr>	
 </table>
 <table style="width:100%">
 <tr>

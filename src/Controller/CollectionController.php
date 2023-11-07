@@ -234,88 +234,239 @@ class CollectionController extends AbstractController
         return $response;
     }
     
-    public function edit(Request $request, TipitakaCollectionsRepository $collectionsRepository,TranslatorInterface $translator,
+    public function editCollection(Request $request, TipitakaCollectionsRepository $collectionsRepository,TranslatorInterface $translator,
+        TipitakaSentencesRepository $sentencesRepository,TipitakaTocRepository $tipitakaTocRepository)
+    {
+        $itemid=$request->query->get('itemid');
+                        
+        $form = $this->createFormBuilder();
+                
+        if($itemid)
+        {
+            $form=$form->add('delete', SubmitType::class);
+        }
+        else
+        {//add new
+            $languages=$sentencesRepository->listLanguages();
+            $langOptions=['choices'  => $languages,
+                'label' => false,
+                'expanded'=>false,
+                'multiple'=>false,
+                'required'=>true
+            ];
+            $langOptions['placeholder']=$translator->trans('Choose an option');
+            
+            $form=$form
+            ->add('name', TextType::class,['required' => true])
+            ->add('language', ChoiceType::class,$langOptions);
+        }
+        
+        $form=$form
+        ->add('notes', TextareaType::class,['required' => false,'label' => false])
+        ->add('defaultview', ChoiceType::class,
+            ['choices'  => [$translator->trans('coll_view_mode1')=>'1',
+                $translator->trans('coll_view_mode2')=>'2'],
+                'label' => false,
+                'expanded'=>false,
+                'multiple'=>false,
+                'required' => true
+            ])
+        ->add('vieworder', IntegerType::class,['required' => true])
+        ->add('save', SubmitType::class);
+                
+        $form=$form->getForm();
+        
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            if($form->get('save')->isClicked())
+            {
+                if(is_null($itemid))
+                {
+                    $item=new TipitakaCollectionItems();                    
+                    $item->setAuthorid($this->getUser());
+                }
+                else
+                {
+                    $item=$collectionsRepository->find($itemid);
+                }
+                                
+                $item->setVieworder($form->get("vieworder")->getData());
+                $item->setNotes($form->get("notes")->getData());
+                $item->setDefaultview($form->get("defaultview")->getData());
+                
+                $collectionsRepository->updateCollectionItem($item);
+                
+                if($form->has("language"))
+                {
+                    $language=$sentencesRepository->getLanguage($form->get("language")->getData());
+                    $collectionsRepository->createItemName($item,$form->get("name")->getData(),$language);
+                }
+            }
+            
+            if($form->has("delete") && $form->get('delete')->isClicked())
+            {
+                $item=$collectionsRepository->find($itemid);
+                $collectionsRepository->deleteCollectionItem($item);
+            }
+                        
+            $response=$this->redirectToRoute('collections_list');
+        }
+        else
+        {
+            if($itemid!=NULL)
+            {
+                $item=$collectionsRepository->find($itemid);
+                $form->get("vieworder")->setData($item->getVieworder());
+
+                $form->get("notes")->setData($item->getNotes());
+                $form->get("defaultview")->setData($item->getDefaultview());
+            }
+            
+            $formView=$form->createView();
+            $response=$this->render('collection_edit.html.twig',['itemid'=>$itemid, 'form' => $formView]);
+        }
+        
+        return $response;
+    }
+        
+    
+    
+    public function editFolder(Request $request, TipitakaCollectionsRepository $collectionsRepository,TranslatorInterface $translator,
+        TipitakaSentencesRepository $sentencesRepository,TipitakaTocRepository $tipitakaTocRepository)
+    {        
+        $itemid=$request->query->get('itemid');
+        $parentid=$request->query->get('parentid');
+        
+        //all params null = create collection
+        //$parentid and $folder not null = create folder
+        //$parentid not null = create item
+        //$itemid is not null = edit item, folder or collection
+        
+        $form = $this->createFormBuilder();
+        
+        if($itemid)
+        {//editing
+            $form=$form->add('delete', SubmitType::class);
+        }
+        else
+        {//add new
+            
+            $languages=$sentencesRepository->listLanguages();
+            $langOptions=['choices'  => $languages,
+                'label' => false,
+                'expanded'=>false,
+                'multiple'=>false,
+                'required'=>true
+            ];
+            
+            if(is_null($itemid))
+            {
+                $langOptions['placeholder']=$translator->trans('Choose an option');
+            }
+            
+            $form=$form
+            ->add('name', TextType::class,['required' => true])
+            ->add('language', ChoiceType::class,$langOptions);            
+        }
+        
+        $form=$form
+        ->add('vieworder', IntegerType::class,['required' => true])
+        ->add('level', IntegerType::class,['required' => true])
+        ->add('save', SubmitType::class);        
+        
+        $form=$form->getForm();
+        
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            if($form->get('save')->isClicked())
+            {
+                if(is_null($itemid))
+                {
+                    $item=new TipitakaCollectionItems();
+                    
+                    $item->setParentid($parentid);
+                    $item->setAuthorid($this->getUser());
+                }
+                else
+                {
+                    $item=$collectionsRepository->find($itemid);
+                }
+                                
+                $item->setVieworder($form->get("vieworder")->getData());
+                $item->setLevel($form->get("level")->getData());                
+                
+                $collectionsRepository->updateCollectionItem($item);
+                
+                if($form->has("language"))
+                {
+                    $language=$sentencesRepository->getLanguage($form->get("language")->getData());
+                    $collectionsRepository->createItemName($item,$form->get("name")->getData(),$language);
+                }
+            }
+            
+            if($form->has("delete") && $form->get('delete')->isClicked())
+            {
+                $item=$collectionsRepository->find($itemid);
+                $collectionsRepository->deleteCollectionItem($item);
+            }
+            
+            $params=array();
+            if($itemid==NULL)
+            {
+                if($parentid!=null)
+                {
+                    $params['itemid']=$parentid;
+                }
+            }
+            else
+            {
+                $params['itemid']=$item->getParentid();
+            }
+            
+            $response=$this->redirectToRoute('collections_list',$params);
+        }
+        else
+        {
+            if($itemid!=NULL)
+            {
+                $item=$collectionsRepository->find($itemid);
+                $form->get("vieworder")->setData($item->getVieworder());
+                $form->get("level")->setData($item->getLevel());                
+            }
+            
+            $formView=$form->createView();
+            $response=$this->render('collection_folder_edit.html.twig',['itemid'=>$itemid,'form' => $formView]);
+        }
+        
+        return $response;
+    }
+    
+    
+    
+    public function editItem(Request $request, TipitakaCollectionsRepository $collectionsRepository,TranslatorInterface $translator,
         TipitakaSentencesRepository $sentencesRepository,TipitakaTocRepository $tipitakaTocRepository)
     {
 
         $itemid=$request->query->get('itemid');
         $parentid=$request->query->get('parentid');
-        $folder=$request->query->get('folder');
-
-        //all params null = create collection
-        //$parentid and $folder not null = create folder
-        //$parentid not null = create item
-        //$itemid is not null = edit item, folder or collection
-                
-        $languages=$sentencesRepository->listLanguages();
-        $langOptions=['choices'  => $languages,
-            'label' => false,
-            'expanded'=>false,
-            'multiple'=>false,
-            'required'=>true
-        ];
-        
-        if(is_null($itemid))
-        {
-            $langOptions['placeholder']=$translator->trans('Choose an option');
-        }
         
         $form = $this->createFormBuilder();
-                
-        if($itemid)
-        {//editing
-            $item=$collectionsRepository->find($itemid);
-            if($item->getParentid() && $item->getNodeid())
-            {//link
-                $form=$form
-                ->add('nodeid', IntegerType::class,['required' => true])
-                ->add('limitrows', TextareaType::class,['required' => false,'label' => false,'mapped'=>false])
-                ->add('hidetitleprint', CheckboxType::class,['label' => false,'required' => false])
-                ->add('hidepalinameprint', CheckboxType::class,['label' => false,'required' => false]);
-            }
-            
-            if($item->getParentid()==NULL)
-            {
-                $form=$form->add('notes', TextareaType::class,['required' => false])
-                ->add('defaultview',IntegerType::class);                
-            }
-        }
-        else
-        {//add new
-            if($parentid)
-            {//folder or link
-                if($folder)
-                {
-                    $form=$form
-                    ->add('name', TextType::class,['required' => true])
-                    ->add('language', ChoiceType::class,$langOptions);
-                }
-                else 
-                {
-                    $form=$form
-                    ->add('nodeid', IntegerType::class,['required' => true])
-                    ->add('limitrows', TextareaType::class,['required' => false,'label' => false,'mapped'=>false])
-                    ->add('hidetitleprint', CheckboxType::class,['label' => false,'required' => false])
-                    ->add('hidepalinameprint', CheckboxType::class,['label' => false,'required' => false]);
-                }
-            }
-            else 
-            {//collection
-                $form=$form
-                ->add('name', TextType::class,['required' => true])
-                ->add('language', ChoiceType::class,$langOptions)
-                ->add('notes', TextareaType::class,['required' => false,'label' => false])
-                ->add('defaultview',IntegerType::class);   
-            }
-        }        
-
         $form=$form
+        ->add('nodeid', IntegerType::class,['required' => true])
+        ->add('limitrows', TextareaType::class,['required' => false,'label' => false,'mapped'=>false])
+        ->add('hidetitleprint', CheckboxType::class,['label' => false,'required' => false])
+        ->add('hidepalinameprint', CheckboxType::class,['label' => false,'required' => false])
         ->add('vieworder', IntegerType::class,['required' => true])
         ->add('level', IntegerType::class,['required' => true])
         ->add('save', SubmitType::class);
         
         if($itemid)
-        {
+        {//editing
+            $item=$collectionsRepository->find($itemid);
             $form=$form->add('delete', SubmitType::class);
         }
         
@@ -339,31 +490,16 @@ class CollectionController extends AbstractController
                     $item=$collectionsRepository->find($itemid);                
                 }
                 
-                if($form->has("nodeid"))
-                {
-                    $node=$tipitakaTocRepository->find($form->get("nodeid")->getData());
-                    $item->setNodeid($node);
-                    $item->setLimitrows($form->get("limitrows")->getData());
-                    $item->setHidetitleprint($form->get("hidetitleprint")->getData());
-                    $item->setHidepalinameprint($form->get("hidepalinameprint")->getData());
-                }
-                
+
+                $node=$tipitakaTocRepository->find($form->get("nodeid")->getData());
+                $item->setNodeid($node);
+                $item->setLimitrows($form->get("limitrows")->getData());
+                $item->setHidetitleprint($form->get("hidetitleprint")->getData());
+                $item->setHidepalinameprint($form->get("hidepalinameprint")->getData());
                 $item->setVieworder($form->get("vieworder")->getData());
-                $item->setLevel($form->get("level")->getData());
+                $item->setLevel($form->get("level")->getData());                
                 
-                if($form->has("notes"))
-                {
-                    $item->setNotes($form->get("notes")->getData());
-                    $item->setDefaultview($form->get("defaultview")->getData());
-                }
-                
-                $collectionsRepository->updateCollectionItem($item);
-                
-                if($form->has("language"))
-                {
-                    $language=$sentencesRepository->getLanguage($form->get("language")->getData());
-                    $collectionsRepository->createItemName($item,$form->get("name")->getData(),$language);
-                }
+                $collectionsRepository->updateCollectionItem($item);                
             }
             
             if($form->has("delete") && $form->get('delete')->isClicked())
@@ -393,26 +529,16 @@ class CollectionController extends AbstractController
             {
                 $item=$collectionsRepository->find($itemid);
                 $form->get("vieworder")->setData($item->getVieworder());
-                $form->get("level")->setData($item->getLevel());
-                
-                if($item->getNodeid()!=NULL)
-                {
-                    $form->get("nodeid")->setData($item->getNodeid()->getNodeid());
-                    $form->get("limitrows")->setData($item->getLimitrows());
-                    $form->get("hidetitleprint")->setData($item->getHidetitleprint());
-                    $form->get("hidepalinameprint")->setData($item->getHidepalinameprint());
-                }   
-                
-                if($item->getParentid()==NULL)
-                {
-                    $form->get("notes")->setData($item->getNotes());
-                    $form->get("defaultview")->setData($item->getDefaultview());
-                }
+                $form->get("level")->setData($item->getLevel());                
+                $form->get("nodeid")->setData($item->getNodeid()->getNodeid());
+                $form->get("limitrows")->setData($item->getLimitrows());
+                $form->get("hidetitleprint")->setData($item->getHidetitleprint());
+                $form->get("hidepalinameprint")->setData($item->getHidepalinameprint());                
             }
             
             $formView=$form->createView();
             $response=$this->render('collection_item_edit.html.twig',['itemid'=>$itemid,'parentid'=>$parentid,
-                'folder'=>$folder,'form' => $formView]);
+                'form' => $formView]);
         }
         
         return $response;
