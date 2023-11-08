@@ -8,10 +8,9 @@
 <a href="{{ path("comments_list_all", {pageid: pageid+1}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
 </center>
 {% for commentItem in comments %}
-<div><a name="c{{ commentItem.CommentID}}"></a><b>{% trans %}Comment submitted{% endtrans %}</b> {{ commentItem.CreatedDate|date("d.m.Y H:i")}}
+<div><a href="{{ path("comments", {sentenceid: commentItem.sentenceid,  _fragment: "c#{commentItem.CommentID}"}) }}">{{commentItem.trname ?? commentItem.title}}</a>&nbsp;&nbsp;<a name="c{{ commentItem.CommentID}}"></a><b>{% trans %}Comment submitted{% endtrans %}</b> {{ commentItem.CreatedDate|date("d.m.Y H:i")}}
 {% if commentItem.AuthorName %}
  <b>{% trans %}by{% endtrans %}</b> {{ commentItem.AuthorName}}
-<a href="{{ path("comments", {sentenceid: commentItem.sentenceid}) }}">{% trans %}Go to sentence{% endtrans %}</a>
 {% endif %}
 </div>
 <div>

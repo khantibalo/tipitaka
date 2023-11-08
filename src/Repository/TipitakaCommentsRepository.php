@@ -178,20 +178,24 @@ class TipitakaCommentsRepository extends ServiceEntityRepository
         return $text;
     } 
     
-    public function listAll($pageid,$pageSize)
+    public function listAll($pageid,$pageSize,$locale)
     {
         $firstResult=$pageid*$pageSize;
         
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('c.commentid As CommentID,c.createddate As CreatedDate,u.username as AuthorName,c.commenttext As CommentText,u.userid As AuthorID,u.allowcommentshtml,c.authorname as UnregName,s.sentenceid')
+        ->select('c.commentid As CommentID,c.createddate As CreatedDate,u.username as AuthorName,c.commenttext As CommentText,u.userid As AuthorID,u.allowcommentshtml,c.authorname as UnregName,s.sentenceid,toc.title')
+        ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaComments','c')
         ->join('c.sentenceid','s')
         ->leftJoin('c.authorid','u',Join::WITH,'c.authorid=u.userid')
+        ->join('s.paragraphid','cn')
+        ->join('cn.nodeid','toc')
         ->orderBy('c.createddate','desc')
         ->setFirstResult($firstResult)
         ->setMaxResults($pageSize) 
-        ->getQuery();
+        ->getQuery()
+        ->setParameter('locale', $locale);
         
         return $query->getResult();
     }

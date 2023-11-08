@@ -216,9 +216,9 @@ class CommentsController  extends AbstractController
         return $response;
     }
     
-    public function listAll($pageid,TipitakaCommentsRepository $commentsRepository)
+    public function listAll($pageid,TipitakaCommentsRepository $commentsRepository,Request $request)
     {
-        $comments=$commentsRepository->listAll($pageid,30);
+        $comments=$commentsRepository->listAll($pageid,30,$request->getLocale());
         
         return $this->render('comments_list_all.html.twig', ['pageid'=>$pageid,'comments'=>$comments
         ]);
