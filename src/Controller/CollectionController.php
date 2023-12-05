@@ -746,13 +746,20 @@ class CollectionController extends AbstractController
             $coll_back_id=$coll_backnext["back_id"];
             $coll_next_id=$coll_backnext["next_id"];
             
+            $chapter_name="";
+            $chapterObj=$collectionsRepository->getChapterName($collectionitemid,$request->getLocale());
+            if($chapterObj)
+            {
+                $chapter_name=$chapterObj["name"];
+            }
+            
             $response=$this->render('collection_item_view.html.twig', ['node'=>$node,'path_nodes'=>$path_nodes,
                 'sentences'=>$sentences,'translations'=>$translations, 'authorRole'=>Roles::Author, 'userRole'=>Roles::User,
                 'editorRole'=>Roles::Editor, 'sources'=>$sources,'collection'=>$collections[0],
                 'coll_back_id'=>$coll_back_id,'coll_next_id'=>$coll_next_id,'collectionItem'=>$collectionItem,
                 'showCode'=>false,'showAlign'=>false,'collectionItemName'=>$collectionItemName,
                 'paragraphs'=>$paragraphs,'related'=>$related,'coll_view_mode' => $coll_view_mode,
-                'form' => $form->createView()
+                'form' => $form->createView(), 'chapter_name'=>$chapter_name
             ]);   
             $response->headers->setCookie(new Cookie('coll_view_mode'.$collections[0]["collectionitemid"],
                 $coll_view_mode,time() + (3600 * 24*365)));

@@ -13,21 +13,23 @@
 &gt;&gt;
 <a href="{{ path('collection_view',{collectionid: collection.collectionitemid}) }}">{{ collection.name }}</a>
 </div>
-<div>
-<center>
-{% if not coll_back_id is empty %}
-<a href="{{ path('collection_item_view', {collectionitemid: coll_back_id}) }}">&lt;&lt; {% trans %}Back{% endtrans %}</a>
-{% endif %}
-{% if not coll_next_id is empty %}
-<a href="{{ path('collection_item_view', {collectionitemid: coll_next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
-{% endif %}
-</center>	
-</div>
 
 {{ form_start(form) }}
 {% trans %}Collection view mode{% endtrans %}: {{ "coll_view_mode#{coll_view_mode}"|trans }}
 {{ form_widget(form.update,{'label': "coll_view_mode_change#{coll_view_mode}"}) }}
 {{ form_end(form) }}
+
+<div>
+<center>
+{% if not coll_back_id is empty %}
+<a href="{{ path('collection_item_view', {collectionitemid: coll_back_id}) }}">&lt;&lt; {% trans %}Back{% endtrans %}</a>
+{% endif %}
+<span style="font-size: large">{{ chapter_name }}</span>
+{% if not coll_next_id is empty %}
+<a href="{{ path('collection_item_view', {collectionitemid: coll_next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+{% endif %}
+</center>	
+</div>
 
 {{ include('_related_nodes.html.twig', {'target': '_blank'}) }}
 <p class="{{ node.typename }}">{{ collectionItemName ?? (node.trname ?? node.title) }} <a href="{{ path('table_view',{id: node.nodeid}) }}">{% trans %}This text in the library{% endtrans %}</a></p>
@@ -113,6 +115,7 @@
 {% if not coll_back_id is empty %}
 <a href="{{ path('collection_item_view', {collectionitemid: coll_back_id}) }}">&lt;&lt; {% trans %}Back{% endtrans %}</a>
 {% endif %}
+<span style="font-size: large">{{ chapter_name }}</span>
 {% if not coll_next_id is empty %}
 <a href="{{ path('collection_item_view', {collectionitemid: coll_next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
 {% endif %}

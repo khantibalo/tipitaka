@@ -273,5 +273,33 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
                 
         return ['back_id'=>$backid,'next_id'=>$nextid];
     }
+    
+    public function getChapterName($collectionitemid,$locale)
+    {
+        $entityManager = $this->getEntityManager();
+        
+        $collectionItem=$this->find($collectionitemid);
+        
+        $result = $entityManager->createQueryBuilder()
+        ->select('cin.name')
+        ->from('App\Entity\TipitakaCollectionItems','ci')
+        ->innerJoin('App\Entity\TipitakaCollectionItemNames','cin',Join::WITH,'ci.collectionitemid=cin.collectionitemid')
+        ->innerJoin('cin.collectionitemid', 'i')
+        ->innerJoin('cin.languageid', 'l')
+        ->where('ci.parentid=:collectionid')
+        ->andWhere('ci.nodeid is null')
+        ->andWhere('ci.vieworder<:vieworder')
+        ->andWhere('l.code=:locale')
+        ->addOrderBy('ci.vieworder','DESC')
+        ->getQuery()
+        ->setParameter('collectionid', $collectionItem->getParentid())
+        ->setParameter('locale', $locale)
+        ->setParameter('vieworder', $collectionItem->getVieworder())
+        ->setMaxResults(1)
+        ->getOneOrNullResult();
+        
+
+        return $result;
+    }
 }
 
