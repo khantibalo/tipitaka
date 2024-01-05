@@ -45,8 +45,8 @@ class CommentsController  extends AbstractController
             if($collectionitemid)
             {
                 $collectionItem=$collectionsRepository->find($collectionitemid);
-                $collections=$collectionsRepository->fetchCollection($collectionItem->getParentid(),$request->getLocale());
-                $collection=$collections[0];
+                $collection=$collectionsRepository->fetchCollection($collectionItem->getParentid(),$request->getLocale());
+                
                 $collectionItemNameResult=$collectionsRepository->getCollectionItemName($collectionitemid,$request->getLocale());
                 if($collectionItemNameResult)
                 {

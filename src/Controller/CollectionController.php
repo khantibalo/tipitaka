@@ -45,7 +45,7 @@ class CollectionController extends AbstractController
         $collectionItems=array();
     
         $collectionItems=$collectionsRepository->listCollectionItems($collectionid,$request->getLocale());
-        $collections=$collectionsRepository->fetchCollection($collectionid,$request->getLocale());
+        $collection=$collectionsRepository->fetchCollection($collectionid,$request->getLocale());
 
         $form = $this->createFormBuilder()
         ->add('shownav', CheckboxType::class,['required' => false,'label' => false,'data'=>true])
@@ -133,22 +133,7 @@ class CollectionController extends AbstractController
                             {//this is the first pali source we have found - use it
                                 $paliSource=$source;
                             }
-                        }
-                        
-//                         if($source['languageid']==$language->getLanguageid())
-//                         {
-//                             if($translSource)
-//                             {
-//                                 if(mb_stristr($source['sourcename'], "khantibalo")!=FALSE)
-//                                 {//this will give priority for sources that have "khantibalo" in their names
-//                                     $translSource=$source;
-//                                 }
-//                             }
-//                             else
-//                             {//this is the first translation source we have found - use it
-//                                 $translSource=$source;
-//                             }
-//                         }
+                        }                        
                     }
                                             
                     if($paliSource)
@@ -206,7 +191,7 @@ class CollectionController extends AbstractController
             }
             
 
-            $response=$this->render($templates[$printviewtype], ['collection'=>$collections[0],
+            $response=$this->render($templates[$printviewtype], ['collection'=>$collection,
                 'collectionItems'=>$collectionItems,'paragraphs'=>$paragraphs,'sentences'=>$sentences,
                 'paliTranslations'=>$paliTranslations,'otherTranslations'=>$otherTranslations,
                 'comments'=>$comments,'shownav'=>$form->get("shownav")->getData()
@@ -216,7 +201,7 @@ class CollectionController extends AbstractController
             {
                 $disposition = HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_ATTACHMENT,
-                    $collections[0]["name"].'.html',
+                    $collection["name"].'.html',
                     'collection.html'
                     );
                 
@@ -227,7 +212,7 @@ class CollectionController extends AbstractController
         {//view collection           
             $formView=$form->createView();
             
-            $response=$this->render('collections_list.html.twig', ['collections'=>$collections,'collectionItems'=>$collectionItems,
+            $response=$this->render('collection_view.html.twig', ['collection'=>$collection,'collectionItems'=>$collectionItems,
                 'authorRole'=>Roles::Author,'form' => $formView, 'editorRole'=>Roles::Editor, 'collectionid'=> $collectionid]);
         }
         
@@ -681,7 +666,7 @@ class CollectionController extends AbstractController
 
         if($collectionItem->getParentid() && $collectionItem->getNodeid())
         {
-            $collections=$collectionsRepository->fetchCollection($collectionItem->getParentid(),$request->getLocale());
+            $collection=$collectionsRepository->fetchCollection($collectionItem->getParentid(),$request->getLocale());
             $collectionItemName=NULL;
             $collectionItemNameResult=$collectionsRepository->getCollectionItemName($collectionitemid,$request->getLocale());
             if($collectionItemNameResult)
@@ -702,8 +687,8 @@ class CollectionController extends AbstractController
                 $sentences=$sentencesRepository->listByNodeId($collectionItem->getNodeid());
             }
             
-            $coll_view_mode=$request->cookies->get('coll_view_mode'.$collections[0]["collectionitemid"],
-                $collections[0]["defaultview"]);
+            $coll_view_mode=$request->cookies->get('coll_view_mode'.$collection["collectionitemid"],
+                $collection["defaultview"]);
             $form = $this->createFormBuilder(null,  array('csrf_protection' => false))
             ->add('update', SubmitType::class)
             ->getForm();
@@ -732,7 +717,8 @@ class CollectionController extends AbstractController
                     break;                
                 case 2:
                     $translationsource=$sentencesRepository->getNodeSourceTopPriority($nodeid);
-                    $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],$translationsource['sourceid']);
+                    $translations=$sentencesRepository->listTranslationsBySourceId($nodeid,$node['path'],
+                        $translationsource['sourceid']);
                     $nodeObj=$tocRepository->find($nodeid);
                     $paragraphs=$paragraphsRepository->listByNode($nodeObj);
                     break;
@@ -755,13 +741,13 @@ class CollectionController extends AbstractController
             
             $response=$this->render('collection_item_view.html.twig', ['node'=>$node,'path_nodes'=>$path_nodes,
                 'sentences'=>$sentences,'translations'=>$translations, 'authorRole'=>Roles::Author, 'userRole'=>Roles::User,
-                'editorRole'=>Roles::Editor, 'sources'=>$sources,'collection'=>$collections[0],
+                'editorRole'=>Roles::Editor, 'sources'=>$sources,'collection'=>$collection,
                 'coll_back_id'=>$coll_back_id,'coll_next_id'=>$coll_next_id,'collectionItem'=>$collectionItem,
                 'showCode'=>false,'showAlign'=>false,'collectionItemName'=>$collectionItemName,
                 'paragraphs'=>$paragraphs,'related'=>$related,'coll_view_mode' => $coll_view_mode,
                 'form' => $form->createView(), 'chapter_name'=>$chapter_name
             ]);   
-            $response->headers->setCookie(new Cookie('coll_view_mode'.$collections[0]["collectionitemid"],
+            $response->headers->setCookie(new Cookie('coll_view_mode'.$collection["collectionitemid"],
                 $coll_view_mode,time() + (3600 * 24*365)));
         }
         else
