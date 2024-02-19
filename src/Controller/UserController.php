@@ -21,12 +21,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
-    public function edit($id,UserRepository $ur,Request $request)
+    public function edit($id,UserRepository $ur,Request $request,
+        UserPasswordHasherInterface $passwordHasher)
     {               
         $user=$ur->find($id);
                 
         $form = $this->createFormBuilder($user)
-        ->add('username', TextType::class,['required' => true,'label' => false])        
+        ->add('username', TextType::class,['required' => true,'label' => false]) 
+        ->add('new_password', PasswordType::class,['required' => false,'label' => false, 'mapped'=>false])
         ->add('email', EmailType::class,['required' => true,'label' => false])
         ->add('roles', TextType::class,['label' => false,'mapped'=>false])
         ->add('allowcommentshtml', CheckboxType::class,['required' => false,'label' => false])
@@ -46,9 +48,16 @@ class UserController extends AbstractController
             }
             
             $user->setRoles($roles);
-            
             $ur->persist($user);
-            $response=$this->redirectToRoute('userlist');            
+                                    
+            if(!empty($form->get("new_password")->getData()))
+            {
+                $password = $passwordHasher->hashPassword($user,$form->get("new_password")->getData());
+                $user->setPassword($password);
+                $ur->persist($user);
+            }
+            
+            $response=$this->redirectToRoute('userlist'); 
         }       
         else 
         {
