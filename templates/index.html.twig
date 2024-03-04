@@ -24,7 +24,7 @@
     </tr>
     {% endfor %}
     </table>
-    <a href="{{ path("translations_feed") }}"><img src="{{ asset("feed.svg") }}"/></a>
+    <a href="{{ path("translations_feed") }}"><img src="{{ asset("feed.svg") }}"/>RSS</a>
 </td>
 <td style="vertical-align: top">
 <h3>{% trans %}New comments{% endtrans %}</h3>
@@ -44,7 +44,7 @@
     {% if app.user %}
     <div><br/><a href="{{ path('comments_list_all',{pageid: 0}) }}">{% trans %}All comments{% endtrans %}</a></div>
     {% endif %}
-    <a href="{{ path("comments_feed") }}"><img src="{{ asset("feed.svg") }}"/></a>
+    <a href="{{ path("comments_feed") }}"><img src="{{ asset("feed.svg") }}"/>RSS</a>
 </td>
 </tr>
 </table>
