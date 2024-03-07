@@ -85,7 +85,7 @@ class NativeRepository extends ServiceEntityRepository
         parent::__construct($registry, TipitakaParagraphs::class);
     }
     
-    private function getSearchBaseQuery($searchString,$inTranslations,$searchMode) : SqlQueryBuilder
+    private function getSearchBaseQuery(&$searchString,$inTranslations,$searchMode) : SqlQueryBuilder
     {
         if($inTranslations)
         {
