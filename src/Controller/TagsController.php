@@ -133,14 +133,14 @@ class TagsController extends AbstractController
                 
                 if(!isset($response))
                 {
-                    $response=$this->redirectToRoute('toc_tags_list');
+                    $response=$this->redirectToRoute('toc_tags_list',['tagtypeid'=>$tag->getTagtypeid()->getTagtypeid()]);
                 }
             }
             catch(\Exception $ex)
             {
                 $formView=$form->createView();
                 $response=$this->render('tag_edit.html.twig',['nodeid'=>$nodeid, 'form' => $formView,'paliword'=>$paliword,
-                    'message'=>$translator->trans('This pali name already exists')
+                    'message'=>$translator->trans('This pali name already exists') 
                 ]);
             }
         }
