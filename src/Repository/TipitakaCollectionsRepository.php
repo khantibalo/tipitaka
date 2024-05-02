@@ -290,11 +290,13 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         ->andWhere('ci.nodeid is null')
         ->andWhere('ci.vieworder<:vieworder')
         ->andWhere('l.code=:locale')
+        ->andWhere('ci.level<:level')
         ->addOrderBy('ci.vieworder','DESC')
         ->getQuery()
         ->setParameter('collectionid', $collectionItem->getParentid())
         ->setParameter('locale', $locale)
         ->setParameter('vieworder', $collectionItem->getVieworder())
+        ->setParameter('level', $collectionItem->getLevel())
         ->setMaxResults(1)
         ->getOneOrNullResult();
         
