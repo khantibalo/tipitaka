@@ -111,17 +111,19 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         
         $result=$query->getResult();
         
-        if(sizeof($result)>0)
+        if(sizeof($result)==0)
         {
-            if(!$result[0]['Prev'])
-            {
-                $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',true);
-            }
-            
-            if(!$result[0]['Next'])
-            {
-                $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',true);
-            }
+            $result[0]=array();
+        }
+        
+        if(!$result[0]['Prev'])
+        {
+            $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',true);
+        }
+        
+        if(!$result[0]['Next'])
+        {
+            $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',true);
         }
             
         return $result;
@@ -133,7 +135,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('parent.IsHidden, node.path')
+        ->select('parent.IsHidden, node.path,parent.nodeid')
         ->from('App\Entity\TipitakaToc','node')
         ->innerJoin('App\Entity\TipitakaToc', 'parent',Join::WITH,'node.parentid=parent.nodeid')
         ->where('node.nodeid=:id')
@@ -190,19 +192,86 @@ class TipitakaTocRepository  extends ServiceEntityRepository
             }
                         
             $path=str_replace("\\","\\\\",$result2['path'])."%";
-            $query = $query->getQuery()
+            $query2 = $query->getQuery()
             ->setMaxResults(1)
             ->setParameter('path', $path)
             ->setParameter('nodeid', $nodeid)
             ->setParameter("level", $level);
             
-            $result3=$query->getOneOrNullResult();
+            $result3=$query2->getOneOrNullResult();
             
             if($result3)
             {
                 $backnextnodeid=$result3["nodeid"];
             }
-        }        
+            else 
+            {
+                $query3 = $query->getQuery()
+                ->setMaxResults(1)
+                ->setParameter('path', $path)
+                ->setParameter('nodeid', $nodeid)
+                ->setParameter("level", $level-1);
+                
+                $result3=$query3->getOneOrNullResult();
+                
+                if($result3)
+                {
+                    $backnextnodeid=$result3["nodeid"];
+                }
+            }
+        }      
+        else
+        {
+            //if previous or next node has children, find last or first non-hidden child
+            $query = $entityManager->createQueryBuilder()
+            ->select('toc.nodeid')
+            ->from('App\Entity\TipitakaToc','toc')
+            ->where('toc.parentid=:parentid')
+            ->andWhere('toc.haschildnodes=1');
+            
+            if($pos=='Prev')
+            {
+                $query = $query->andWhere('toc.nodeid<:nodeid')
+                ->orderBy('toc.nodeid','DESC');
+            }
+            
+            if($pos=='Next')
+            {
+                $query = $query->andWhere('toc.nodeid>:nodeid')
+                ->orderBy('toc.nodeid','ASC');
+            }
+            
+            $query = $query->getQuery()
+            ->setMaxResults(1)
+            ->setParameter('parentid', $result1["nodeid"])
+            ->setParameter('nodeid', $nodeid);
+            
+            $result2=$query->getOneOrNullResult();
+            if($result2)
+            {
+                $query = $entityManager->createQueryBuilder()
+                ->select('MAX(toc.nodeid) As Prev, MIN(toc.nodeid) As Next')
+                ->from('App\Entity\TipitakaToc','toc')
+                ->where('toc.parentid=:parentid')
+                ->andWhere('toc.IsHidden=0');
+                
+                if($hasTableView)
+                {
+                    $query = $query->andWhere('toc.HasTableView=1');
+                }
+                                
+                $query = $query->getQuery()
+                ->setMaxResults(1)
+                ->setParameter('parentid', $result2["nodeid"]);
+                
+                $result3=$query->getOneOrNullResult();
+                
+                if($result3)
+                {                    
+                    $backnextnodeid=$result3[$pos];
+                }
+            }
+        }
         
         return $backnextnodeid;
     }
