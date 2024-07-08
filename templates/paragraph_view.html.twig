@@ -8,11 +8,22 @@
 {% endblock %}
 {% block content %}
 {% if view_settings.printview is empty %}
-{{ include('_translation_node_path.html.twig') }}
-{% if paragraph.hastableview %}
-&gt;&gt;
-<a href="{{ path('table_view',{id: paragraph.nodeid, _fragment: "sent#{sentences|first.sentenceid}"}) }}">{% trans %}Table view{% endtrans %}</a>
-{% endif %}
+{% trans %}Location{% endtrans %}
+{% set node_has_translation=(path_nodes | last).HasTranslation  %}
+{% for node in path_nodes %}
+    {% if loop.last %}
+        {% if paragraph.hastableview %}
+           <a href="{{ path('table_view',{id: paragraph.nodeid, _fragment: "sent#{sentences|first.sentenceid}"}) }}">{{ node.trname ?? node.title }}</a>
+        {% else %}
+           <a href="{{ path('view_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+        {% endif %}
+    {% else %}
+    <a href="{{ path(node_has_translation ? 'translation_toc_node' : 'full_toc_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+    {% endif %} 
+    {% if not loop.last %}
+    &gt;&gt;
+    {% endif %}    
+{% endfor %}
 {{ include('_view_settings.html.twig') }}
 {% endif %}
 <table>
