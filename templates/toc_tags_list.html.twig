@@ -15,7 +15,7 @@
     <a href="{{ path('toc_tag_nodes_list',{tagid: tag.tagid}) }}">{{ tag.title }}{% if tag.paliname %} ({{ tag.paliname }}){% endif %}</a>&nbsp;({{ tag.TagCount }})
     {% if is_granted(authorRole) %}   
 	<a href="{{ path('tag_edit',{tagid: tag.tagid}) }}">({% trans %}Edit{% endtrans %})</a>	
-	<a href="{{ path('tag_names',{tagid: tag.tagid}) }}">({% trans %}Edit names{% endtrans %})</a>
+	<a href="{{ path('tag_names',{tagid: tag.tagid}) }}">({% trans %}Edit names{% endtrans %} {{ tag.NameCount }})</a>
 	{% endif %} 
         <ul>
         {% for node in nodes %}

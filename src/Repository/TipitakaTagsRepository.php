@@ -67,16 +67,27 @@ class TipitakaTagsRepository extends ServiceEntityRepository
     public function listTocTagsWithStats($locale,$tagtypeid)
     {
         $entityManager = $this->getEntityManager();
+        
+        $tocSubquery=$entityManager->createQueryBuilder()
+        ->select('COUNT(tt.tagid)')
+        ->from('App\Entity\TipitakaTocTags','tt')
+        ->where('tt.tagid=t.tagid');
+        
+        $namesSubquery=$entityManager->createQueryBuilder()
+        ->select('COUNT(tn1.tagid)')
+        ->from('App\Entity\TipitakaTagNames','tn1')
+        ->where('tn1.tagid=t.tagid');
+        
         $query = $entityManager->createQueryBuilder()
-        ->select('t.tagid,tn.title,ty.tagtypeid, COUNT(t.tagid) As TagCount,t.paliname')
+        ->select('t.tagid,tn.title,ty.tagtypeid, t.paliname')
+        ->addSelect('('.$tocSubquery->getDQL().') AS TagCount')
+        ->addSelect('('.$namesSubquery->getDQL().') AS NameCount')
         ->from('App\Entity\TipitakaTagNames','tn')
         ->innerJoin('tn.tagid', 't')
         ->innerJoin('tn.languageid','l')
         ->innerJoin('t.tagtypeid', 'ty')
-        ->join('App\Entity\TipitakaTocTags','tt',Join::WITH,'tt.tagid=t.tagid')
         ->where('l.code=:locale')
         ->andWhere('ty.tagtypeid=:tyid')
-        ->groupBy('t.tagid,tn.title,t.tagtypeid')
         ->orderBy('tn.title')
         ->getQuery()
         ->setParameter('locale', $locale)
