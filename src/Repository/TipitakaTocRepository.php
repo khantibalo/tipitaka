@@ -625,5 +625,75 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         
         return $query->getOneOrNullResult();
     }
+    
+    public function updateParentNodeId($nodeid,$parentid)
+    {
+        //update parentid, path and textpath of the current node
+        $node=$this->find($nodeid);
+        $parent=$this->find($parentid);
+        $node->setParentid($parentid);
+        $node->setPath($parent->getPath().$node->getNodeid()."\\");
+        $node->setTextPath($parent->getTextPath().' '.$node->getTitle()."\\");
+        $this->persistNode($node);
+        
+        //update path and textpath of all descendant nodes
+        
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('toc')
+        ->from('App\Entity\TipitakaToc','toc')
+        ->where('toc.parentid=:nid')
+        ->getQuery()
+        ->setParameter('nid',$nodeid);
+        
+        $childNodes=$query->getResult();
+        
+        foreach($childNodes as $childNode)
+        {
+            $this->fixChildNodePathsRecursive($node,$childNode);
+        }
+        
+        //update maxpagenumber,minpagenumber,maxvolumenumber,minvolumenumber,haschildnodes,hastranslation of the parent node
+        $query = $entityManager->createQueryBuilder()
+        ->select('MAX(toc.MaxPageNumber) As MaxPage,MIN(toc.MinPageNumber) As MinPage,MAX(toc.MaxVolumeNumber) As MaxVolume,MIN(toc.MinVolumeNumber) As MinVolume,MAX(toc.HasTranslation) As HasTranslation,MAX(toc.allowptspage) As allowptspage')
+        ->from('App\Entity\TipitakaToc','toc')
+        ->where('toc.parentid=:nid')
+        ->getQuery()
+        ->setParameter('nid',$parentid);
+        
+        $agg=$query->getOneOrNullResult();
+        
+        $parent->setMaxPageNumber($agg["MaxPage"]);
+        $parent->setMinPageNumber($agg["MinPage"]);
+        $parent->setMaxVolumeNumber($agg["MaxVolume"]);
+        $parent->setMinVolumeNumber($agg["MinVolume"]);
+        $parent->setHaschildnodes(true);
+        $parent->setHasTranslation($agg["HasTranslation"]);
+        $parent->setAllowptspage($agg["allowptspage"]);
+        $this->persistNode($parent);
+    }
+        
+    private function fixChildNodePathsRecursive($parent,$child)
+    {
+        $entityManager = $this->getEntityManager();
+        
+        $child->setPath($parent->getPath().$child->getNodeid()."\\");
+        $child->setTextPath($parent->getTextPath().' '.$child->getTitle()."\\");
+        $this->persistNode($child);
+        
+        $query = $entityManager->createQueryBuilder()
+        ->select('toc')
+        ->from('App\Entity\TipitakaToc','toc')
+        ->where('toc.parentid=:nid')
+        ->getQuery()
+        ->setParameter('nid',$child->getNodeid());
+        
+        $childNodes=$query->getResult();
+        
+        foreach($childNodes as $childNode)
+        {
+            $this->fixChildNodePathsRecursive($child,$childNode);
+        }
+    }   
 }
 

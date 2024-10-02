@@ -454,4 +454,44 @@ class TipitakaToc
         $this->disabletranslalign = $disabletranslalign;
         return $this;
     }
+    /**
+     * @param number $MinVolumeNumber
+     */
+    public function setMinVolumeNumber($MinVolumeNumber)
+    {
+        $this->MinVolumeNumber = $MinVolumeNumber;
+    }
+
+    /**
+     * @param number $MaxVolumeNumber
+     */
+    public function setMaxVolumeNumber($MaxVolumeNumber)
+    {
+        $this->MaxVolumeNumber = $MaxVolumeNumber;
+    }
+
+    /**
+     * @param number $MinPageNumber
+     */
+    public function setMinPageNumber($MinPageNumber)
+    {
+        $this->MinPageNumber = $MinPageNumber;
+    }
+
+    /**
+     * @param number $MaxPageNumber
+     */
+    public function setMaxPageNumber($MaxPageNumber)
+    {
+        $this->MaxPageNumber = $MaxPageNumber;
+    }
+    /**
+     * @return boolean
+     */
+    public function isAllowptspage()
+    {
+        return $this->allowptspage;
+    }
+
+
 }

@@ -332,32 +332,47 @@ class TOCController extends AbstractController
                 
         $form = $this->createFormBuilder($node)
         ->add('title', TextType::class,['required' => true,'label' => false])
+        ->add('parentid', IntegerType::class,['mapped'=>false])
         ->add('IsHidden', CheckboxType::class,['label' => false,'required' => false])
         ->add('TranslationSourceID', ChoiceType::class,$sourcesOptions)
         ->add('notes', TextareaType::class,['required' => false,'label' => false])
         ->add('disableview', CheckboxType::class,['label' => false,'required' => false])
         ->add('disabletranslalign', CheckboxType::class,['label' => false,'required' => false])
         ->add('save', SubmitType::class)
+        ->add('updateparent', SubmitType::class)
         ->getForm();
         
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid())
         {           
-            $sourceid=$form->get("TranslationSourceID")->getData();
-            if($sourceid)
+            if($form->get('save')->isClicked())
             {
-                $source=$sourcesRepository->find($sourceid);
-                $node->setTranslationSourceID($source);
-            }
-            else
-            {
-                $node->setTranslationSourceID(null);
+                $sourceid=$form->get("TranslationSourceID")->getData();
+                if($sourceid)
+                {
+                    $source=$sourcesRepository->find($sourceid);
+                    $node->setTranslationSourceID($source);
+                }
+                else
+                {
+                    $node->setTranslationSourceID(null);
+                }
+                
+                $tocRepository->persistNode($node);
+                
+                $response=$this->redirectToRoute($route,['id'=>$node->getNodeid()]);
             }
             
-            $tocRepository->persistNode($node);
-            
-            $response=$this->redirectToRoute($route,['id'=>$node->getNodeid()]);
+            if($form->get('updateparent')->isClicked())
+            {
+                if($nodeid!=$form->get("parentid")->getData())
+                {
+                    $tocRepository->updateParentNodeId($nodeid,$form->get("parentid")->getData());
+                }
+                
+                $response=$this->redirectToRoute('node_edit',['nodeid'=>$node->getNodeid()]);
+            }
         }
         else 
         {
@@ -365,6 +380,8 @@ class TOCController extends AbstractController
             {
                 $form->get("TranslationSourceID")->setData($node->getTranslationSourceID()->getSourceid());
             }
+            
+            $form->get("parentid")->setData($node->getParentid());
             
             $response=$this->render('node_edit.html.twig', ['form' => $form->createView(),
                 'route'=>$route,'node'=>$node]);

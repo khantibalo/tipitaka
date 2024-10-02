@@ -8,6 +8,10 @@
 <td>{{ form_widget(form.title) }}</td>
 </tr>
 <tr>
+<td>{{ form_label(form.parentid,'Parent node') }}:</td>
+<td>{{ form_widget(form.parentid) }} {{ form_widget(form.updateparent,{'label': 'Update'}) }}</td>
+</tr>
+<tr>
 <td style="width:200px">{{ form_label(form.IsHidden,'Is hidden') }}:</td>
 <td>{{ form_widget(form.IsHidden) }}</td>
 </tr>
