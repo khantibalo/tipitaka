@@ -652,7 +652,7 @@ class CollectionController extends AbstractController
         
         //double consonant with h
         $formatted=preg_replace('/(m|n|ṇ|ñ|ṅ|s|v|l|r|y|ṃ)(h)/si', '<u>$1$2</u>', $formatted);
-        $formatted=preg_replace('/(ā|ī|ū)/si', '<b>$1</b>', $formatted);        
+        $formatted=preg_replace('/(ā|ī|ū|Ā|Ī|Ū)/si', '<b>$1</b>', $formatted);        
 
         return $formatted;
     }

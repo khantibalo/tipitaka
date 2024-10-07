@@ -588,7 +588,7 @@ class ViewController extends AbstractController
             
             $backnext=$tocRepository->getBackNextNodeWithTranslation($id);
             
-            //FIXME: this will always link to table view, hovewer, we are in translation mode and it should see
+            //FIXME: this will always link to table view, however, we are in translation mode and it should see
             //if that is available for back or next node and if it does, link to that
             
             if(sizeof($backnext)>0)
