@@ -46,7 +46,7 @@
         <ul>
         {% for tag in tags%}
         <li>
-        <a href="{{ path('toc_tags_list',{tagid: tag.tagid,tagtypeid: -1}) }}">{% if tag.paliname %} {{ tag.paliname }}{% endif %} ({{ tag.title }})</a>&nbsp;({{ tag.TagCount }})
+        <a href="{{ path('toc_tag_nodes_list',{tagid: tag.tagid}) }}">{% if tag.paliname %} {{ tag.paliname }}{% endif %} ({{ tag.title }})</a>&nbsp;({{ tag.TagCount }})
         {% if is_granted(authorRole) %}   
     	<a href="{{ path('tag_edit',{tagid: tag.tagid}) }}">({% trans %}Edit{% endtrans %})</a>	
     	<a href="{{ path('tag_names',{tagid: tag.tagid}) }}">({% trans %}Edit names{% endtrans %})</a>
