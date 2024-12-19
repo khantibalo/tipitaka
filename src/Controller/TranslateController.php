@@ -137,28 +137,35 @@ class TranslateController extends AbstractController
         if($translationid)
         {//editing existing translation
             $translation=$sentenceRepository->getTranslation($translationid);
-            $sentenceText=$translation->getSentenceId()->getSentenceText();
-            $paragraphid=$translation->getSentenceId()->getParagraphid()->getParagraphid();
-            $sourceid=$translation->getSourceId();
-            
-            $sources=$sentenceRepository->listAllSources();
-            
-            $sourceOptions=['choices'  => $sources,
-                'label' => false,
-                'expanded'=>false,
-                'multiple'=>false,
-                'required' => true,
-                'mapped' => false
-            ];  
-            
-            if(!$this->isGranted(Roles::Editor))
-            {//if you are not an editor, you can edit translation only if you are its author or is assigned to its source
-                $author=$translation->getUserid();
-                $currentUser=$this->getUser();
-                if($author->getUserid()!=$currentUser->getUserid() && $sourceid->getUserid()->getUserid()!=$currentUser->getUserid())
-                {
-                    $this->denyAccessUnlessGranted(Roles::Editor);
+            if($translation)
+            {
+                $sentenceText=$translation->getSentenceId()->getSentenceText();
+                $paragraphid=$translation->getSentenceId()->getParagraphid()->getParagraphid();
+                $sourceid=$translation->getSourceId();
+                
+                $sources=$sentenceRepository->listAllSources();
+                
+                $sourceOptions=['choices'  => $sources,
+                    'label' => false,
+                    'expanded'=>false,
+                    'multiple'=>false,
+                    'required' => true,
+                    'mapped' => false
+                ];  
+                
+                if(!$this->isGranted(Roles::Editor))
+                {//if you are not an editor, you can edit translation only if you are its author or is assigned to its source
+                    $author=$translation->getUserid();
+                    $currentUser=$this->getUser();
+                    if($author->getUserid()!=$currentUser->getUserid() && $sourceid->getUserid()->getUserid()!=$currentUser->getUserid())
+                    {
+                        $this->denyAccessUnlessGranted(Roles::Editor);
+                    }
                 }
+            }
+            else 
+            {
+                return new Response('translation not found', 404);
             }
         }
         
@@ -166,25 +173,32 @@ class TranslateController extends AbstractController
         {//adding new translation
             $translation=new TipitakaSentenceTranslations();
             $sentence=$sentenceRepository->find($sentenceid);
-            $sentenceText=$sentence->getSentenceText();
-            $paragraphid=$sentence->getParagraphid()->getParagraphid();
-            
-            if($sourceid)
+            if($sentence)
             {
-                $sources=$sentenceRepository->listAllSources();
+                $sentenceText=$sentence->getSentenceText();
+                $paragraphid=$sentence->getParagraphid()->getParagraphid();
+                
+                if($sourceid)
+                {
+                    $sources=$sentenceRepository->listAllSources();
+                }
+                else 
+                {
+                    $sources=$sentenceRepository->listSources($sentenceid);
+                }
+                
+                $sourceOptions=['choices'  => $sources,
+                    'label' => false,
+                    'expanded'=>false,
+                    'multiple'=>false,
+                    'required' => true,
+                    'mapped' => false
+                ];    
             }
-            else 
+            else
             {
-                $sources=$sentenceRepository->listSources($sentenceid);
+                return new Response('sentence not found', 404); 
             }
-            
-            $sourceOptions=['choices'  => $sources,
-                'label' => false,
-                'expanded'=>false,
-                'multiple'=>false,
-                'required' => true,
-                'mapped' => false
-            ];            
         }
         
         $users=$userRepository->findAllAssoc();
@@ -488,14 +502,16 @@ class TranslateController extends AbstractController
             else 
             {
                 $params=["id"=>$nodeid];
-            }                        
+            }   
+            
+            $response=$this->redirectToRoute('table_view',$params);
         }
         else 
         {
-            throw $this->createNotFoundException("not found");
+            $response=new Response('node not found', 404); 
         }
         
-        return $this->redirectToRoute('table_view',$params);
+        return $response;
     }
     
     public function translationImport($sourceid,$nodeid,TipitakaSentencesRepository $sentenceRepository,

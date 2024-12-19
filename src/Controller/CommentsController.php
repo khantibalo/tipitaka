@@ -133,7 +133,7 @@ class CommentsController  extends AbstractController
         }
         else 
         {
-            throw $this->createNotFoundException("not found");
+            $response=new Response('sentence not found', 404); 
         }
         
         return $response;
@@ -168,7 +168,7 @@ class CommentsController  extends AbstractController
         }
         else
         {
-            throw $this->createNotFoundException("not found");
+            $response=new Response('comment not found', 404); 
         }
         
         return $response;
