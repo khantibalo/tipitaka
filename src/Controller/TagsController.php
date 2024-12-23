@@ -146,13 +146,16 @@ class TagsController extends AbstractController
         }
         else 
         {        
-            if($tagid)
-            {//правка
-                $tag=$tagsRepository->find($tagid);
-                
-                $form->get("paliname")->setData($tag->getPaliname());
-                $form->get("tagtype")->setData($tag->getTagtypeid()->getTagtypeid());
-            }            
+            if (!$form->isSubmitted())
+            {
+                if($tagid)
+                {//правка
+                    $tag=$tagsRepository->find($tagid);
+                    
+                    $form->get("paliname")->setData($tag->getPaliname());
+                    $form->get("tagtype")->setData($tag->getTagtypeid()->getTagtypeid());
+                }
+            }
             
             $formView=$form->createView();
             $response=$this->render('tag_edit.html.twig',['nodeid'=>$nodeid, 'form' => $formView,'paliword'=>$paliword,
@@ -264,13 +267,16 @@ class TagsController extends AbstractController
         }
         else
         {
-            if($tagnameid)
-            {//правка
-                $tagName=$tagsRepository->getTagName($tagnameid);
-                
-                $form->get("title")->setData($tagName["title"]);
-                $form->get("language")->setData($tagName["languageid"]);
-                $tagid=$tagName["tagid"];
+            if (!$form->isSubmitted())
+            {
+                if($tagnameid)
+                {//правка
+                    $tagName=$tagsRepository->getTagName($tagnameid);
+                    
+                    $form->get("title")->setData($tagName["title"]);
+                    $form->get("language")->setData($tagName["languageid"]);
+                    $tagid=$tagName["tagid"];
+                }
             }
             
             $formView=$form->createView();

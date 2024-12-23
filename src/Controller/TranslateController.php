@@ -378,43 +378,46 @@ class TranslateController extends AbstractController
         }
         else
         {
-            if($translationid && is_null($sourceid))
+            if (!$form->isSubmitted())
             {
-                $form->get("source")->setData($translation->getSourceid()->getSourceid());
-            }
-            else
-            {
-                if($userSource && is_null($sourceid))
-                {
-                    $form->get("source")->setData($userSource["sourceid"]);                    
-                }
-            }
-            
-            if($translation)
-            {
-                $form->get("translation")->setData($translation->getTranslation());               
-                
-                if($translation->getSourceid()!=NULL)
+                if($translationid && is_null($sourceid))
                 {
                     $form->get("source")->setData($translation->getSourceid()->getSourceid());
                 }
-                
-                if($this->isGranted(Roles::Editor))
+                else
                 {
-                    if($translation->getUserid()==NULL)
+                    if($userSource && is_null($sourceid))
                     {
-                        $form->get("author")->setData($this->getUser()->getUserid());
+                        $form->get("source")->setData($userSource["sourceid"]);                    
                     }
-                    else 
-                    {
-                        $form->get("author")->setData($translation->getUserid()->getUserid());
-                    }      
                 }
-            }
-            
-            if($request->query->get('sourceid'))
-            {
-                $form->get("source")->setData($sourceid);
+                
+                if($translation)
+                {
+                    $form->get("translation")->setData($translation->getTranslation());               
+                    
+                    if($translation->getSourceid()!=NULL)
+                    {
+                        $form->get("source")->setData($translation->getSourceid()->getSourceid());
+                    }
+                    
+                    if($this->isGranted(Roles::Editor))
+                    {
+                        if($translation->getUserid()==NULL)
+                        {
+                            $form->get("author")->setData($this->getUser()->getUserid());
+                        }
+                        else 
+                        {
+                            $form->get("author")->setData($translation->getUserid()->getUserid());
+                        }      
+                    }
+                }
+                
+                if($request->query->get('sourceid'))
+                {
+                    $form->get("source")->setData($sourceid);
+                }
             }
                     
             $cancelUrl=$this->getCancelUrl($sentenceid,$translationid,$returnNodeid,$showAlign,
@@ -613,12 +616,16 @@ class TranslateController extends AbstractController
         }
         else
         {
-            if($this->isGranted(Roles::Editor))
+            if (!$form->isSubmitted())
             {
-                $form->get("author")->setData($this->getUser()->getUserid());
+                if($this->isGranted(Roles::Editor))
+                {
+                    $form->get("author")->setData($this->getUser()->getUserid());
+                }
+                
+                $form->get("paliskip")->setData(0);
             }
             
-            $form->get("paliskip")->setData(0);
             $response=$this->render('translation_import.html.twig', ['form' => $form->createView(),'nodeid'=>$nodeid]);
         }
         
@@ -863,7 +870,10 @@ class TranslateController extends AbstractController
         }
         else
         {
-            $form->get("sentencetext")->setData($sentence->getSentencetext());
+            if (!$form->isSubmitted())
+            {
+                $form->get("sentencetext")->setData($sentence->getSentencetext());
+            }
             
             $response=$this->render('sentence_edit.html.twig', ['form' => $form->createView(),
                 'cancelUrl'=>$this->generateUrl('table_view',['id'=>$node['nodeid']])

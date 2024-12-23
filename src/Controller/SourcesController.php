@@ -13,7 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\TipitakaSources;
-use App\Entity\TipitakaUsers;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class SourcesController extends AbstractController
@@ -98,18 +97,21 @@ class SourcesController extends AbstractController
         }
         else
         {
-            if($sourceid)
+            if(!$form->isSubmitted())
             {
-                $form->get("language")->setData($source->getLanguageid()->getLanguageid());
-            }
-                        
-            if($source && $source->getUserid()!=NULL)
-            {
-                $form->get("userid")->setData($source->getUserid()->getUserid());
-            }
-            else
-            {
-                $form->get("userid")->setData(-1);
+                if($sourceid)
+                {
+                    $form->get("language")->setData($source->getLanguageid()->getLanguageid());
+                }
+                            
+                if($source && $source->getUserid()!=NULL)
+                {
+                    $form->get("userid")->setData($source->getUserid()->getUserid());
+                }
+                else
+                {
+                    $form->get("userid")->setData(-1);
+                }
             }
             
             $response=$this->render('source_edit.html.twig', ['form' => $form->createView()]);

@@ -227,9 +227,12 @@ class TOCController extends AbstractController
         }
         else
         {
-            if($nodenameid)
+            if (!$form->isSubmitted())
             {
-                $form->get("language")->setData($nodename->getLanguageid()->getLanguageid());
+                if($nodenameid)
+                {
+                    $form->get("language")->setData($nodename->getLanguageid()->getLanguageid());
+                }
             }
             
             $formView=$form->createView();
@@ -376,12 +379,15 @@ class TOCController extends AbstractController
         }
         else 
         {
-            if($node->getTranslationSourceID())
+            if (!$form->isSubmitted())
             {
-                $form->get("TranslationSourceID")->setData($node->getTranslationSourceID()->getSourceid());
+                if($node->getTranslationSourceID())
+                {
+                    $form->get("TranslationSourceID")->setData($node->getTranslationSourceID()->getSourceid());
+                }
+                
+                $form->get("parentid")->setData($node->getParentid());
             }
-            
-            $form->get("parentid")->setData($node->getParentid());
             
             $response=$this->render('node_edit.html.twig', ['form' => $form->createView(),
                 'route'=>$route,'node'=>$node]);
