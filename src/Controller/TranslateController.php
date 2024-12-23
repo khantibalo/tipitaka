@@ -698,32 +698,39 @@ class TranslateController extends AbstractController
     {        
         $node=$sentenceRepository->getNodeIdByTranslationId($translationid);
         $translation=$sentenceRepository->getTranslation($translationid);
-        $sentence=$translation->getSentenceid();
-        $sentenceid=$sentence->getSentenceid();
-        $source=$translation->getSourceid();
-        $author=$translation->getUserid();
-        
-        if($this->isGranted(Roles::Author))
-        {            
-            $currentUser=$this->getUser();
-            if($author->getUserid()!=$currentUser->getUserid())
-            {
-                $this->denyAccessUnlessGranted(Roles::Editor);
+        if($translation)
+        {
+            $sentence=$translation->getSentenceid();
+            $sentenceid=$sentence->getSentenceid();
+            $source=$translation->getSourceid();
+            $author=$translation->getUserid();
+            
+            if($this->isGranted(Roles::Author))
+            {            
+                $currentUser=$this->getUser();
+                if($author->getUserid()!=$currentUser->getUserid())
+                {
+                    $this->denyAccessUnlessGranted(Roles::Editor);
+                }
             }
+            
+    	    $sentenceRepository->translationShiftDown($translationid);    
+    	    
+    	    if(!$this->isGranted(Roles::Editor))
+    	    {
+    	        $translation=new TipitakaSentenceTranslations();
+    	        $translation->setSourceid($source);
+    	        $translation->setUserid($author);
+    	        $translation->setDateupdated(new \DateTime());
+    	        $translation->setSentenceid($sentence);
+    	        $translation->setTranslation('');    
+    	        $sentenceRepository->persistTranslation($translation);
+    	    }
         }
-        
-	    $sentenceRepository->translationShiftDown($translationid);    
-	    
-	    if(!$this->isGranted(Roles::Editor))
-	    {
-	        $translation=new TipitakaSentenceTranslations();
-	        $translation->setSourceid($source);
-	        $translation->setUserid($author);
-	        $translation->setDateupdated(new \DateTime());
-	        $translation->setSentenceid($sentence);
-	        $translation->setTranslation('');    
-	        $sentenceRepository->persistTranslation($translation);
-	    }
+        else 
+        {
+            $sentenceid=0;
+        }
 	    
 	    return $this->redirectToRoute('table_view', ["id"=>$node['nodeid'],'showAlign'=>'yes','_fragment' => "sent$sentenceid"]);        
     }
@@ -732,19 +739,26 @@ class TranslateController extends AbstractController
     {
 	    $node=$sentenceRepository->getNodeIdByTranslationId($translationid);
 	    $translation=$sentenceRepository->getTranslation($translationid);
-	    $sentenceid=$translation->getSentenceid()->getSentenceid();
-	    
-	    if($this->isGranted(Roles::Author))
+	    if($translation)
 	    {
-	        $author=$translation->getUserid();
-	        $currentUser=$this->getUser();
-	        if($author->getUserid()!=$currentUser->getUserid())
-	        {
-	            $this->denyAccessUnlessGranted(Roles::Editor);
-	        }
+    	    $sentenceid=$translation->getSentenceid()->getSentenceid();
+    	    
+    	    if($this->isGranted(Roles::Author))
+    	    {
+    	        $author=$translation->getUserid();
+    	        $currentUser=$this->getUser();
+    	        if($author->getUserid()!=$currentUser->getUserid())
+    	        {
+    	            $this->denyAccessUnlessGranted(Roles::Editor);
+    	        }
+    	    }
+    	    
+            $sentenceRepository->translationShiftUp($translationid);
 	    }
-	    
-        $sentenceRepository->translationShiftUp($translationid);        
+	    else 
+	    {
+	        $sentenceid=1;
+	    }
         
         return $this->redirectToRoute('table_view', ["id"=>$node['nodeid'],'showAlign'=>'yes','_fragment' => "sent".($sentenceid-1)]);  
     }
