@@ -39,7 +39,7 @@ to the vitrual directory configuration section.
 
 Ensure that `var` folder is writable (or is owned by) the web server account, especially if you use apache. I had to run this to make it work on apache:
 
-    sudo chown -R www-data:www-data var
+    sudo chown -R www-data:www-data /var/www/html
 
 5\. If you want to start a production instance, run
  
