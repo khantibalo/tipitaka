@@ -697,70 +697,88 @@ class TranslateController extends AbstractController
     public function shiftDown($translationid,TipitakaSentencesRepository $sentenceRepository)
     {        
         $node=$sentenceRepository->getNodeIdByTranslationId($translationid);
-        $translation=$sentenceRepository->getTranslation($translationid);
-        if($translation)
+        if($node)
         {
-            $sentence=$translation->getSentenceid();
-            $sentenceid=$sentence->getSentenceid();
-            $source=$translation->getSourceid();
-            $author=$translation->getUserid();
-            
-            if($this->isGranted(Roles::Author))
-            {            
-                $currentUser=$this->getUser();
-                if($author->getUserid()!=$currentUser->getUserid())
-                {
-                    $this->denyAccessUnlessGranted(Roles::Editor);
+            $translation=$sentenceRepository->getTranslation($translationid);
+            if($translation)
+            {
+                $sentence=$translation->getSentenceid();
+                $sentenceid=$sentence->getSentenceid();
+                $source=$translation->getSourceid();
+                $author=$translation->getUserid();
+                
+                if($this->isGranted(Roles::Author))
+                {            
+                    $currentUser=$this->getUser();
+                    if($author->getUserid()!=$currentUser->getUserid())
+                    {
+                        $this->denyAccessUnlessGranted(Roles::Editor);
+                    }
                 }
+                
+        	    $sentenceRepository->translationShiftDown($translationid);    
+        	    
+        	    if(!$this->isGranted(Roles::Editor))
+        	    {
+        	        $translation=new TipitakaSentenceTranslations();
+        	        $translation->setSourceid($source);
+        	        $translation->setUserid($author);
+        	        $translation->setDateupdated(new \DateTime());
+        	        $translation->setSentenceid($sentence);
+        	        $translation->setTranslation('');    
+        	        $sentenceRepository->persistTranslation($translation);
+        	    }
             }
-            
-    	    $sentenceRepository->translationShiftDown($translationid);    
+            else 
+            {
+                $sentenceid=0;
+            }
     	    
-    	    if(!$this->isGranted(Roles::Editor))
-    	    {
-    	        $translation=new TipitakaSentenceTranslations();
-    	        $translation->setSourceid($source);
-    	        $translation->setUserid($author);
-    	        $translation->setDateupdated(new \DateTime());
-    	        $translation->setSentenceid($sentence);
-    	        $translation->setTranslation('');    
-    	        $sentenceRepository->persistTranslation($translation);
-    	    }
+            $response=$this->redirectToRoute('table_view', ["id"=>$node['nodeid'],'showAlign'=>'yes','_fragment' => "sent$sentenceid"]);
         }
         else 
         {
-            $sentenceid=0;
+            $response=new Response('node not found', 404);
         }
-	    
-	    return $this->redirectToRoute('table_view', ["id"=>$node['nodeid'],'showAlign'=>'yes','_fragment' => "sent$sentenceid"]);        
+        
+        return $response;
     }
     
     public function shiftUp($translationid,TipitakaSentencesRepository $sentenceRepository)
     {
 	    $node=$sentenceRepository->getNodeIdByTranslationId($translationid);
-	    $translation=$sentenceRepository->getTranslation($translationid);
-	    if($translation)
+	    if($node)
 	    {
-    	    $sentenceid=$translation->getSentenceid()->getSentenceid();
-    	    
-    	    if($this->isGranted(Roles::Author))
+    	    $translation=$sentenceRepository->getTranslation($translationid);
+    	    if($translation)
     	    {
-    	        $author=$translation->getUserid();
-    	        $currentUser=$this->getUser();
-    	        if($author->getUserid()!=$currentUser->getUserid())
-    	        {
-    	            $this->denyAccessUnlessGranted(Roles::Editor);
-    	        }
+        	    $sentenceid=$translation->getSentenceid()->getSentenceid();
+        	    
+        	    if($this->isGranted(Roles::Author))
+        	    {
+        	        $author=$translation->getUserid();
+        	        $currentUser=$this->getUser();
+        	        if($author->getUserid()!=$currentUser->getUserid())
+        	        {
+        	            $this->denyAccessUnlessGranted(Roles::Editor);
+        	        }
+        	    }
+        	    
+                $sentenceRepository->translationShiftUp($translationid);
     	    }
-    	    
-            $sentenceRepository->translationShiftUp($translationid);
+    	    else 
+    	    {
+    	        $sentenceid=1;
+    	    }
+            
+    	    $response=$this->redirectToRoute('table_view', ["id"=>$node['nodeid'],'showAlign'=>'yes','_fragment' => "sent".($sentenceid-1)]);
 	    }
 	    else 
 	    {
-	        $sentenceid=1;
+	        $response=new Response('node not found', 404);
 	    }
-        
-        return $this->redirectToRoute('table_view', ["id"=>$node['nodeid'],'showAlign'=>'yes','_fragment' => "sent".($sentenceid-1)]);  
+	    
+	    return $response;
     }
     
     public function translationsFeed(NativeRepository $nativeRepository)
