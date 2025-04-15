@@ -1,9 +1,6 @@
 {% extends 'base.html.twig' %}
 {% set showT=false %}
 {% block title %}{{ paragraph.nodetitle }}{% endblock %}
-{% block navigation %}
-{{ include('_navigation.html.twig') }}
-{% endblock %}
 {% block content %}
 {{ include('_translation_node_path.html.twig') }}
 {% if sentences|length>0 %}

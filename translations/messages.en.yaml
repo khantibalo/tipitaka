@@ -250,4 +250,7 @@ Introduction: >
 Title language: Title language
 Weight note: light items go up, heavy items sink down
 Parent node: Parent node
+ui_desktop: PC layout
+ui_mobile: Mobile device layout
+
    

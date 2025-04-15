@@ -11,7 +11,11 @@
     </head>
     <body>
         {% block navigation %}
-        {{ include('_navigation.html.twig') }}
+        {% if app.request.cookies.get('mobile')=="1" %}
+        	{{ include('_navigation_mobile.html.twig') }}
+        {% else %}
+        	{{ include('_navigation.html.twig') }}
+        {% endif %}
         {% endblock %}
         {% block content %}{% endblock %}
         {% block javascripts %}{% endblock %}

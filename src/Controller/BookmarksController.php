@@ -106,7 +106,6 @@ class BookmarksController extends AbstractController
             }
         }
         
-        
         return $this->render('bookmarks.html.twig',
             ['bookmarks'=>$bookmarks,'bs'=>$bookmarks_str]);
     }

@@ -1,11 +1,6 @@
 {% extends 'base.html.twig' %}
 {% set showT=false %}
 {% block title %}{{ paragraph.nodetitle }}{% endblock %}
-{% block navigation %}
-{% if view_settings.printview is empty %}
-{{ include('_navigation.html.twig') }}
-{% endif %}
-{% endblock %}
 {% block content %}
 {% if view_settings.printview is empty %}
 {{ include('_translation_node_path.html.twig') }}

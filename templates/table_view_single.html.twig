@@ -1,9 +1,6 @@
 {% extends 'base.html.twig' %}
 {% set showT=false %}
 {% block title %}{{ node.trname ?? node.title }}{% endblock %}
-{% block navigation %}
-{{ include('_navigation.html.twig') }}
-{% endblock %}
 {% block content %}
 <div>
 {{ include('_translation_node_path.html.twig') }}

@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+{% set showT=false %}
+{% block title %}{{ node.trname ?? node.title }}{% endblock %}
+{% block content %}
+<div>
+{{ include('_translation_node_path.html.twig') }}
+</div>
+{% if node.notes %}
+<br>{{ node.notes|raw }}
+{% endif %}
+{{ include('_back_next_navigation.html.twig') }}
+{{ include('_related_nodes.html.twig') }}
+{{ include('_column_view.html.twig') }}
+<p class="{{ node.typename }}">{{ node.trname ?? node.title }}
+{% if node.TranslationSourceID %}<a href="{{ path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
+    <a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}original{% endtrans %}</a>   
+</p>
+{% if sentences|length>0 %}
+{% set colWidth=90/(sources|length+(showPali ? 1 : 0)) %}
+    {% for sentence in sentences %}
+    	{% if showPali %}
+        	<p style="font-size:Larger"><a name="sent{{ sentence.sentenceid }}"></a>
+{{ sentence.sentencetext }}            
+	        </p>
+        {% endif %}
+        {% if sources|length>0 %}
+            {% for source in sources %}
+            <p>
+                {% set translation=translations|filter(t=>t.sentenceid==sentence.sentenceid and t.sourceid==source.sourceid)|first %}
+                {% if translation %}
+                	<span id="et{{ translation.sentencetranslationid }}">{{ source.hasformatting ? translation.translation|raw : translation.translation }}</span>
+                {% else %}
+                {% endif %}
+            </p>
+            {% endfor %}
+        {% endif %}
+        {% if showComments %}
+			<p>
+			{% if sentence.commentcount>0 %}
+			    {{ sentence.lastcomment }}<br>
+				<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+			{% else %}
+			{% endif %}
+			</p>
+		{% endif %}      
+    {% endfor %}
+	{% endif %}  
+	<div>
+	{% if tags|length>0 %}		
+		{% trans %}Tags{% endtrans %}:
+	    {% for tag in tags %}
+	        <a href="{{ path('toc_tag_nodes_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>&nbsp;
+	    {% endfor %}
+	{% endif %}	
+	</div>
+{{ include('_back_next_navigation.html.twig') }}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}

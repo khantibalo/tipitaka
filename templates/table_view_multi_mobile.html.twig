@@ -5,16 +5,6 @@
 <div>
 {{ include('_translation_node_path.html.twig') }}
 </div>
-{% if is_granted(userRole) %}
-    <div>
-    {% trans %}code link{% endtrans %} 
-    {% if showCode %}
-    	<a href="{{ path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
-    {% else %}
-    	{% trans %}hide{% endtrans %} <a href="{{ path('table_view',{id : node.nodeid,showCode : 'yes'}) }}">{% trans %}show{% endtrans %}</a>
-    {% endif %}
-    </div>
-{% endif %} 
 {% if node.notes %}
 <br>{{ node.notes|raw }}
 {% endif %}
@@ -34,44 +24,26 @@
 </p>
 {% if immediate_sentences|length>0 or child_sentences|length>0 %}
 {% set colWidth=90/(sources|length+(showPali ? 1 : 0)) %}
-    <table class="bordercell" style="width:100%">
-    <tr>
-    {% if showPali %}<td style="width:{{ colWidth }}%">{% trans %}Pali{% endtrans %}</td>{% endif %}
-    {% if sources|length>0 %}
-        {% for source in sources %}
-        	<td style="width:{{ colWidth }}%">{{ source.sourcename }} - {{ source.languagename }}</td>
-        {% endfor %}
-    {% endif %}
-    {% if showComments %}<td>{% trans %}Comments{% endtrans %}</td>{% endif %}
-    </tr>
+    {% if showComments %}<p>{% trans %}Comments{% endtrans %}</p>{% endif %}
     {% for sentence in immediate_sentences %}
-        {{ include('_table_view_row.html.twig') }}
+        {{ include('_table_view_row_mobile.html.twig') }}
     {% endfor %}
-    {% for child_node in child_nodes %}
-        <tr>
-        <td colspan="{{ sources|length + 2 }}">
-        <a name="{{ child_node.nodeid }}"></a>
-        <p class="{{ child_node.typename }}">{{ child_node.trname ?? child_node.title }}
+    {% for child_node in child_nodes %}        
+        <p class="{{ child_node.typename }}"><a name="{{ child_node.nodeid }}"></a>{{ child_node.trname ?? child_node.title }}
         {% if child_node.HasTableView %}<a href="{{ path('table_view',{id: child_node.nodeid}) }}">{% trans %}Table view{% endtrans %}</a>{% endif %}
         {% if child_node.TranslationSourceID %}<a href="{{ path('translation_view', {id: child_node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
     		<a href="{{ path('view_node', {id: child_node.nodeid}) }}">{% trans %}original{% endtrans %}</a>
         </p>
-        </td>
-        </tr>
         {% for sentence in child_sentences|filter(s=>s.nodeid==child_node.nodeid) %}
-        {{ include('_table_view_row.html.twig') }}
+        {{ include('_table_view_row_mobile.html.twig') }}
         {% endfor %}
     {% endfor %}
-    </table> 
 	{% if tags|length>0 %}
 		<div>
 		{% trans %}Tags{% endtrans %}:
 	    {% for tag in tags %}
 	        <a href="{{ path('toc_tag_nodes_list', {tagid: tag.tagid}) }}">{{ tag.title }}</a>&nbsp;
 	    {% endfor %}
-	    {% if is_granted(authorRole) %}
-	    &nbsp;<a href="{{ path('node_tags',{nodeid: node.nodeid }) }}">({% trans %}Edit tags{% endtrans %})</a>
-	    {% endif %}
 		</div>
 	{% endif %}	    
 {% endif %}    
@@ -79,7 +51,4 @@
 {% endblock %}
 {% block javascripts %}
     {% set showAlign=false %}
-    {% if is_granted(authorRole) %}
-        {{ include('_quick_edit_scripts.html.twig') }}
-    {% endif %}
 {% endblock %}

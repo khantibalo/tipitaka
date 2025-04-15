@@ -1,0 +1,34 @@
+	{% if showPali %}
+	    <p style="font-size:Larger">
+	    <a name="sent{{ sentence.sentenceid }}"></a> 
+	    {{ sentence.sentencetext }}
+	    </p>
+    {% endif %}
+    {% if sources|length>0 %}
+        {% for source in sources %}
+        	<p>
+            {% set translation=translations|filter(t=>t.sentenceid==sentence.sentenceid and t.sourceid==source.sourceid)|first %}
+            {% if translation %}
+            <span id="et{{ translation.sentencetranslationid }}">{{ source.hasformatting ? translation.translation|raw : translation.translation  }}</span>
+            	{% if is_granted(userRole) %}
+                  	<span id="ec{{ translation.sentencetranslationid }}">
+                	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>            	                           
+                	</span>
+                {% endif %}
+            {% else %}
+            {% endif %}
+        </p>
+        {% endfor %}
+    {% endif %}
+    {% if showComments %}
+		<td>
+		{% if sentence.commentcount>0 %}
+		    {{ sentence.lastcomment }}<br>
+			<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+		{% else %}
+		    {% if is_granted(userRole) %}
+				<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}Add new comment{% endtrans %}</a>
+			{% endif %}
+		{% endif %}
+		</td>
+	{% endif %}          

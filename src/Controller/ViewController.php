@@ -366,7 +366,9 @@ class ViewController extends AbstractController
         
         $tags=$tagsRepository->listByOneNodeId($nodeid,$request->getLocale());       
                 
-        $response=$this->render('table_view_single.html.twig', ['node'=>$node,'path_nodes'=>$path_nodes,
+        $template=$request->cookies->get("mobile")=="1" ? "table_view_single_mobile.html.twig" : "table_view_single.html.twig";
+        
+        $response=$this->render($template, ['node'=>$node,'path_nodes'=>$path_nodes,
             'sentences'=>$sentences,'translations'=>$translations,'sources'=>$filteredSources,'back_id'=>$back_id,
             'next_id'=>$next_id,'showNewSource'=>$request->query->get('showNewSource'),
             'showCode'=>$request->query->get('showCode'),'authorRole'=>Roles::Author,
@@ -424,8 +426,9 @@ class ViewController extends AbstractController
                 $next_id=$backnext[0]['Next'];
             }
         }
-                
-        $response=$this->render('table_view_multi.html.twig', ['node'=>$node,'path_nodes'=>$path_nodes,
+
+        $template=$request->cookies->get("mobile")=="1" ? 'table_view_multi_mobile.html.twig' : 'table_view_multi.html.twig';
+        $response=$this->render($template, ['node'=>$node,'path_nodes'=>$path_nodes,
             'child_sentences'=>$child_sentences,'translations'=>$translations,'sources'=>$filteredSources,
             'showCode'=>$request->query->get('showCode'),'authorRole'=>Roles::Author,
             'userRole'=>Roles::User,'child_nodes'=>$child_nodes,'immediate_sentences'=>$immediate_sentences,
@@ -567,7 +570,7 @@ class ViewController extends AbstractController
         TipitakaSentencesRepository $sentencesRepository,TipitakaParagraphsRepository $paragraphsRepository,
         TipitakaSourcesRepository $sourcesRepository,TipitakaTagsRepository $tagsRepository)
     {
-        //view и bookmark links are initially hidden, but it is possible to show them
+        //view and bookmark links are initially hidden, but it is possible to show them
         //this will show a translation from the source that is specified in node edit form
         $node=$tocRepository->getNodeWithNameTranslation($id,$request->getLocale());
                         

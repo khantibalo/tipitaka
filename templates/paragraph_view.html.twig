@@ -3,7 +3,11 @@
 {% block title %}{{ paragraph.nodetitle }}{% endblock %}
 {% block navigation %}
 {% if view_settings.printview is empty %}
-{{ include('_navigation.html.twig') }}
+        {% if app.request.cookies.get('mobile')=="1" %}
+        	{{ include('_navigation_mobile.html.twig') }}
+        {% else %}
+        	{{ include('_navigation.html.twig') }}
+        {% endif %}
 {% endif %}
 {% endblock %}
 {% block content %}

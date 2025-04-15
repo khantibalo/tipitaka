@@ -428,6 +428,10 @@ redir_node_pali:
     requirements:   
         id: '\d+'
 
+mobile_ui:
+    path: /mobile 
+    controller: App\Controller\DefaultController::setMobile    
+
 #not all redirects could be implemented here.
 #some, e.g. index.php?NodeID=X can only be implemented on the web server side
 
