@@ -18,31 +18,33 @@
 {% if sentences|length>0 %}
 {% set colWidth=90/(sources|length+(showPali ? 1 : 0)) %}
     {% for sentence in sentences %}
+    	<p>
     	{% if showPali %}
-        	<p style="font-size:Larger"><a name="sent{{ sentence.sentenceid }}"></a>
+        	<span style="display: block;font-size:Larger"><a name="sent{{ sentence.sentenceid }}"></a>
 {{ sentence.sentencetext }}            
-	        </p>
+	        </span>
         {% endif %}
         {% if sources|length>0 %}
             {% for source in sources %}
-            <p>
+            <span style="display: block;">
                 {% set translation=translations|filter(t=>t.sentenceid==sentence.sentenceid and t.sourceid==source.sourceid)|first %}
                 {% if translation %}
                 	<span id="et{{ translation.sentencetranslationid }}">{{ source.hasformatting ? translation.translation|raw : translation.translation }}</span>
                 {% else %}
                 {% endif %}
-            </p>
+            </span>
             {% endfor %}
         {% endif %}
         {% if showComments %}
-			<p>
+			<span style="display: block;font-size: small">
 			{% if sentence.commentcount>0 %}
 			    {{ sentence.lastcomment }}<br>
 				<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
 			{% else %}
 			{% endif %}
-			</p>
-		{% endif %}      
+			</span>
+		{% endif %}   
+		</p>   
     {% endfor %}
 	{% endif %}  
 	<div>

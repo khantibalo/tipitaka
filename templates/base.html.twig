@@ -3,10 +3,13 @@
     <head>
         <meta charset="UTF-8">
         {% block meta %}{% endblock %}
-        <title>{% block title %}{% endblock %}</title>
+        	<title>{% block title %}{% endblock %}</title>
         {% block stylesheets %}
-        <link href="{{ asset('styles.css') }}" rel="stylesheet"/>
-        <link href="{{ asset('favicon.png') }}" rel="shortcut icon"/>
+	        <link href="{{ asset('styles.css') }}" rel="stylesheet"/>
+	        <link href="{{ asset('favicon.png') }}" rel="shortcut icon"/>
+	        {% if app.request.cookies.get('mobile')=="1" %}
+	        <meta name="viewport" content="width=device-width, initial-scale=1">
+	        {% endif %}
         {% endblock %}
     </head>
     <body>
