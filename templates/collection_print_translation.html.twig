@@ -1,6 +1,6 @@
 {% extends 'collection_print.html.twig' %}
 {% block stylesheets %}
-<link href="{{ asset('styles.css') }}" rel="stylesheet"/>
+<link href="{{ absolute_url(asset('styles.css')) }}" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
 {% if shownav %}
