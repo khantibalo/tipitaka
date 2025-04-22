@@ -249,9 +249,10 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment')
+        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,pt.name as paragraphTypeName')
         ->from('App\Entity\TipitakaSentences','s')
         ->innerJoin('s.paragraphid','c')
+        ->innerJoin('c.paragraphtypeid', 'pt')
         ->innerJoin('c.nodeid', 'toc')
         ->where('toc.nodeid=:id')
         ->orderBy('c.paragraphid,s.sentenceid')
@@ -929,9 +930,10 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,toc.nodeid')
+        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,toc.nodeid,pt.name as paragraphTypeName')
         ->from('App\Entity\TipitakaSentences','s')
         ->innerJoin('s.paragraphid','c')
+        ->innerJoin('c.paragraphtypeid','pt')
         ->innerJoin('c.nodeid', 'toc')
         ->where('toc.nodeid=:id')
         ->orWhere('toc.path LIKE :path ')

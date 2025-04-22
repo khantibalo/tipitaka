@@ -62,7 +62,7 @@
     {% endif %} 
     </tr>
     {% for sentence in sentences %}
-    <tr>
+    <tr class="t_{{ sentence.paragraphTypeName }}">
     	{% if showPali %}
         	<td style="vertical-align: top;"><a name="sent{{ sentence.sentenceid }}"></a>
 {% if is_granted(editorRole) and showAlign %}{{ loop.index }} : {% endif %}
