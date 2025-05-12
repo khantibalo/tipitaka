@@ -207,6 +207,8 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         ->innerJoin('c.nodeid', 'toc')
         ->where('toc.nodeid=:nodeid')
         ->andWhere('s.sentenceid IN(:limitrows)')
+        ->addOrderBy('c.paragraphid')
+        ->addOrderBy('s.sentenceid')
         ->getQuery()
         ->setParameter('nodeid', $nodeid)
         ->setParameter('limitrows', explode(',',$limitrows));
