@@ -24,6 +24,7 @@
 		{% else %} 
 			<h{{collectionItem.level}}>{{ collectionItem.colItemName }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
 		{% endif %}
+		{{ collectionItem.notes }}
 		<p></p>
 		{% if collectionItem.nodeid %}	
 			{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
@@ -37,5 +38,6 @@
 				</p>
 			{% endfor %}
 		{% endif %}
+		{{ collectionItem.notesBottom }}
 	{% endfor %}
 {% endblock %}

@@ -1,0 +1,42 @@
+<table style="width:100%;">
+<tr>
+<td style="text-align:center;width:50%">
+{% set isTranslation= tocPage is defined and tocPage=='translation' %}
+{% if not isTranslation %}
+    {% if thisNode is defined and thisNode.HasTranslation  %}
+    <a href="{{ path('translation_toc_node', {id: thisNode.nodeid}) }}">
+    {% else %}
+    <a href="{{ path('toc') }}">
+    {% endif %} 
+{% endif %}    	
+{% trans %}TranslationToc{% endtrans %}
+{% if not isTranslation %}</a>{% endif %}
+</td>
+<td style="text-align:center;width:50%">
+{% set isTags= tocPage is defined and tocPage=='tags' %}
+{% if not isTags %}<a href="{{ path('toc_tag_types_list') }}">{% endif %}    	
+{% trans %}Tags{% endtrans %}
+{% if not isTags %}</a>{% endif %}
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width:50%">
+{% set isCollections= tocPage is defined and tocPage=='collections' %}
+{% if not isCollections %}<a href="{{ path('collections_list') }}">{% endif %}    	
+{% trans %}Collections{% endtrans %}
+{% if not isCollections %}</a>{% endif %}
+</td>
+<td style="text-align:center;width:50%">
+{% set isFull= tocPage is defined and tocPage=='full' %}
+{% if not isFull %}
+    {% if thisNode is defined  %}
+    <a href="{{ path('full_toc_node', {id: thisNode.nodeid}) }}">
+    {% else %}
+    <a href="{{ path('full_toc') }}">
+    {% endif %} 
+{% endif %}    	
+{% trans %}FullToc{% endtrans %}
+{% if not isFull %}</a>{% endif %}
+</td>
+</tr>
+</table>

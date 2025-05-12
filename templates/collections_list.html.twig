@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 {% set tocPage='collections' %}
-{{ include('_toc_navigation.html.twig') }}
+{{ include(app.request.cookies.get('mobile') ? '_toc_navigation_mobile.html.twig' : '_toc_navigation.html.twig') }}
 {% if is_granted(editorRole) %}   
 <a href="{{ path('collection_edit') }}">{% trans %}New collection{% endtrans %}</a>
 {% endif %} 

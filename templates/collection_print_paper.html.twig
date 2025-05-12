@@ -25,6 +25,7 @@
 			{% else %} 
 				<h{{collectionItem.level}} style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:20pt;{{collectionItem.level==1 ? 'border: solid thin black;page-break-before: always;' : 'text-decoration: underline;'}}">{{ collectionItem.colItemName }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
 			{% endif %}	
+			{{ collectionItem.notes }}
 			<p style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:19pt;margin-bottom:0;margin-top:0"></p>
 			{% if collectionItem.nodeid %}	
 				{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
@@ -57,6 +58,7 @@
 					{% endfor %}
 				{% endfor %}
 			{% endif %}
+			{{ collectionItem.notesBottom }}
 		{% endfor %}
 
 {% endblock %}

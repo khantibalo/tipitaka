@@ -446,6 +446,8 @@ class CollectionController extends AbstractController
         ->add('hidetitleprint', CheckboxType::class,['label' => false,'required' => false])
         ->add('hidepalinameprint', CheckboxType::class,['label' => false,'required' => false])
         ->add('vieworder', IntegerType::class,['required' => true])
+        ->add('notes', TextareaType::class,['required' => false,'label' => false])
+        ->add('notesBottom', TextareaType::class,['required' => false,'label' => false])
         ->add('level', IntegerType::class,['required' => true])
         ->add('save', SubmitType::class);
         
@@ -482,7 +484,9 @@ class CollectionController extends AbstractController
                 $item->setHidetitleprint($form->get("hidetitleprint")->getData());
                 $item->setHidepalinameprint($form->get("hidepalinameprint")->getData());
                 $item->setVieworder($form->get("vieworder")->getData());
-                $item->setLevel($form->get("level")->getData());                
+                $item->setLevel($form->get("level")->getData());       
+                $item->setNotes($form->get("notes")->getData());
+                $item->setNotesBottom($form->get("notesBottom")->getData());
                 
                 $collectionsRepository->updateCollectionItem($item);                
             }
@@ -518,7 +522,9 @@ class CollectionController extends AbstractController
                 $form->get("nodeid")->setData($item->getNodeid()->getNodeid());
                 $form->get("limitrows")->setData($item->getLimitrows());
                 $form->get("hidetitleprint")->setData($item->getHidetitleprint());
-                $form->get("hidepalinameprint")->setData($item->getHidepalinameprint());                
+                $form->get("hidepalinameprint")->setData($item->getHidepalinameprint());     
+                $form->get("notes")->setData($item->getNotes());
+                $form->get("notesBottom")->setData($item->getNotesBottom());
             }
             
             $formView=$form->createView();

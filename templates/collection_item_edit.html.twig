@@ -20,6 +20,14 @@
 <td>{{ form_widget(form.vieworder) }}{% trans %}Weight note{% endtrans %}</td>
 </tr>
 <tr>
+<td style="width:200px">{{ form_label(form.notes, 'Notes') }}:</td>
+<td>{{ form_widget(form.notes,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}</td>
+</tr>
+<tr>
+<td style="width:200px">{{ form_label(form.notesBottom, 'NotesBottom') }}:</td>
+<td>{{ form_widget(form.notesBottom,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}</td>
+</tr>
+<tr>
 <td>{{ form_label(form.hidetitleprint,'hide title in print view') }}:</td>
 <td>{{ form_widget(form.hidetitleprint) }}</td>
 </tr>

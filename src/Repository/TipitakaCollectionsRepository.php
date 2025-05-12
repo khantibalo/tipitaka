@@ -113,7 +113,7 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         ->andWhere('ci.collectionitemid=cin2.collectionitemid');
                 
         $query = $entityManager->createQueryBuilder()
-        ->select('ci.collectionitemid,ci.vieworder,ci.level,toc.nodeid,toc.HasTableView,so.sourceid as TranslationSourceID,ci.parentid,toc.title,ci.limitrows,ci.hidetitleprint,ci.hidepalinameprint')
+        ->select('ci.collectionitemid,ci.vieworder,ci.level,toc.nodeid,toc.HasTableView,so.sourceid as TranslationSourceID,ci.parentid,toc.title,ci.limitrows,ci.hidetitleprint,ci.hidepalinameprint,ci.notes,ci.notesBottom')
         ->addSelect('('.$nodeNameSubQuery->getDQL().') AS nodeName')
         ->addSelect('('.$colItemNameSubQuery->getDQL().') AS colItemName')
         ->addSelect('('.$altPaliNameSubQuery->getDQL().') AS altPaliName')

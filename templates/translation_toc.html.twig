@@ -3,7 +3,7 @@
 {% block title %}{% trans %}Table of contents{% endtrans %}{% endblock %}
 {% block content %}
 {% set tocPage='translation' %}
-{{ include('_toc_navigation.html.twig') }}
+{{ include(app.request.cookies.get('mobile') ? '_toc_navigation_mobile.html.twig' : '_toc_navigation.html.twig') }}
 <div><a href="{{ path('toc') }}">{% trans %}Top{% endtrans %}</a></div>
 {% set level = 1 %}
 {% if path_nodes is defined %}

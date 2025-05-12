@@ -96,7 +96,12 @@ class TipitakaCollectionItems
      * @ORM\Column(name="default_view", type="integer", nullable=false)
      */
     private $defaultview='1';
-    
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="notes_bottom", type="text", length=65535, nullable=true)
+     */
+    private $notesBottom;
     
 
     public function getCollectionitemid(): ?int
@@ -220,6 +225,18 @@ class TipitakaCollectionItems
     public function setDefaultview(int $defaultview): self
     {
         $this->defaultview = $defaultview;
+        
+        return $this;
+    }
+    
+    public function getNotesBottom(): ?string
+    {
+        return $this->notesBottom;
+    }
+    
+    public function setNotesBottom(?string $notesBottom): static
+    {
+        $this->notesBottom = $notesBottom;
         
         return $this;
     }

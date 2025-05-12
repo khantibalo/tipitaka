@@ -126,7 +126,7 @@ Translation to this language already exists: Перевод на этот язы
 Exclude from search: Исключить из поиска
 Contains formatting: Содержит форматирование
 Update: Обновить
-Notes: Примечание (показывается над таблицей и переводом)
+Notes: Верхнее примечание
 Disable view link: Отключить ссылку просмотра в дереве переводов
 Tag type: Тип метки
 Related texts: Связанные тексты
@@ -252,4 +252,4 @@ Weight note: Лёгкие поднимаются вверх, тяжёлые оп
 Parent node: Родительский узел
 ui_desktop: Версия для ПК
 ui_mobile: Версия для мобильных
-   
+NotesBottom: Нижнее примечание   
