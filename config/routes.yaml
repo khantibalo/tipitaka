@@ -432,6 +432,12 @@ mobile_ui:
     path: /mobile 
     controller: App\Controller\DefaultController::setMobile    
 
+collection_view_mobile:
+   path: /toc/collections/{collectionid}/mobile
+   controller: App\Controller\CollectionController::viewCollectionMobile
+   requirements:   
+        collectionid: '\d+'
+
 #not all redirects could be implemented here.
 #some, e.g. index.php?NodeID=X can only be implemented on the web server side
 

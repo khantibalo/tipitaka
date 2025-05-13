@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 {% set page='default' %}
 {% block title %}{% trans %}Home{% endtrans %}{% endblock %}
-{% block content %}
-   <br><center>{% trans %}Top links{% endtrans %}&nbsp;<a href="{{ path('mobile_ui') }}">{{ (mobile is defined and mobile=="1" ? "ui_desktop" : "ui_mobile")|trans }}</a></center>
+{% block content %}{% set mobile= app.request.cookies.get('mobile') %}
+   <br><center>{% trans %}Top links{% endtrans %}&nbsp;<a href="{{ path('mobile_ui') }}">{{ (mobile=="1" ? "ui_desktop" : "ui_mobile")|trans }}</a></center>
 {% trans %}Introduction{% endtrans %}
 <table style="width:100%">
-<tr>{% set mobile= app.request.cookies.get('mobile') %}
+<tr>
 <td style="width:{{ mobile ? 100 : 80}}%;vertical-align: top">
 <h3>{% trans %}Latest updates{% endtrans %}</h3>
     <table style="width:100%">

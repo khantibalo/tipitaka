@@ -26,16 +26,14 @@ class DefaultController extends AbstractController
             $viewcountItem->set($viewcountValue);
             $pool->save($viewcountItem);
         }
-        
-        $mobile=$request->cookies->get("mobile");
-        
+                
         return $this->render('index.html.twig',['lastupd'=>$lastupdItem,'comments'=>$comments,
-            'viewCount'=>$viewcountItem->get(),'mobile'=>$mobile]);
+            'viewCount'=>$viewcountItem->get()]);
     }
     
     public function setLocale($locale,Request $request)
     {                
-        //if referer is speficied, redirect to referer
+        //if referer is specified, redirect to referer
         if($request->headers->get('referer'))
         {
             $response=$this->redirect($request->headers->get('referer'));

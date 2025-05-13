@@ -768,5 +768,12 @@ class CollectionController extends AbstractController
     {
         return $this->redirectToRoute('collection_view',['collectionid'=>$request->query->get("itemid")],301);
     }
+    
+    public function viewCollectionMobile($collectionid,Request $request)
+    {   
+        $response=$this->redirectToRoute('collection_view',['collectionid'=>$collectionid],301);
+        $response->headers->setCookie(new Cookie('mobile','1',time() + (3600 * 24*365)));
+        return $response;
+    }
 }
 
