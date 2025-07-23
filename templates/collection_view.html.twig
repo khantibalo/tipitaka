@@ -3,6 +3,35 @@
 {% block title %}
 {{ collection.name }}
 {% endblock %}
+
+{% block stylesheets %}
+<style>
+.spoiler {
+  display: none;
+}
+
+.show {
+  display: none; 
+}
+
+.hide:target + .show {
+  display: inline; 
+}
+
+.hide:target {
+  display: none; 
+}
+
+.hide:target ~ .spoiler {
+  display: inline;
+}
+
+.btn
+{
+font-size:14pt;
+}
+</style>
+{% endblock %}
 {% block content %}
 {% set tocPage='collections' %}
 {{ include(app.request.cookies.get('mobile')=='1' ? '_toc_navigation_mobile.html.twig' : '_toc_navigation.html.twig') }}
@@ -10,35 +39,36 @@
 {{ collection.notes|raw }}
 {% endif %}
 {% if form is defined %}
+<b>{% trans %}Print view{% endtrans %}</b> <a href="#hide" class="hide btn" id="hide">{% trans %}show{% endtrans %}</a><a href="#show" class="show btn" id="show">{% trans %}hide{% endtrans %}</a>
+<div class="spoiler">
 {{ form_start(form,{'attr' : {'style' : 'display: inline'}}) }}
 <table>
-<tr>
-<td colspan="2">
-<b>{% trans %}Print view{% endtrans %}</b>
-</td>
-</tr>
 <tr><td colspan="2">
 {{ form_widget(form.shownav) }}<small>{{ form_label(form.shownav, 'ShowNav') }}</small></td>
 </tr>
-<tr><td colspan="2">
+<tr><td>
+{% trans %}Format{% endtrans %}:
+</td>
+<td>
 {{ form_widget(form.rendermode[0]) }}<small>{{ form_label(form.rendermode[0], 'display print view') }}</small><br>
-{{ form_widget(form.rendermode[1]) }}<small>{{ form_label(form.rendermode[1], 'download print view') }}</small><br>
+{{ form_widget(form.rendermode[1]) }}<small>{{ form_label(form.rendermode[1], 'download print view html') }}</small><br>
 </td>
 </tr>
-<tr><td>
-{{ form_widget(form.table,{'label': 'PrintViewTable','attr' : {'style' : 'font-size:12px'}}) }}</td>
-<td><small>{% trans %}PrintViewTableDesc{% endtrans %}</small></td>
-</tr>
-<tr><td>
-{{ form_widget(form.paper,{'label': 'PrintViewPaper','attr' : {'style' : 'font-size:12px'}}) }}</td>
-<td><small>{% trans %}PrintViewPaperDesc{% endtrans %}</small></td>
-</tr>
-<tr><td>
-{{ form_widget(form.translation,{'label': 'PrintViewTranslation','attr' : {'style' : 'font-size:12px'}}) }}</td>
-<td><small>{% trans %}PrintViewTranslationDesc{% endtrans %}</small></td>
-</tr>
+<tr>
+<td>
+{% trans %}Layout{% endtrans %}:
+</td>
+<td>
+{{ form_widget(form.layout[0]) }}<small>{{ form_label(form.layout[0], 'PrintViewTableDesc') }}</small><br>
+{{ form_widget(form.layout[1]) }}<small>{{ form_label(form.layout[1], 'PrintViewPaperDesc') }}</small><br>
+{{ form_widget(form.layout[2]) }}<small>{{ form_label(form.layout[2], 'PrintViewTranslationDesc') }}</small><br>
+<td>
+</td>
 </table>
+{{ form_row(form.submit,{'label': 'Submit','attr' : {'style' : 'font-size:14pt'}}) }}
 {{ form_end(form) }}
+<hr>
+</div>
 {% endif %}
 
 <div><a href="{{ path('collections_list') }}">{% trans %}Top{% endtrans %}</a></div>

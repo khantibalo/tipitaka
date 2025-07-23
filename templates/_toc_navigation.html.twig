@@ -9,19 +9,19 @@
     <a href="{{ path('toc') }}">
     {% endif %} 
 {% endif %}    	
-{% trans %}TranslationToc{% endtrans %}
+<i class="twa twa-lg twa-green-book"></i>{% trans %}TranslationToc{% endtrans %}
 {% if not isTranslation %}</a>{% endif %}
 </td>
 <td style="text-align:center;width:25%">
 {% set isTags= tocPage is defined and tocPage=='tags' %}
 {% if not isTags %}<a href="{{ path('toc_tag_types_list') }}">{% endif %}    	
-{% trans %}Tags{% endtrans %}
+<i class="twa twa-lg twa-label"></i>{% trans %}Tags{% endtrans %}
 {% if not isTags %}</a>{% endif %}
 </td>
 <td style="text-align:center;width:25%">
 {% set isCollections= tocPage is defined and tocPage=='collections' %}
 {% if not isCollections %}<a href="{{ path('collections_list') }}">{% endif %}    	
-{% trans %}Collections{% endtrans %}
+<i class="twa twa-lg twa-bookmark-tabs"></i>{% trans %}Collections{% endtrans %}
 {% if not isCollections %}</a>{% endif %}
 </td>
 <td style="text-align:center;width:25%">
@@ -33,7 +33,7 @@
     <a href="{{ path('full_toc') }}">
     {% endif %} 
 {% endif %}    	
-{% trans %}FullToc{% endtrans %}
+<i class="twa twa-lg twa-books"></i>{% trans %}FullToc{% endtrans %}
 {% if not isFull %}</a>{% endif %}
 </td>
 </tr>

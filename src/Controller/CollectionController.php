@@ -58,9 +58,17 @@ class CollectionController extends AbstractController
                 'multiple'=>false,
                 'data'=>'disp'
             ])
-        ->add('table', SubmitType::class)
-        ->add('paper', SubmitType::class)
-        ->add('translation', SubmitType::class);
+        ->add('layout', ChoiceType::class,
+            ['choices'  => [
+                'PrintViewTableDesc' => 'table',
+                'PrintViewPaperDesc' => 'paper',
+                'PrintViewTranslationDesc' => 'tran'],
+                'label' => false,
+                'expanded'=>true,
+                'multiple'=>false,
+                'data'=>'table'
+            ])
+        ->add('submit', SubmitType::class);
         
         $form=$form->getForm();
         
@@ -68,26 +76,11 @@ class CollectionController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid())
         {
-            $printviewtype="table";
-            
-            if($form->get("table")->isClicked())
-            {
-                $printviewtype="table";
-            }
-            
-            if($form->get("paper")->isClicked())
-            {
-                $printviewtype="paper";
-            }
-            
-            if($form->get("translation")->isClicked())
-            {
-                $printviewtype="translation";
-            }
+            $printviewtype=$form->get("layout")->getData();
             
             $templates=["table"=>"collection_print_table.html.twig",
                 "paper"=>"collection_print_paper.html.twig",                    
-                "translation"=>"collection_print_translation.html.twig"];               
+                "tran"=>"collection_print_translation.html.twig"];               
             
             //all paragraphs that belong to nodes in this collection
             //all sentences that belong to these paragraphs

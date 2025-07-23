@@ -75,3 +75,68 @@ table.bordercell
 	color: red;
 }
 
+.twa {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 1em 1em; }
+
+.twa-lg {
+  height: 1.5em;
+  width: 1.5em;
+  margin: 0 0.0665em 0 0.133em;
+  vertical-align: -0.3em;
+  background-size: 1.5em 1.5em; }
+ 
+.twa-united-kingdom-flag {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f1ec-1f1e7.svg"); }
+  
+.twa-russia-flag {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f1f7-1f1fa.svg"); }  
+
+.twa-bookmark {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f516.svg"); }
+
+.twa-closed-lock-with-key {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f510.svg"); }
+  
+.twa-key {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f511.svg"); }
+    
+.twa-input-latin-letters {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f524.svg"); }
+
+.twa-right-pointing-magnifying-glass {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f50e.svg"); }
+  
+.twa-open-book {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4d6.svg"); }
+
+.twa-house {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f3e0.svg"); }
+
+
+.twa-books {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4da.svg"); }
+  
+.twa-green-book {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4d7.svg"); }
+  
+.twa-label {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f3f7.svg"); }
+
+.twa-bookmark-tabs {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4d1.svg"); }
+    
+.twa-bear {
+  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f43b.svg"); }
+      
+  
+    
+      
+    
+      

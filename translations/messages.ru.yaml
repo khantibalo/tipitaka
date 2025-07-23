@@ -213,16 +213,16 @@ url of this passage: Ссылка на этот фрагмент
 Go to sentence: к предложению
 Remember me: Запомнить меня
 TagType-1: Метки с палийским названием
-PrintViewTableDesc: Для чтения с экрана ПК и планшетов. Содержит текст на пали и перевод.
-PrintViewPaperDesc: Для печати и чтения с экрана телефонов. Содержит текст на пали и перевод.
-PrintViewTranslationDesc: Для печати и чтения. Содержит только перевод.
+PrintViewTableDesc: Таблица - для больших экранов
+PrintViewPaperDesc: Подстрочник - для телефонов
+PrintViewTranslationDesc: Перевод - для печати
 Search mode: Режим поиска на пали
 SearchMode1: Использовать язык запросов
 SearchMode2: Искать совпадение с любой частью слова (нет языка запросов)
 SearchMode3: Искать в конце слова (нет языка запросов)
-ShowNav: Показывать средства навигации
+ShowNav: Добавить оглавление
 display print view: Вывести на экран
-download print view: Скачать файл
+download print view html: Скачать файл html
 This pali name already exists: Это палийское название уже есть
 hide title in print view: Скрывать название в виде для печати
 hide pali name in print view: Скрывать палийское название в виде для печати
@@ -252,4 +252,7 @@ Weight note: Лёгкие поднимаются вверх, тяжёлые оп
 Parent node: Родительский узел
 ui_desktop: Версия для ПК
 ui_mobile: Версия для мобильных
-NotesBottom: Нижнее примечание   
+NotesBottom: Нижнее примечание
+Format: Формат
+Submit: Выполнить
+Layout: Размещение текста

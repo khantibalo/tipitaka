@@ -213,16 +213,16 @@ url of this passage: Url of this passage
 Go to sentence: Go to sentence
 Remember me: Remember me
 TagType-1: Tags with pali name
-PrintViewTableDesc: for reading from PCs and tablets. pali text and translation
-PrintViewPaperDesc: for printing and reading from phones. pali text and translation
-PrintViewTranslationDesc: for printing. translation only
+PrintViewTableDesc: Table - for reading from PCs and tablets. pali text and translation
+PrintViewPaperDesc: Line by line - for printing and reading from phones. pali text and translation
+PrintViewTranslationDesc: Translation - for printing.
 Search mode: Pali search mode
 SearchMode1: Use query language
 SearchMode2: Search in any part of the word (no query language)
 SearchMode3: Search at the end of the word (no query language)
 ShowNav: Show navigation
-display print view: display print view
-download print view: download print view
+display print view: display on screen
+download print view html: download in html format
 This pali name already exists: This pali name already exists
 hide title in print view: Hide title in print view
 hide pali name in print view: Hide pali name in print view
@@ -253,3 +253,6 @@ Parent node: Parent node
 ui_desktop: PC layout
 ui_mobile: Mobile device layout
 NotesBottom: Bottom notes
+Format: Format
+Submit: Submit
+Layout: Layout
