@@ -1,6 +1,6 @@
-<table style="width:100%;">
+<table style="width:100%">
 <tr>
-<td style="text-align:center;width:25%">
+<td style="text-align:center;width:25%;background-color:AliceBlue">
 {% set isTranslation= tocPage is defined and tocPage=='translation' %}
 {% if not isTranslation %}
     {% if thisNode is defined and thisNode.HasTranslation  %}
@@ -8,23 +8,24 @@
     {% else %}
     <a href="{{ path('toc') }}">
     {% endif %} 
+{% else %}<b>    
 {% endif %}    	
 <i class="twa twa-lg twa-green-book"></i>{% trans %}TranslationToc{% endtrans %}
-{% if not isTranslation %}</a>{% endif %}
+{% if not isTranslation %}</a>{% else %}</b>{% endif %}
 </td>
-<td style="text-align:center;width:25%">
+<td style="text-align:center;width:25%;background-color:AliceBlue">
 {% set isTags= tocPage is defined and tocPage=='tags' %}
-{% if not isTags %}<a href="{{ path('toc_tag_types_list') }}">{% endif %}    	
+{% if not isTags %}<a href="{{ path('toc_tag_types_list') }}">{% else %}<b>{% endif %}    	
 <i class="twa twa-lg twa-label"></i>{% trans %}Tags{% endtrans %}
-{% if not isTags %}</a>{% endif %}
+{% if not isTags %}</a>{% else %}</b>{% endif %}
 </td>
-<td style="text-align:center;width:25%">
+<td style="text-align:center;width:25%;background-color:AliceBlue">
 {% set isCollections= tocPage is defined and tocPage=='collections' %}
-{% if not isCollections %}<a href="{{ path('collections_list') }}">{% endif %}    	
+{% if not isCollections %}<a href="{{ path('collections_list') }}">{% else %}<b>{% endif %}    	
 <i class="twa twa-lg twa-bookmark-tabs"></i>{% trans %}Collections{% endtrans %}
-{% if not isCollections %}</a>{% endif %}
+{% if not isCollections %}</a>{% else %}</b>{% endif %}
 </td>
-<td style="text-align:center;width:25%">
+<td style="text-align:center;width:25%;background-color:AliceBlue">
 {% set isFull= tocPage is defined and tocPage=='full' %}
 {% if not isFull %}
     {% if thisNode is defined  %}
@@ -32,9 +33,10 @@
     {% else %}
     <a href="{{ path('full_toc') }}">
     {% endif %} 
+{% else %}<b>    
 {% endif %}    	
 <i class="twa twa-lg twa-books"></i>{% trans %}FullToc{% endtrans %}
-{% if not isFull %}</a>{% endif %}
+{% if not isFull %}</a>{% else %}</b>{% endif %}
 </td>
 </tr>
 </table>

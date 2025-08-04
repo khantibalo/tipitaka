@@ -1,47 +1,47 @@
     <table style="width:100%;border: 1">
     <tr style="background-color:LightGrey;">
     	<td style="width:14%;text-align:center">
-        	{% set isdefault= page is defined and page=='default' %}
-        	{% if not isdefault %}<a href="{{ path('index') }}">{% endif %}    	
+    		{% set isdefault= page is defined and page=='default' %}
+        	{% if not isdefault %}<a href="{{ path('index') }}">{% else %}<b>{% endif %}    	
         	<i class="twa twa-lg twa-house"></i>{% trans %}Whatsnew{% endtrans %}
-        	{% if not isdefault %}</a>{% endif %}     	    	
+        	{% if not isdefault %}</a>{% else %}</b>{% endif %}     	    	
     	</td>
-    	<td style="width:14%;text-align:center">
-        	{% set istoc= page is defined and page=='toc' %}
-        	{% if not istoc %}<a href="{{ path('toc') }}">{% endif %} 
+    	<td style="width:14%;text-align:center">   
+    		{% set istoc= page is defined and page=='toc' %}     	
+        	{% if not istoc %}<a href="{{ path('toc') }}">{% else %}<b>{% endif %} 
         	<i class="twa twa-lg twa-open-book"></i>{% trans %}Table of contents{% endtrans %}
-        	{% if not istoc %}</a>{% endif %}
+        	{% if not istoc %}</a>{% else %}</b>{% endif %}
     	</td>
     	<td style="width:14%;text-align:center">
         	{% set issearch=page is defined and page=='search' %}
-        	{% if not issearch %}<a href="{{ path('search') }}">{% endif %} 
+        	{% if not issearch %}<a href="{{ path('search') }}">{% else %}<b>{% endif %} 
         	<i class="twa twa-lg twa-right-pointing-magnifying-glass"></i>{% trans %}search{% endtrans %}
-        	{% if not issearch %}</a>{% endif %}    	
+        	{% if not issearch %}</a>{% else %}</b>{% endif %}    	
     	</td>
     	<td style="width:14%;text-align:center">
     	    {% set isbookmarks=page is defined and page=='bookmarks' %}
-        	{% if not isbookmarks %}<a href="{{ path('bookmarks') }}">{% endif %}        		
+        	{% if not isbookmarks %}<a href="{{ path('bookmarks') }}">{% else %}<b>{% endif %}        		
         	<i class="twa twa-lg twa-bookmark"></i>{% trans %}bookmarks{% endtrans %}
-            {% if not isbookmarks %}</a>{% endif %}    	
+            {% if not isbookmarks %}</a>{% else %}</b>{% endif %}    	
     	</td>
     	<td style="width:14%;text-align:center">
     	    {% set isdictionary=page is defined and page=='dictionary' %}
-    	    {% if not isdictionary %}<a href="{{ path('dictionary') }}">{% endif %} 
+    	    {% if not isdictionary %}<a href="{{ path('dictionary') }}">{% else %}<b>{% endif %} 
     		<i class="twa twa-lg twa-input-latin-letters"></i>{% trans %}dictionary{% endtrans %}    	
-    		{% if not isdictionary %}</a>{% endif %}      	
+    		{% if not isdictionary %}</a>{% else %}</b>{% endif %}      	
     	</td>
     	<td style="width:14%;text-align:center">
         	{% if page is defined and page=='user' %}
         	    {% if app.user %}
-            	<i class="twa twa-lg twa-key"></i>{% trans %}My account{% endtrans %}
+            	<i class="twa twa-lg twa-closed-lock-with-key"></i><b>{% trans %}My account{% endtrans %}</b>
             	{% else %}
-            	<i class="twa twa-lg twa-closed-lock-with-key"></i>{% trans %}login{% endtrans %}
+            	<i class="twa twa-lg twa-key"></i><b>{% trans %}login{% endtrans %}</b>
             	{% endif %}
         	{% else %}
             	{% if app.user %}
-            	<a href="{{ path('user') }}"><i class="twa twa-lg twa-key"></i>{% trans %}My account{% endtrans %}</a>
+            	<a href="{{ path('user') }}"><i class="twa twa-lg twa-closed-lock-with-key"></i>{% trans %}My account{% endtrans %}</a>
             	{% else %}
-            	<a href="{{ path('app_login') }}"><i class="twa twa-lg twa-closed-lock-with-key"></i>{% trans %}login{% endtrans %}</a>
+            	<a href="{{ path('app_login') }}"><i class="twa twa-lg twa-key"></i>{% trans %}login{% endtrans %}</a>
             	{% endif %}
         	{% endif %}  
     	</td>

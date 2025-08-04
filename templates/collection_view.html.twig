@@ -80,9 +80,11 @@ font-size:14pt;
 <a href="{{ path('collection_folder_edit',{parentid: collection.collectionitemid}) }}">({% trans %}Add folder{% endtrans %})</a>
 <a href="{{ path('collection_item_edit',{parentid: collection.collectionitemid}) }}">({% trans %}Add item{% endtrans %})</a>
 {% endif %} 
-{% set divOffset=app.request.cookies.get('mobile')=='1' ? 10 : 20 %}
+{% set divOffset=app.request.cookies.get('mobile')=='1' ? 20 : 30 %}
 	{% for item in collectionItems|filter(ci=>ci.parentid==collection.collectionitemid) %}
+		{% if item.level==1 %}<ul style="list-style-type: square;"><li>{% else %}
 		<div style="padding-left:{{ item.level*divOffset }}px">
+		{% endif %}
 			{% if item.nodeid %}		        
 		        <a href="{{ path('collection_item_view', {collectionitemid: item.collectionitemid}) }}">{{ item.colItemName ?? (item.nodeName ?? item.title) }}</a>
 			{% else %} 
@@ -93,7 +95,9 @@ font-size:14pt;
 			<a href="{{ path(item.nodeid ? 'collection_item_edit' : 'collection_folder_edit',{itemid: item.collectionitemid}) }}">({% trans %}Edit{% endtrans %})</a>
 			<a href="{{ path('collection_item_names',{itemid: item.collectionitemid}) }}">({% trans %}Edit names{% endtrans %})</a>	
 			{% endif %} 
+		{% if item.level==1 %}</li></ul>{% else %}
 		</div>
+		{% endif %}
 	{% endfor %}
 </li>
 </ul>

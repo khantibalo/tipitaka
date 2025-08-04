@@ -7,38 +7,38 @@
 {% endif %}
 <table style="width:100%">
 <tr>
-<td style="width:{{ 100/colno }}%;text-align: center">
+<td style="width:{{ 100/colno }}%;text-align: center;background-color:AliceBlue">
 {% set isComments= userPage is defined and userPage=='comments' %}
-{% if not isComments %}<a href="{{ path('user') }}">{% endif %}  
-{% trans %}My comments{% endtrans %}
-{% if not isComments %}</a>{% endif %}
+{% if not isComments %}<a href="{{ path('user') }}">{% else %}<b>{% endif %}  
+<i class="twa twa-lg twa-speech-balloon"></i>{% trans %}My comments{% endtrans %}
+{% if not isComments %}</a>{% else %}</b>{% endif %}
 </td>
 {% if is_granted(editorRole) %}
-    <td style="width:{{ 100/colno }}%;text-align: center">
+    <td style="width:{{ 100/colno }}%;text-align: center;background-color:AliceBlue">
     {% set isSources= userPage is defined and userPage=='sources' %}
-    {% if not isSources %}<a href="{{ path('sources_list') }}">{% endif %}  
-    {% trans %}Sources{% endtrans %}
-    {% if not isSources %}</a>{% endif %}
+    {% if not isSources %}<a href="{{ path('sources_list') }}">{% else %}<b>{% endif %}  
+    <i class="twa twa-lg twa-globe-with-meridians"></i>{% trans %}Sources{% endtrans %}
+    {% if not isSources %}</a>{% else %}</b>{% endif %}
     </a>
     </td>
 {% endif %}
 {% if is_granted(adminRole) %}
-    <td style="width:{{ 100/colno }}%;text-align: center">
+    <td style="width:{{ 100/colno }}%;text-align: center;background-color:AliceBlue">
     {% set isUsers= userPage is defined and userPage=='users' %}
-    {% if not isUsers %}<a href="{{ path('userlist') }}">{% endif %}  
-    {% trans %}Users{% endtrans %}
-    {% if not isUsers %}</a>{% endif %}
+    {% if not isUsers %}<a href="{{ path('userlist') }}">{% else %}<b>{% endif %}  
+    <i class="twa twa-lg twa-busts-in-silhouette"></i>{% trans %}Users{% endtrans %}
+    {% if not isUsers %}</a>{% else %}</b>{% endif %}
     </td>
 {% endif %}
 {% if is_granted(editorRole) %}
-    <td style="width:{{ 100/colno }}%;text-align: center">
+    <td style="width:{{ 100/colno }}%;text-align: center;background-color:AliceBlue">
     {% set isStatistics= userPage is defined and userPage=='statistics' %}
-    {% if not isStatistics %}<a href="{{ path('statistics_view_agg') }}">{% endif %}  
-    {% trans %}Usage statistics{% endtrans %}
-    {% if not isStatistics %}</a>{% endif %}
+    {% if not isStatistics %}<a href="{{ path('statistics_view_agg') }}">{% else %}<b>{% endif %}  
+    <i class="twa twa-lg twa-bar-chart"></i>{% trans %}Usage statistics{% endtrans %}
+    {% if not isStatistics %}</a>{% else %}</b>{% endif %}
     </td>
 {% endif %}
-<td style="width:{{ 100/colno }}%;text-align: center">
-<a href="{{ path('app_logout') }}">{% trans %}Logout{% endtrans %}</a>
+<td style="width:{{ 100/colno }}%;text-align: center;background-color:AliceBlue">
+<a href="{{ path('app_logout') }}"><i class="twa twa-lg twa-door"></i>{% trans %}Logout{% endtrans %}</a>
 </td>
 </table>
