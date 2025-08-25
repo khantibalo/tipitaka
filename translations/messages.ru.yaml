@@ -215,7 +215,7 @@ Remember me: Запомнить меня
 TagType-1: Метки с палийским названием
 PrintViewTableDesc: Таблица - для больших экранов
 PrintViewPaperDesc: Подстрочник - для телефонов
-PrintViewTranslationDesc: Перевод - для печати
+PrintViewTranslationDesc: Перевод - для любых устройств
 Search mode: Режим поиска на пали
 SearchMode1: Использовать язык запросов
 SearchMode2: Искать совпадение с любой частью слова (нет языка запросов)
@@ -256,3 +256,4 @@ NotesBottom: Нижнее примечание
 Format: Формат
 Submit: Выполнить
 Layout: Размещение текста
+Settings: настройки

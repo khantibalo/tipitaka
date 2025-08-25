@@ -9,7 +9,6 @@ body {
   background: white;
 }
 
-span {}
 .note {color: blue}
 .bld {font-weight: bold; }
 .paranum {font-weight: bold; }
@@ -150,4 +149,67 @@ table.bordercell
 .twa-globe-with-meridians {
   background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f310.svg"); }
       
-      
+.collLevel1,
+.collLevel2,
+.collLevel3,
+.collLevel4,
+.collLevel5,
+.collLevel6
+{
+	list-style-type: square;	
+}      
+
+li.collLevel1::marker {
+  color: Navy;
+  font-size: 16pt;
+}
+
+li.collLevel2::marker {
+  color: Blue;
+  font-size: 16pt;
+}
+
+li.collLevel3::marker {
+  color: Teal;
+  font-size: 16pt;  
+}
+
+li.collLevel4::marker {
+  color: DarkTurquoise;
+  font-size: 16pt;  
+}
+
+li.collLevel5::marker {
+  color: SeaGreen;
+  font-size: 16pt;  
+}
+
+li.collLevel6::marker {
+  color: SpringGreen;
+  font-size: 16pt;  
+}
+
+.spoiler {
+  display: none;
+}
+
+.show {
+  display: none; 
+}
+
+.hide:target + .show {
+  display: inline; 
+}
+
+.hide:target {
+  display: none; 
+}
+
+.hide:target ~ .spoiler {
+  display: inline;
+}
+
+.btn
+{
+font-size:14pt;
+}

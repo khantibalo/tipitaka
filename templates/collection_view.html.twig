@@ -4,34 +4,6 @@
 {{ collection.name }}
 {% endblock %}
 
-{% block stylesheets %}
-<style>
-.spoiler {
-  display: none;
-}
-
-.show {
-  display: none; 
-}
-
-.hide:target + .show {
-  display: inline; 
-}
-
-.hide:target {
-  display: none; 
-}
-
-.hide:target ~ .spoiler {
-  display: inline;
-}
-
-.btn
-{
-font-size:14pt;
-}
-</style>
-{% endblock %}
 {% block content %}
 {% set tocPage='collections' %}
 {{ include(app.request.cookies.get('mobile')=='1' ? '_toc_navigation_mobile.html.twig' : '_toc_navigation.html.twig') }}
@@ -39,7 +11,7 @@ font-size:14pt;
 {{ collection.notes|raw }}
 {% endif %}
 {% if form is defined %}
-<b>{% trans %}Print view{% endtrans %}</b> <a href="#hide" class="hide btn" id="hide">{% trans %}show{% endtrans %}</a><a href="#show" class="show btn" id="show">{% trans %}hide{% endtrans %}</a>
+<b>{% trans %}Print view{% endtrans %}</b> <a href="#hide" class="hide btn" id="hide">{% trans %}Settings{% endtrans %}</a><a href="#show" class="show btn" id="show">{% trans %}hide{% endtrans %}</a>
 <div class="spoiler">
 {{ form_start(form,{'attr' : {'style' : 'display: inline'}}) }}
 <table>
@@ -83,11 +55,11 @@ font-size:14pt;
 {% set divOffset=app.request.cookies.get('mobile')=='1' ? 10 : 15 %}
 {% set thisCollItems=collectionItems|filter(ci=>ci.parentid==collection.collectionitemid) %}
 	{% for item in thisCollItems %}
-		{% set bullet="none" %}
+		{% set liClass="" %}
 		{% if not item.nodeid and not loop.last and item.level < thisCollItems[loop.index0 + 1].level %}
-			{% set bullet=item.level==1 ? "square" : "circle" %}
+			{% set liClass="collLevel%s"|format(item.level) %}
 		{% endif %}		
-		<li style="list-style-type: {{ bullet }};margin-left:{{ item.level*divOffset }}px;">
+		<li style="margin-left:{{ item.level*divOffset }}px;{{ liClass ? '' : 'list-style-type: none;'}}" class="{{ liClass }}">
 			{% if item.nodeid %}		        
 		        <a href="{{ path('collection_item_view', {collectionitemid: item.collectionitemid}) }}">{{ item.colItemName ?? (item.nodeName ?? item.title) }}</a>
 			{% else %} 
