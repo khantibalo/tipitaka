@@ -1,0 +1,45 @@
+{% extends 'collection_print_fb2.xml.twig' %}
+{% block body %}
+<body>
+{% if shownav %}
+<section id="top">
+<title>{{ collection.name }}</title>
+	{% for collectionItem in collectionItems %}
+		<p>{% if collectionItem.level>0 %}{% for i in 0..collectionItem.level %}*{% endfor %}{% endif %} 
+		{% if collectionItem.nodeid %}		
+			<a xlink:href="#ch{{collectionItem.collectionitemid}}" type="note">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}</a>
+		{% else %} 
+			<a xlink:href="#ch{{collectionItem.collectionitemid}}" type="note">{{ collectionItem.colItemName }}</a>
+		{% endif %}
+		</p>
+	{% endfor %}
+</section>
+{% endif %}		
+	{% for collectionItem in collectionItems %}
+<section id="ch{{collectionItem.collectionitemid}}">
+			{% if collectionItem.nodeid %}	
+			    {% if not collectionItem.hidetitleprint %}	
+					<title><p><strong>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}{% if not collectionItem.hidepalinameprint %} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% endif %}</strong></p></title>
+				{% endif %}					
+			{% else %} 
+				<title><p><strong>{{ collectionItem.colItemName }}</strong></p></title>				
+			{% endif %}	
+		{% if collectionItem.notes %}<p>{{ collectionItem.notes|raw }}</p>{% endif %}
+
+		{% if collectionItem.nodeid %}	
+			{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
+				<p>
+				{% for sentence in sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
+					{% set other=otherTranslations[collectionItem.nodeid] is empty ? [] : otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) %}	
+					{% if other|length>0 %}				
+						{{ (other|first).translation }}
+					{% endif %}
+				{% endfor %}
+				</p>
+			{% endfor %}
+		{% endif %}
+		{% if collectionItem.notesBottom %}<p>{{ collectionItem.notesBottom|raw }}</p>{% endif %}
+</section>		
+	{% endfor %} 
+</body>	
+{% endblock %}

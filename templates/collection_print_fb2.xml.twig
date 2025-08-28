@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <FictionBook xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns="http://www.gribuser.ru/xml/fictionbook/2.0">
+  <description>
+    <title-info>
+      <book-title>{{ collection.name }}</book-title>
+      <annotation>
+      </annotation>
+    </title-info>
+    <document-info>
+      <program-used>twig</program-used>
+      <src-url>{{ url('collection_view',{collectionid: collection.collectionitemid}) }}</src-url>
+      <date value="{{ "now"|date("Y-m-d") }}">{{ "now"|date("d.m.Y") }}</date>
+    </document-info>
+    <custom-info info-type="general">{% trans %}Publisher{% endtrans %}</custom-info>
+  </description>
+ {% block body %}{% endblock %}
+ </FictionBook>

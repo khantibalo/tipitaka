@@ -1,0 +1,64 @@
+{% extends 'collection_print_fb2.xml.twig' %}
+{% block body %}
+<body>
+{% if shownav %}
+<section id="top">
+<title>{{ collection.name }}</title>
+	{% for collectionItem in collectionItems %}
+		<p>{% if collectionItem.level>0 %}{% for i in 0..collectionItem.level %}*{% endfor %}{% endif %} 
+		{% if collectionItem.nodeid %}		
+			<a xlink:href="#ch{{collectionItem.collectionitemid}}" type="note">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}</a>
+		{% else %} 
+			<a xlink:href="#ch{{collectionItem.collectionitemid}}" type="note">{{ collectionItem.colItemName }}</a>
+		{% endif %}
+		</p>
+	{% endfor %}
+</section>
+{% endif %}	
+		{% for collectionItem in collectionItems %}
+		<section id="ch{{collectionItem.collectionitemid}}">
+			{% if collectionItem.nodeid %}	
+			    {% if not collectionItem.hidetitleprint %}	
+					<title><p><strong>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}{% if not collectionItem.hidepalinameprint %} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% endif %}</strong></p></title>
+				{% else %}
+				{% endif %}					
+			{% else %} 
+				<title><p><strong>{{ collectionItem.colItemName }}</strong></p></title>				
+			{% endif %}	
+			{{ collectionItem.notes|raw  }}
+			{% if collectionItem.nodeid %}	
+				{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
+					{% for sentence in sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
+						{% set pali=collectionItem.nodeid in paliTranslations|keys ? paliTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) : "" %}
+						{% set other=otherTranslations[collectionItem.nodeid] is empty ? [] :  otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) %}
+						{% set sentenceComments=comments|filter(c=>c.sentenceid==sentence.sentenceid) %}
+						{% set comment1=sentenceComments|filter(c=>c.forprint==1)|first %}
+						{% set comment2=sentenceComments|filter(c=>c.forprint==2)|first %}
+						{% set comment3=sentenceComments|filter(c=>c.forprint==3)|first %}
+						{% set comment4=sentenceComments|filter(c=>c.forprint==4)|first %}		
+						{% if other|length>0 and pali|length>0 %}		
+							{% if comment1 %}
+							<p>&#8226;{{comment1.commenttext}}</p>
+							{% endif %}				
+							<p>							
+								{% if comment2 %}
+								&#8226;{{comment2.commenttext}}
+								{% endif %}								    			
+								{{ pali|length>0 ? (pali|first).translation|replace({'<b>': '<strong>','</b>' : '</strong>','<u>': '','</u>':''})|raw : sentence.sentencetext|raw }}
+								{% if comment4 %}
+								&#8226;{{comment4.commenttext}}
+								{% endif %}		
+							</p>
+							{% if comment3 %}
+							<p>&#8226;{{comment3.commenttext}}</p>
+							{% endif %}								
+							<p><emphasis>{{ (other|first).translation }}</emphasis></p>
+						{% endif %}
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+			{{ collectionItem.notesBottom|raw  }}			
+			</section>	
+		{% endfor %}	
+</body>
+{% endblock %}

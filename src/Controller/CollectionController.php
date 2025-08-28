@@ -52,7 +52,8 @@ class CollectionController extends AbstractController
         ->add('rendermode', ChoiceType::class,
             ['choices'  => [
                 'display print view' => 'disp',
-                'download print view' => 'down'],
+                'download html' => 'html',
+                'download fb2'=>'fb2'],
                 'label' => false,
                 'expanded'=>true,
                 'multiple'=>false,
@@ -77,10 +78,21 @@ class CollectionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid())
         {
             $printviewtype=$form->get("layout")->getData();
+            $rendermode=$form->get("rendermode")->getData();
             
-            $templates=["table"=>"collection_print_table.html.twig",
-                "paper"=>"collection_print_paper.html.twig",                    
-                "tran"=>"collection_print_translation.html.twig"];               
+            if($rendermode=="disp" || $rendermode=="html")
+            {
+                $templates=["table"=>"collection_print_table.html.twig",
+                    "paper"=>"collection_print_paper.html.twig",                    
+                    "tran"=>"collection_print_translation.html.twig"];
+            }
+
+            if($rendermode=="fb2")
+            {
+                $templates=["table"=>"collection_print_table_fb2.xml.twig",
+                    "paper"=>"collection_print_paper_fb2.xml.twig",
+                    "tran"=>"collection_print_translation_fb2.xml.twig"];
+            }
             
             //all paragraphs that belong to nodes in this collection
             //all sentences that belong to these paragraphs
@@ -190,7 +202,7 @@ class CollectionController extends AbstractController
                 'comments'=>$comments,'shownav'=>$form->get("shownav")->getData()
             ]);     
                 
-            if($form->get("rendermode")->getData()=="down")
+            if($rendermode=="html")
             {
                 $disposition = HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_ATTACHMENT,
@@ -198,6 +210,18 @@ class CollectionController extends AbstractController
                     'collection.html'
                     );
                 
+                $response->headers->set('Content-Disposition', $disposition);
+            }
+            
+            if($rendermode=="fb2")
+            {
+                $disposition = HeaderUtils::makeDisposition(
+                    HeaderUtils::DISPOSITION_ATTACHMENT,
+                    $collection["name"].'.fb2',
+                    'collection.fb2'
+                    );
+                
+                $response->headers->set('Content-Type', 'application/fictionbook2+zip');
                 $response->headers->set('Content-Disposition', $disposition);
             }
         }
