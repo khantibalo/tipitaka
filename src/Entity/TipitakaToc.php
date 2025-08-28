@@ -184,6 +184,20 @@ class TipitakaToc
     private $allowptspage;
     
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="urlpart", type="string", length=20, nullable=true)
+     */
+    private $urlpart;
+    
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="urlfull", type="string", length=255, nullable=true)
+     */
+    private $urlfull;
+    
+    /**
      * @return \App\Entity\TipitakaSources
      */
     public function getTranslationSourceID(): ?TipitakaSources
@@ -493,5 +507,28 @@ class TipitakaToc
         return $this->allowptspage;
     }
 
+    public function getUrlpart(): ?string
+    {
+        return $this->urlpart;
+    }
+    
+    public function setUrlpart(?string $urlpart): static
+    {
+        $this->urlpart = $urlpart;
+        
+        return $this;
+    }
+    
+    public function getUrlfull(): ?string
+    {
+        return $this->urlfull;
+    }
+    
+    public function setUrlfull(?string $urlfull): static
+    {
+        $this->urlfull = $urlfull;
+        
+        return $this;
+    }
 
 }

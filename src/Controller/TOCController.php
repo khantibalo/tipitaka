@@ -335,12 +335,13 @@ class TOCController extends AbstractController
                 
         $form = $this->createFormBuilder($node)
         ->add('title', TextType::class,['required' => true,'label' => false])
-        ->add('parentid', IntegerType::class,['mapped'=>false])
+        ->add('parentid', IntegerType::class,['required' => false,'mapped'=>false])
         ->add('IsHidden', CheckboxType::class,['label' => false,'required' => false])
         ->add('TranslationSourceID', ChoiceType::class,$sourcesOptions)
         ->add('notes', TextareaType::class,['required' => false,'label' => false])
         ->add('disableview', CheckboxType::class,['label' => false,'required' => false])
         ->add('disabletranslalign', CheckboxType::class,['label' => false,'required' => false])
+        ->add('urlpart', TextType::class,['required' => false,'label' => false])
         ->add('save', SubmitType::class)
         ->add('updateparent', SubmitType::class)
         ->getForm();
