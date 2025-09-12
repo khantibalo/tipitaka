@@ -23,6 +23,7 @@ use App\Enums\Languages;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 
+
 class CollectionController extends AbstractController
 {
     public function list(Request $request,TipitakaCollectionsRepository $collectionsRepository,TranslatorInterface $translator,
@@ -39,8 +40,7 @@ class CollectionController extends AbstractController
     
     
     public function viewCollection($collectionid,Request $request,TipitakaCollectionsRepository $collectionsRepository,
-        TranslatorInterface $translator,
-        TipitakaSentencesRepository $sentencesRepository)
+        TranslatorInterface $translator, TipitakaSentencesRepository $sentencesRepository)
     {                
         $collectionItems=array();
     
@@ -53,7 +53,8 @@ class CollectionController extends AbstractController
             ['choices'  => [
                 'display print view' => 'disp',
                 'download html' => 'html',
-                'download fb2'=>'fb2'],
+                'download fb2'=>'fb2',
+                'download pdf'=>'pdf'],
                 'label' => false,
                 'expanded'=>true,
                 'multiple'=>false,
@@ -80,7 +81,7 @@ class CollectionController extends AbstractController
             $printviewtype=$form->get("layout")->getData();
             $rendermode=$form->get("rendermode")->getData();
             
-            if($rendermode=="disp" || $rendermode=="html")
+            if($rendermode=="disp" || $rendermode=="html" || $rendermode=="pdf")
             {
                 $templates=["table"=>"collection_print_table.html.twig",
                     "paper"=>"collection_print_paper.html.twig",                    
@@ -120,7 +121,18 @@ class CollectionController extends AbstractController
                 {
                     $paliSource=NULL;
                     
-                    $translSource=$sentencesRepository->getNodeSourceTopPriority($collectionItem['nodeid']);
+                    try 
+                    {
+                        $translSource=$sentencesRepository->getNodeSourceTopPriority($collectionItem['nodeid']);
+                    } 
+                    catch (\Exception $e) 
+                    {                        
+                        $response = new Response();
+                        $response->setStatusCode(Response::HTTP_NOT_FOUND);
+                        $response->setContent("node id=".$collectionItem['nodeid']." has no translations");
+                        return $response;
+                    }
+                    
                     
                     $sources=$sentencesRepository->listNodeSources($collectionItem['nodeid']);
                     foreach($sources as $source)
@@ -195,35 +207,109 @@ class CollectionController extends AbstractController
                 }
             }
             
-
-            $response=$this->render($templates[$printviewtype], ['collection'=>$collection,
+            $params=['collection'=>$collection,
                 'collectionItems'=>$collectionItems,'paragraphs'=>$paragraphs,'sentences'=>$sentences,
                 'paliTranslations'=>$paliTranslations,'otherTranslations'=>$otherTranslations,
                 'comments'=>$comments,'shownav'=>$form->get("shownav")->getData()
-            ]);     
-                
-            if($rendermode=="html")
-            {
-                $disposition = HeaderUtils::makeDisposition(
-                    HeaderUtils::DISPOSITION_ATTACHMENT,
-                    $collection["name"].'.html',
-                    'collection.html'
-                    );
-                
-                $response->headers->set('Content-Disposition', $disposition);
-            }
+            ];
             
-            if($rendermode=="fb2")
+            switch($rendermode)
             {
-                $disposition = HeaderUtils::makeDisposition(
-                    HeaderUtils::DISPOSITION_ATTACHMENT,
-                    $collection["name"].'.fb2',
-                    'collection.fb2'
-                    );
-                
-                $response->headers->set('Content-Type', 'application/fictionbook2+zip');
-                $response->headers->set('Content-Disposition', $disposition);
-            }
+                case "disp":
+                    $response=$this->render($templates[$printviewtype], $params);
+                    break;
+                case "html":
+                    $response=$this->render($templates[$printviewtype], $params);
+                    
+                    $disposition = HeaderUtils::makeDisposition(
+                        HeaderUtils::DISPOSITION_ATTACHMENT,
+                        $collection["name"].'.html',
+                        'collection.html'
+                        );
+                    
+                    $response->headers->set('Content-Disposition', $disposition);
+                    break;
+                case "fb2":
+                    $response=$this->render($templates[$printviewtype], $params);
+                    
+                    $disposition = HeaderUtils::makeDisposition(
+                        HeaderUtils::DISPOSITION_ATTACHMENT,
+                        $collection["name"].'.fb2',
+                        'collection.fb2'
+                        );
+                    
+                    $response->headers->set('Content-Type', 'application/fictionbook2+zip');
+                    $response->headers->set('Content-Disposition', $disposition);
+                    break;
+                case "pdf":
+                    $params["shownav"]=0;
+                                       
+                    $html=$this->renderView($templates[$printviewtype], $params);
+                    
+                    //tried dompdf for this. it has a problem with bold text flow
+                    //mpdf works flawlessly!
+                    
+                    $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+                    $fontDir = $defaultConfig['fontDir'];
+                    $fontDir=array_merge($fontDir, [
+                        $this->getParameter('kernel.project_dir') . '/fonts/',
+                    ]);
+                    
+                    $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+                    $fontData = $defaultFontConfig['fontdata'];
+                    $fontData=$fontData + [ // lowercase letters only in font key
+                        'liberationsans' => [
+                            'R' => 'LiberationSans-Regular.ttf',
+                            'I' => 'LiberationSans-Italic.ttf',
+                            'B' => 'LiberationSans-Bold.ttf',
+                            'BI' => 'LiberationSans-BoldItalic.ttf',
+                        ],
+                        'liberationserif' => [
+                            'R' => 'LiberationSerif-Regular.ttf',
+                            'I' => 'LiberationSerif-Italic.ttf',
+                            'B' => 'LiberationSerif-Bold.ttf',
+                            'BI' => 'LiberationSerif-BoldItalic.ttf',
+                        ] ];
+                    
+                    
+                    $mpdf = new \Mpdf\Mpdf([
+                        'fontDir' => $fontDir,
+                        'fontdata' => $fontData,
+                        'default_font' => 'libsans'
+                    ]);   
+                    
+                    $mpdf->h2bookmarks = array('H1'=>0, 'H2'=>1, 'H3'=>2, 'H4'=>3, 'H5'=>4);
+                    $mpdf->h2toc = array('H1' => 0, 'H2' => 1, 'H3' => 2,'H4'=>  3,'H5' => 4);
+                    
+                    $mpdf->defaultfooterfontstyle="R";
+                    $mpdf->setFooter('|{PAGENO}|');
+                                        
+                    $mpdf->WriteHTML($html);
+                    
+                    if($form->get("shownav")->getData())
+                    {                        
+                        $tocParams=['links'=>true, 
+                            'toc-bookmarkText'=>$translator->trans("table of contents")];
+                        $mpdf->TOCpagebreakByArray($tocParams);                        
+                    }
+                    
+                    $pdfEncodedContent=$mpdf->OutputBinaryData();
+                    
+                    $response=new Response();
+                    $response->setContent($pdfEncodedContent);
+                    $disposition = HeaderUtils::makeDisposition(
+                        HeaderUtils::DISPOSITION_ATTACHMENT,
+                        $collection["name"].'.pdf',
+                        'collection.pdf'
+                        );
+                    
+                    $response->headers->set('Content-Disposition', $disposition);
+
+                    
+                    //$response->setStatusCode(Response::HTTP_NOT_FOUND);
+                    //$response->setContent("node id=".$collectionItem['nodeid']." has no translations");
+                    break;                
+            }            
         }
         else 
         {//view collection           
