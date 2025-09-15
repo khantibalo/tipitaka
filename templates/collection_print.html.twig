@@ -9,9 +9,9 @@
     <body style="font-family:Tahoma,Verdana,Liberation Sans">
 		<a name="top"></a>
 		<h1 style="text-align: center;">{{ collection.name }}</h1>
-		<div style="text-align: center;">{% trans %}Publisher{% endtrans %}</div>
-		<div style="text-align: center;">{% trans %}Collection URL{% endtrans %} <a href="{{ url('collection_view',{collectionid: collection.collectionitemid}) }}">{{ url('collection_view',{collectionid: collection.collectionitemid}) }}</a></div>	
-		<div style="text-align: center;">{% trans %}Retrieved{% endtrans %} {{ "now"|date("d.m.Y") }}</center></div>
+		<p style="text-align: center;">{% trans %}Publisher{% endtrans %}</p>
+		<p style="text-align: center;">{% trans %}Collection URL{% endtrans %} <a href="{{ url('collection_view',{collectionid: collection.collectionitemid}) }}">{{ url('collection_view',{collectionid: collection.collectionitemid}) }}</a></p>	
+		<p style="text-align: center;">{% trans %}Retrieved{% endtrans %} {{ "now"|date("d.m.Y") }}</center></p>
         {% block content %}{% endblock %}
     </body>
 </html>

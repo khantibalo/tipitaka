@@ -304,7 +304,7 @@ class CollectionController extends AbstractController
                         );
                     
                     $response->headers->set('Content-Disposition', $disposition);
-
+		    $response->headers->set('Content-Type', 'application/pdf');
                     
                     //$response->setStatusCode(Response::HTTP_NOT_FOUND);
                     //$response->setContent("node id=".$collectionItem['nodeid']." has no translations");
