@@ -278,12 +278,11 @@ class CollectionController extends AbstractController
                         'default_font' => 'libsans'
                     ]);   
                     
-                    $mpdf->h2bookmarks = array('H1'=>0, 'H2'=>1, 'H3'=>2, 'H4'=>3, 'H5'=>4);
-                    $mpdf->h2toc = array('H1' =>0, 'H2' =>1, 'H3' =>2,'H4'=>3,'H5' => 4);
+                    $mpdf->h2bookmarks = array('H1'=>0, 'H2'=>1, 'H3'=>2, 'H4'=>3, 'H5'=>4, 'H6'=>5);
+                    $mpdf->h2toc = array('H1' =>0, 'H2' =>1, 'H3' =>2,'H4'=>3,'H5' => 4,'H6'=>5); 
                     
                     $mpdf->defaultfooterfontstyle="R";
                     $mpdf->setFooter('|{PAGENO}|');
-                                        
                     $mpdf->WriteHTML($html);
                     
                     if($form->get("shownav")->getData())
