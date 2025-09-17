@@ -20,9 +20,9 @@
 {% endif %}		
 	{% for collectionItem in collectionItems %}
 		{% if collectionItem.nodeid %}		
-			<h2>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} {% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h2>				
+			<h{{collectionItem.level}}>{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }} {% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
 		{% else %} 
-			<h{{collectionItem.level}}>{{ collectionItem.colItemName }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
+			<h{{collectionItem.level}} style="{{collectionItem.level==1 ? 'page-break-before: always;' : ''}}">{{ collectionItem.colItemName }}{% if shownav %}&nbsp;<a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
 		{% endif %}
 		{{ collectionItem.notes|raw }}
 		<p></p>

@@ -20,7 +20,7 @@
 		{% for collectionItem in collectionItems %}
 			{% if collectionItem.nodeid %}	
 			    {% if not collectionItem.hidetitleprint %}	
-					<h2 style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:17pt;text-decoration: underline;">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}{% if not collectionItem.hidepalinameprint %} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% endif %}{% if shownav %}  <a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h2>
+					<h{{collectionItem.level}} style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:17pt;text-decoration: underline;">{{ collectionItem.colItemName ?? (collectionItem.nodeName ?? collectionItem.title) }}{% if not collectionItem.hidepalinameprint %} - {{ collectionItem.altPaliName ?? collectionItem.title }}{% endif %}{% if shownav %}  <a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>
 				{% endif %}					
 			{% else %} 
 				<h{{collectionItem.level}} style="font-family:Tahoma, Liberation Sans, Ubuntu;font-size:20pt;{{collectionItem.level==1 ? 'border: solid thin black;page-break-before: always;' : 'text-decoration: underline;'}}">{{ collectionItem.colItemName }}{% if shownav %}  <a name="ch{{collectionItem.collectionitemid}}"></a><a href="#top">К началу</a>{% endif %}</h{{collectionItem.level}}>				
