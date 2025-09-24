@@ -122,6 +122,8 @@ class SearchController extends AbstractController
                 $form->get("inTranslated")->setData($inTranslated=="1" ? true : false);
                 $form->get("searchMode")->setData($searchMode);
                                 
+                $searchString=str_ireplace("ṁ","ṃ",$searchString);
+                
                 if($scope=='toc')
                 {
                     if($lang==SearchController::LanguagePali)
