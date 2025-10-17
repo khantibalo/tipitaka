@@ -1,6 +1,6 @@
 <div style="margin-left:{{ level*20 }}px">
 {% if node.haschildnodes %}
-<a href="{{ path(expandRoute, {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+<a href="{{ node.urlfull ?? path(expandRoute, {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
 {% else %}
 {{ node.trname ?? node.title }}
 {% endif %}
@@ -8,10 +8,11 @@
 	{% if not node.disableview %}	
         {% if node.HasTableView or not node.haschildnodes %}
             {% set route=node.TranslationSourceID ? 'translation_view' : (node.HasTableView ? 'table_view' : 'view_node') %}
+            {% set suffix=node.TranslationSourceID ? '/transl' : '/table' %}
             {% set label=node.TranslationSourceID ? 'translation'|trans : (node.HasTableView ? 'table'|trans : 'fragments'|trans) %}
-            &nbsp;<a href="{{ path(route, {id: node.nodeid}) }}">({{ label }})</a>
+            &nbsp;<a href="{{ node.urlfull ? node.urlfull ~ suffix :  path(route, {id: node.nodeid}) }}">({{ label }})</a>
         {% else %}
-        	<a href="{{ path('view_node', {id: node.nodeid}) }}">({% trans %}fragments{% endtrans %})</a>
+        	<a href="{{ node.urlfull ?? path('view_node', {id: node.nodeid}) }}">({% trans %}fragments{% endtrans %})</a>
         {% endif %}
     {% endif %}
     {% for tag in tags|filter(t=>t.nodeid==node.nodeid) %}

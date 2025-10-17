@@ -258,5 +258,8 @@ Submit: Submit
 Layout: Layout
 Settings: settings
 download print view fb2: download in fb2 format
-URL part: URL part
+URL part: Part url
 download print view pdf: download in pdf format
+URL full: Full url
+Calculate for this node: Calculate for this node 
+Calculate for child nodes: Calculate for child nodes

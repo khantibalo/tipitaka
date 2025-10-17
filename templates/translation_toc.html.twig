@@ -12,12 +12,12 @@
 		{% set level = level+1 %}
     {% endfor %}
 	{% if thisNode.hasprologue %}
-	<div style="margin-left:{{ level*20 }}px">
-	{% set route=thisNode.HasTableView ? 'table_view' : 'view_node' %}
-	{% set label=thisNode.HasTableView ? 'table'|trans : 'fragments'|trans %}
-	{% trans %}Prologue{% endtrans %}
-	&nbsp;<a href="{{ path(route, {id: thisNode.nodeid,prologue: 1}) }}">({{ label }})</a>
-	</div>
+    	<div style="margin-left:{{ level*20 }}px">
+    	{% set route=thisNode.HasTableView ? 'table_view' : 'view_node' %}
+    	{% set label=thisNode.HasTableView ? 'table'|trans : 'fragments'|trans %}
+    	{% trans %}Prologue{% endtrans %}
+    	&nbsp;<a href="{{ thisNode.urlfull ? thisNode.urlfull ~ '/prologue' : path(route, {id: thisNode.nodeid,prologue: 1}) }}">({{ label }})</a>
+    	</div>
 	{% endif %}
 {% endif %}
 {% for node in child_nodes %}

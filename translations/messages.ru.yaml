@@ -215,7 +215,7 @@ Remember me: Запомнить меня
 TagType-1: Метки с палийским названием
 PrintViewTableDesc: Таблица - для больших экранов
 PrintViewPaperDesc: Подстрочник - для телефонов
-PrintViewTranslationDesc: Перевод - для любых устройств
+PrintViewTranslationDesc: Перевод - для любых устройств и печати
 Search mode: Режим поиска на пали
 SearchMode1: Использовать язык запросов
 SearchMode2: Искать совпадение с любой частью слова (нет языка запросов)
@@ -260,3 +260,6 @@ Settings: настройки
 download print view fb2: Скачать файл fb2
 URL part: Часть ссылки
 download print view pdf: Скачать файл pdf (оглавление в конце документа)
+URL full: Ссылка полностью
+Calculate for this node: Вычислить для этого узла
+Calculate for child nodes: Вычислить для дочерних узлов

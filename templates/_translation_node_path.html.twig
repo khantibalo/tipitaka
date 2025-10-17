@@ -1,6 +1,6 @@
 {% trans %}Location{% endtrans %}
 {% for node in path_nodes %}    
-    <a href="{{ path('translation_toc_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+    <a href="{{ node.urlfull ?? path('translation_toc_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
     {% if not loop.last %}
     &gt;&gt;
     {% endif %}

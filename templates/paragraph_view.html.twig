@@ -17,12 +17,12 @@
 {% for node in path_nodes %}
     {% if loop.last %}
         {% if paragraph.hastableview %}
-           <a href="{{ path('table_view',{id: paragraph.nodeid, _fragment: "sent#{sentences|first.sentenceid}"}) }}">{{ node.trname ?? node.title }}</a>
+           <a href="{{ node.urlfull ? node.urlfull ~ '/table' : path('table_view',{id: paragraph.nodeid, _fragment: "sent#{sentences|first.sentenceid}"}) }}">{{ node.trname ?? node.title }}</a>
         {% else %}
-           <a href="{{ path('view_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+           <a href="{{ node.urlfull ?? path('view_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
         {% endif %}
     {% else %}
-    <a href="{{ path(node_has_translation ? 'translation_toc_node' : 'full_toc_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+    <a href="{{ node_has_translation ?  (node.urlfull ?? path('translation_toc_node', {id: node.nodeid})) : path('full_toc_node', {id: node.nodeid}) }}" >{{ node.trname ?? node.title }}</a>
     {% endif %} 
     {% if not loop.last %}
     &gt;&gt;
@@ -85,10 +85,10 @@
 		<td>
 		{% if sentence.commentcount>0 %}
 		    {{ sentence.lastcomment }}<br>
-			<a href="{{ path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+			<a href="{{ urlfull ? (urlfull ~ '/s/' ~  sentence.sentenceid) : path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
 		{% else %}
 		    {% if is_granted(userRole) %}
-				<a href="{{ path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}Add new comment{% endtrans %}</a>
+				<a href="{{ urlfull ? (urlfull ~ '/s/' ~  sentence.sentenceid) : path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}Add new comment{% endtrans %}</a>
 			{% endif %}
 		{% endif %}
 		</td>          

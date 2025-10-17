@@ -35,6 +35,10 @@
 <td>{{ form_label(form.urlpart,'URL part') }}:</td>
 <td>{{ form_widget(form.urlpart) }}</td>
 </tr>
+<tr>
+<td>{{ form_label(form.urlfull,'URL full') }}:</td>
+<td>{{ form_widget(form.urlfull) }} {{ form_widget(form.calcthis,{'label': 'Calculate for this node'}) }} {{ form_widget(form.calcchild,{'label': 'Calculate for child nodes'}) }}</td>
+</tr>
 </table>
 {{ form_widget(form.save,{'label': 'Save'}) }}
 <a href="{{ path(route,{id: node.nodeid}) }}">{% trans %}Return to node{% endtrans %}</a>

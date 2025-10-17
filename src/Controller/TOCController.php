@@ -344,6 +344,9 @@ class TOCController extends AbstractController
         ->add('urlpart', TextType::class,['required' => false,'label' => false])
         ->add('save', SubmitType::class)
         ->add('updateparent', SubmitType::class)
+        ->add('calcthis', SubmitType::class)
+        ->add('calcchild', SubmitType::class)
+        ->add('urlfull', TextType::class,['required' => false,'label' => false])
         ->getForm();
         
         $form->handleRequest($request);
@@ -365,7 +368,7 @@ class TOCController extends AbstractController
                 
                 $tocRepository->persistNode($node);
                 
-                $response=$this->redirectToRoute($route,['id'=>$node->getNodeid()]);
+                $response=$this->redirectToRoute($route,['id'=>$nodeid]);
             }
             
             if($form->get('updateparent')->isClicked())
@@ -375,8 +378,29 @@ class TOCController extends AbstractController
                     $tocRepository->updateParentNodeId($nodeid,$form->get("parentid")->getData());
                 }
                 
-                $response=$this->redirectToRoute('node_edit',['nodeid'=>$node->getNodeid()]);
+                $response=$this->redirectToRoute('node_edit',['nodeid'=>$nodeid]);
             }
+            
+            if($form->get('calcthis')->isClicked())
+            {
+                if($form->get("urlpart")->getData())
+                {
+                    $tocRepository->calcThisUrlFull($nodeid,$form->get("urlpart")->getData());
+                }
+                
+                $response=$this->redirectToRoute('node_edit',['nodeid'=>$nodeid]);
+            }
+            
+            if($form->get('calcchild')->isClicked())
+            {
+                if($form->get("urlpart")->getData() && $form->get("urlfull")->getData())
+                {
+                    $tocRepository->calcChildUrlFull($node->getNodeid(),$form->get("urlpart")->getData(),
+                        $form->get("urlfull")->getData());
+                }
+                
+                $response=$this->redirectToRoute('node_edit',['nodeid'=>$nodeid]);
+            }            
         }
         else 
         {
@@ -403,8 +427,8 @@ class TOCController extends AbstractController
         return $this->redirectToRoute('view_node',['id'=>$nodeid]);
     }
 
-    public function listNodeTags($nodeid,TipitakaTagsRepository $tagsRepository,TipitakaTocRepository $tocRepository,Request $request,
-        TranslatorInterface $translator)
+    public function listNodeTags($nodeid,TipitakaTagsRepository $tagsRepository,TipitakaTocRepository $tocRepository,
+        Request $request, TranslatorInterface $translator)
     {
         $tagtypeid=TagTypes::Subject;
         
@@ -480,5 +504,22 @@ class TOCController extends AbstractController
     {
         $tagsRepository->removeNodeTag($tagid,$nodeid);
         return $this->redirectToRoute('node_tags',['nodeid'=>$nodeid]);
+    }
+    
+    public function fromHierpath(Request $request,TipitakaTocRepository $tocRepository, TranslatorInterface $translator,
+        TipitakaTagsRepository $tagsRepository)
+    {
+        $nodes=$tocRepository->findBy(["urlfull"=>$request->getRequestUri()]);
+        $node=array_pop($nodes);
+        if($node)
+        {
+            $response=$this->translationListById($node->getNodeid(),$tocRepository,$request,$translator,$tagsRepository);
+        }
+        else
+        {
+            $response=new Response("not found",404);
+        }        
+        
+        return $response;
     }
 }

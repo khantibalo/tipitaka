@@ -52,8 +52,8 @@
         <td colspan="{{ sources|length + 2 }}">
         <a name="{{ child_node.nodeid }}"></a>
         <p class="{{ child_node.typename }}">{{ child_node.trname ?? child_node.title }}
-        {% if child_node.HasTableView %}<a href="{{ path('table_view',{id: child_node.nodeid}) }}">{% trans %}Table view{% endtrans %}</a>{% endif %}
-        {% if child_node.TranslationSourceID %}<a href="{{ path('translation_view', {id: child_node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
+        {% if child_node.HasTableView %}<a href="{{ child_node.urlfull ? child_node.urlfull ~ '/table' : path('table_view',{id: child_node.nodeid}) }}">{% trans %}Table view{% endtrans %}</a>{% endif %}
+        {% if child_node.TranslationSourceID %}<a href="{{ child_node.urlfull ? child_node.urlfull ~ '/transl' : path('translation_view', {id: child_node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
     		<a href="{{ path('view_node', {id: child_node.nodeid}) }}">{% trans %}original{% endtrans %}</a>
         </p>
         </td>

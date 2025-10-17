@@ -367,6 +367,50 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         $entityManager->persist($nn);
         $entityManager->flush();
+        
+        $matches=array();
+        
+        if(preg_match("|\d+\.([-\d]+)|u", $nn->getName(),$matches))
+        {
+            $node=$nn->getNodeid();
+            $node->setUrlpart($matches[1]);
+            $urlFull=$this->findUrlFull($node);
+            $node->setUrlfull($urlFull."/".$matches[1]);
+            $entityManager->persist($node);
+            $entityManager->flush();
+        }
+        else 
+        {
+            if(preg_match("|\d+|u", $nn->getName(),$matches))
+            {
+                $node=$nn->getNodeid();
+                $node->setUrlpart($matches[0]);  
+                $urlFull=$this->findUrlFull($node);
+                $node->setUrlfull($urlFull."/".$matches[0]);
+                $entityManager->persist($node);
+                $entityManager->flush();
+            }
+        }        
+    }
+    
+    private function findUrlFull(TipitakaToc $node)
+    {
+        $urlFull=$node->getUrlfull();
+        $parentid=$node->getParentid();
+        
+        while(!is_null($parentid))
+        {
+            $node=$this->find($parentid);
+            $urlFull=$node->getUrlfull();
+            if($urlFull)
+            {
+                break;
+            }
+            
+            $parentid=$node->getParentid();
+        }
+        
+        return $urlFull;
     }
     
     private function getNamesSubquery()
@@ -387,7 +431,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();                  
         
         $query = $entityManager->createQueryBuilder()
-        ->select('toc.nodeid','toc.title','toc.haschildnodes','tt.canview','toc.IsHidden','tt.name as typename','toc.HasTableView','s.sourceid as TranslationSourceID','toc.disableview')
+        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.HasTableView,s.sourceid as TranslationSourceID,toc.disableview,toc.urlfull')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaToc','toc')
         ->innerJoin('toc.titletypeid', 'tt')
@@ -444,7 +488,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         $parent_nodes=str_replace("\\",",",trim($path,"\\"));
         
         $query=$entityManager->createQueryBuilder()
-        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.HasTableView,s.sourceid as TranslationSourceID,toc.disableview,toc.hasprologue,toc.HasTranslation')
+        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.HasTableView,s.sourceid as TranslationSourceID,toc.disableview,toc.hasprologue,toc.HasTranslation,toc.urlfull')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaToc','toc')
         ->innerJoin('toc.titletypeid', 'tt')
@@ -480,7 +524,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
     {                        
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.path,s.sourceid as TranslationSourceID,toc.notes,toc.disabletranslalign')
+        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.path,s.sourceid as TranslationSourceID,toc.notes,toc.disabletranslalign,toc.urlfull')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaToc','toc')
         ->innerJoin('toc.titletypeid', 'tt')
@@ -497,7 +541,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.HasTableView,s.sourceid as TranslationSourceID')
+        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.HasTableView,s.sourceid as TranslationSourceID,toc.urlfull')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaToc','toc')
         ->innerJoin('toc.titletypeid', 'tt')
@@ -527,7 +571,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.HasTableView,s.sourceid as TranslationSourceID')
+        ->select('toc.nodeid,toc.title,toc.haschildnodes,tt.canview,toc.IsHidden,tt.name as typename,toc.HasTableView,s.sourceid as TranslationSourceID,toc.urlfull')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaToc','toc')
         ->innerJoin('toc.titletypeid', 'tt')
@@ -569,7 +613,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         //find all nodes with these tags excluding current
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('toc.nodeid,toc.title,s.sourceid as TranslationSourceID,toc.HasTableView')
+        ->select('toc.nodeid,toc.title,s.sourceid as TranslationSourceID,toc.HasTableView,toc.urlfull')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaTocTags','tt')
         ->innerJoin('tt.tagid', 't')
@@ -636,17 +680,8 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         $node->setTextPath($parent->getTextPath().' '.$node->getTitle()."\\");
         $this->persistNode($node);
         
-        //update path and textpath of all descendant nodes
-        
-        $entityManager = $this->getEntityManager();
-        $query = $entityManager->createQueryBuilder()
-        ->select('toc')
-        ->from('App\Entity\TipitakaToc','toc')
-        ->where('toc.parentid=:nid')
-        ->getQuery()
-        ->setParameter('nid',$nodeid);
-        
-        $childNodes=$query->getResult();
+        //update path and textpath of all descendant nodes                      
+        $childNodes=$this->findBy(['parentid'=>$nodeid]);
         
         foreach($childNodes as $childNode)
         {
@@ -654,6 +689,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         }
         
         //update maxpagenumber,minpagenumber,maxvolumenumber,minvolumenumber,haschildnodes,hastranslation of the parent node
+        $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
         ->select('MAX(toc.MaxPageNumber) As MaxPage,MIN(toc.MinPageNumber) As MinPage,MAX(toc.MaxVolumeNumber) As MaxVolume,MIN(toc.MinVolumeNumber) As MinVolume,MAX(toc.HasTranslation) As HasTranslation,MAX(toc.allowptspage) As allowptspage')
         ->from('App\Entity\TipitakaToc','toc')
@@ -674,26 +710,122 @@ class TipitakaTocRepository  extends ServiceEntityRepository
     }
         
     private function fixChildNodePathsRecursive($parent,$child)
-    {
-        $entityManager = $this->getEntityManager();
-        
+    {        
         $child->setPath($parent->getPath().$child->getNodeid()."\\");
         $child->setTextPath($parent->getTextPath().' '.$child->getTitle()."\\");
         $this->persistNode($child);
-        
-        $query = $entityManager->createQueryBuilder()
-        ->select('toc')
-        ->from('App\Entity\TipitakaToc','toc')
-        ->where('toc.parentid=:nid')
-        ->getQuery()
-        ->setParameter('nid',$child->getNodeid());
-        
-        $childNodes=$query->getResult();
+                
+        $childNodes=$this->findBy(['parentid'=>$child->getNodeid()]);
         
         foreach($childNodes as $childNode)
         {
             $this->fixChildNodePathsRecursive($child,$childNode);
         }
     }   
+    
+    public function calcThisUrlFull($nodeid,$urlpart)
+    {
+        $node=$this->find($nodeid);
+        $node->setUrlpart($urlpart);
+        
+        $parentid=$node->getParentid();
+        
+        do
+        {            
+            $parent=$this->find($parentid);
+            $parentid=$parent->getParentid();
+        }
+        while($parent && $parentid && empty($parent->getUrlfull()));       
+        
+        if($parent)
+        {
+            $node->setUrlFull($parent->getUrlFull()."/".$urlpart);
+        }
+        
+        
+        $this->persistNode($node);
+    }
+    
+    public function calcChildUrlFull($nodeid,$urlpart,$urlfull)
+    {
+        $node=$this->find($nodeid);
+        $node->setUrlpart($urlpart);
+        $node->setUrlfull($urlfull);
+        $this->persistNode($node);
+        
+        $this->calcChildUrlFullRecursive($nodeid,$urlfull);
+    }
+    
+    private function calcChildUrlFullRecursive($parentid,$parentFullUrl)
+    {        
+        $childNodes=$this->findBy(['parentid'=>$parentid]);
+        $entityManager = $this->getEntityManager();
+        $childid=1;
+        
+        foreach($childNodes as $child)
+        {
+            if(!$child->getIsHidden())
+            {//skip hidden
+                if(empty($child->getUrlpart()))
+                {//if urlpart is empty try to find it in name
+                    $query = $entityManager->createQueryBuilder()
+                    ->select('nn')
+                    ->from('App\Entity\TipitakaNodeNames','nn')
+                    ->where('nn.nodeid=:id')
+                    ->getQuery()
+                    ->setParameter('id', $child->getNodeid());
+                    
+                    $names=$query->getResult();
+                    if(!empty($names))
+                    {
+                        $name=current($names);
+                        $matches=array();
+                        
+                        if(preg_match("|\d+\.([-\d]+)|u", $name->getName(),$matches))
+                        {
+                            $child->setUrlpart($matches[1]);
+                            $child->setUrlfull($parentFullUrl."/".$matches[1]);
+                            $entityManager->persist($child);
+                            $entityManager->flush();
+                        }
+                        else
+                        {
+                            if(preg_match("|\d+|u", $name->getName(),$matches))
+                            {
+                                $child->setUrlpart($matches[0]);
+                                $child->setUrlfull($parentFullUrl."/".$matches[0]);
+                                $entityManager->persist($child);
+                                $entityManager->flush();
+                            }
+                        }
+                    }
+                    
+                    if(empty($child->getUrlpart()))
+                    {
+                        $child->setUrlpart("part/$childid");
+                        $child->setUrlfull($parentFullUrl."/part/$childid");
+                        $entityManager->persist($child);
+                        $entityManager->flush();
+                    }
+                }
+                else
+                {
+                    $child->setUrlfull($parentFullUrl."/".$child->getUrlpart());
+                    $entityManager->persist($child);
+                    $entityManager->flush();
+                }
+                
+                $this->calcChildUrlFullRecursive($child->getNodeid(),$parentFullUrl."/".$child->getUrlpart());
+            }
+            else
+            {
+                $this->calcChildUrlFullRecursive($child->getNodeid(),$parentFullUrl);
+            }
+            
+            $childid++;
+        }
+        
+    }
+    
 }
 

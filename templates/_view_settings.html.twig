@@ -42,11 +42,11 @@ Myanmar
 <div>
 <center>
 {% if not view_settings.back_id is empty %}
-{% if backPrologue %}<a href="{{ path(view_settings.view_route, {id: view_settings.back_id,prologue: 1}) }}">{% else %}<a href="{{ path(view_settings.view_route, {id: view_settings.back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>
+{% if backPrologue %}<a href="{{ path(view_settings.view_route, {id: view_settings.back_id,prologue: 1}) }}">{% else %}<a href="{{ view_settings.urlfull ? (view_settings.urlfull ~ '/p/' ~ view_settings.back_id) : path(view_settings.view_route, {id: view_settings.back_id}) }}">{% endif %}&lt;&lt; {% trans %}Back{% endtrans %}</a>
 {% endif %}
 {% set node_offset=paragraph is defined ? 1 : 2 %}{% set last_path_node= path_nodes[path_nodes | length - node_offset] %}{{ last_path_node.trname ?? last_path_node.title }}
 {% if not view_settings.next_id is empty %}
-<a href="{{ path(view_settings.view_route, {id: view_settings.next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
+<a href="{{ view_settings.urlfull ? (view_settings.urlfull ~ '/p/' ~ view_settings.next_id) : path(view_settings.view_route, {id: view_settings.next_id}) }}">{% trans %}Next{% endtrans %} &gt;&gt;</a>
 {% endif %}
 </center>
 </div>

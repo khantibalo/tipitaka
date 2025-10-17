@@ -23,7 +23,6 @@ use App\Enums\Languages;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 
-
 class CollectionController extends AbstractController
 {
     public function list(Request $request,TipitakaCollectionsRepository $collectionsRepository,TranslatorInterface $translator,

@@ -39,13 +39,13 @@
         {% endfor %}
     {% endif %}
     {% if showComments %}
-		<td>
+		<td>{% set urlfull=(child_node ?? node).urlfull %}
 		{% if sentence.commentcount>0 %}
 		    {{ sentence.lastcomment }}<br>
-			<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+			<a href="{{ urlfull ? (urlfull~ '/s/' ~ sentence.sentenceid) : path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
 		{% else %}
 		    {% if is_granted(userRole) %}
-				<a href="{{ path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}Add new comment{% endtrans %}</a>
+				<a href="{{ urlfull ? (urlfull ~ '/s/' ~ sentence.sentenceid) : path('comments',{sentenceid: sentence.sentenceid,return: 'node'}) }}">{% trans %}Add new comment{% endtrans %}</a>
 			{% endif %}
 		{% endif %}
 		</td>

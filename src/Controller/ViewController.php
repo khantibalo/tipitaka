@@ -116,7 +116,7 @@ class ViewController extends AbstractController
         if($paragraph)
         {        
             $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($paragraph['nodeid'],$request->getLocale());
-                    
+            $urlfull=end($path_nodes)['urlfull'];
             $pn=$paragraphsRepository->listPageNumbersByParagraph($id);
             
             $notes=$paragraphsRepository->listNotesByParagraph($id);   
@@ -145,7 +145,7 @@ class ViewController extends AbstractController
             
             $ci=new CapitalizeExtension();
             
-            $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request);
+            $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request,$urlfull);
             $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
             $paragraph['text']=$this->formatParagraph($paragraph['text'],$paragraph['bold'],$pn,$notes,$view_settings);     
             
@@ -156,7 +156,7 @@ class ViewController extends AbstractController
                     'sentences'=>$sentences,'translations'=>$translations,'sources'=>$sources,
                     'showNewSource'=>$request->query->get('showNewSource'),
                     'showCode'=>$request->query->get('showCode'),'authorRole'=>Roles::Author, 'userRole'=>Roles::User,'backPrologue'=>NULL,
-                    'editorRole'=>Roles::Editor
+                    'editorRole'=>Roles::Editor,'urlfull'=>$urlfull
                 ]);
         }
         else
@@ -263,9 +263,9 @@ class ViewController extends AbstractController
     }
     
     
-    private function getViewSettings($route,$id,$back_id,$next_id,Request $request)
+    private function getViewSettings($route,$id,$back_id,$next_id,Request $request,$urlfull=null)
     {
-        $view_settings=array('ic'=>'','notes'=>'','printview'=>'','view_route'=>$route,'id'=>$id,'back_id'=>$back_id,'next_id'=>$next_id);
+        $view_settings=array('ic'=>'','notes'=>'','printview'=>'','view_route'=>$route,'id'=>$id,'back_id'=>$back_id,'next_id'=>$next_id,'urlfull'=>$urlfull);
                 
         $view_settings['ic']=$request->query->get('ic','');
         $view_settings['notes']=$request->query->get('notes','');
@@ -275,13 +275,16 @@ class ViewController extends AbstractController
     }
     
     public function tableView($id,TipitakaTocRepository $tocRepository,TipitakaSentencesRepository $sentencesRepository,Request $request,
-        TipitakaTagsRepository $tagsRepository,TipitakaCollectionsRepository $collectionsRepository)
+        TipitakaTagsRepository $tagsRepository,TipitakaCollectionsRepository $collectionsRepository,$prologue=false)
     {                
         $node=$tocRepository->getNodeWithNameTranslation($id,$request->getLocale());
         
         if($node)
         {
-            $prologue=$request->query->get('prologue');
+            if(!$prologue)
+            {
+                $prologue=$request->query->get('prologue');
+            }
             
             if($prologue)
             {
@@ -318,12 +321,16 @@ class ViewController extends AbstractController
 
         $back_id='';
         $next_id='';
+        $back_urlfull='';
+        $next_urlfull='';
         $back_prologue=false;
         
         if($prologue)
         {
             $childNodes=$tocRepository->listAllChildNodes($nodeid);
             $next_id=$childNodes[1]['nodeid'];
+            $nextNode=$tocRepository->find($next_id);
+            $next_urlfull=$nextNode->getUrlfull();
         }
         else 
         {
@@ -334,11 +341,15 @@ class ViewController extends AbstractController
                 if($backnext[0]['Prev'])
                 {
                     $back_id=$backnext[0]['Prev'];
+                    $backNode=$tocRepository->find($back_id);
+                    $back_urlfull=$backNode->getUrlfull();
                 }
                 
                 if($backnext[0]['Next'])
                 {
                     $next_id=$backnext[0]['Next'];
+                    $nextNode=$tocRepository->find($next_id);
+                    $next_urlfull=$nextNode->getUrlfull();
                 }
             }
             
@@ -348,6 +359,8 @@ class ViewController extends AbstractController
                 if($parentNode['hasprologue'])
                 {
                     $back_id=$parentNode['nodeid'];
+                    $backNode=$tocRepository->find($back_id);
+                    $back_urlfull=$backNode->getUrlfull();
                     $back_prologue=true;
                 }
             }
@@ -375,7 +388,7 @@ class ViewController extends AbstractController
             'showAlign'=>$request->query->get('showAlign'),'userRole'=>Roles::User,
             'form' => $form->createView(),'allSources'=>$sources,'related'=>$related,
             'adminRole'=>Roles::Admin,'showPali'=>$form->get("pali")->getData(),'showComments'=>$form->get("comments")->getData(),
-            'backPrologue'=>$back_prologue,'tags'=>$tags,'editorRole'=>Roles::Editor,
+            'backPrologue'=>$back_prologue,'tags'=>$tags,'editorRole'=>Roles::Editor,'back_urlfull'=>$back_urlfull,'next_urlfull'=>$next_urlfull
         ]);
         
         if ($form->isSubmitted() && $form->isValid())
@@ -411,6 +424,8 @@ class ViewController extends AbstractController
         
         $back_id='';
         $next_id='';
+        $back_urlfull='';
+        $next_urlfull='';
         
         $backnext=$tocRepository->getBackNextNodeWithTranslation($nodeid);
         
@@ -419,11 +434,15 @@ class ViewController extends AbstractController
             if($backnext[0]['Prev'])
             {
                 $back_id=$backnext[0]['Prev'];
+                $backNode=$tocRepository->find($back_id);
+                $back_urlfull=$backNode->getUrlfull();
             }
             
             if($backnext[0]['Next'])
             {
                 $next_id=$backnext[0]['Next'];
+                $nextNode=$tocRepository->find($next_id);
+                $next_urlfull=$nextNode->getUrlfull();
             }
         }
 
@@ -434,7 +453,7 @@ class ViewController extends AbstractController
             'userRole'=>Roles::User,'child_nodes'=>$child_nodes,'immediate_sentences'=>$immediate_sentences,
             'showAlign'=>false,'form' => $form->createView(),'allSources'=>$sources,'related'=>$related,
             'adminRole'=>Roles::Admin,'showPali'=>$form->get("pali")->getData(),'showComments'=>$form->get("comments")->getData(),
-            'tags'=>$tags,'editorRole'=>Roles::Editor, 'back_id'=>$back_id, 'next_id'=>$next_id
+            'tags'=>$tags,'editorRole'=>Roles::Editor, 'back_id'=>$back_id, 'next_id'=>$next_id,'back_urlfull'=>$back_urlfull,'next_urlfull'=>$next_urlfull
         ]);
         
         if ($form->isSubmitted() && $form->isValid())
@@ -588,6 +607,8 @@ class ViewController extends AbstractController
             
             $back_id='';
             $next_id='';
+            $back_urlfull='';
+            $next_urlfull='';
             
             $backnext=$tocRepository->getBackNextNodeWithTranslation($id);
             
@@ -599,18 +620,22 @@ class ViewController extends AbstractController
                 if($backnext[0]['Prev'])
                 {
                     $back_id=$backnext[0]['Prev'];
+                    $backNode=$tocRepository->find($back_id);
+                    $back_urlfull=$backNode->getUrlfull();
                 }
                 
                 if($backnext[0]['Next'])
                 {
                     $next_id=$backnext[0]['Next'];
+                    $nextNode=$tocRepository->find($next_id);
+                    $next_urlfull=$nextNode->getUrlfull();
                 }
             }
             
             $response=$this->render('translation_view.html.twig', ['node'=>$node,'path_nodes'=>$path_nodes,
                 'paragraphs'=>$paragraphs,'nodes'=>$nodes,'translations'=>$translations,
                 'showsidebar'=>false,'source'=>$source,'related'=>$related,'tags'=>$tags,'authorRole'=>Roles::Author,
-                'back_id'=>$back_id, 'next_id'=>$next_id
+                'back_id'=>$back_id, 'next_id'=>$next_id, 'back_urlfull'=>$back_urlfull,'next_urlfull'=>$next_urlfull
             ]);
         }
         else
@@ -652,7 +677,7 @@ class ViewController extends AbstractController
                
         $ci=new CapitalizeExtension();
         
-        $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request);
+        $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request,end($path_nodes)['urlfull']);
         $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
         
         //we split the text, but not saving it anywhere
@@ -739,5 +764,59 @@ class ViewController extends AbstractController
         return $this->redirectToRoute('view_node',['id'=>$id],301);
     }
     
+    
+    public function fromHierpath(Request $request,TipitakaTocRepository $tocRepository,
+        TipitakaSentencesRepository $sentencesRepository, TipitakaTagsRepository $tagsRepository,TipitakaCollectionsRepository $collectionsRepository,
+        TipitakaParagraphsRepository $paragraphsRepository, TipitakaSourcesRepository $sourcesRepository)
+    {
+        $matches=array();
+        if(preg_match("/^(.+)\/(table|transl|prologue)$/", $request->getRequestUri(),$matches))
+        {            
+            $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+            $node=array_pop($nodes);
+            if($node)
+            {
+                switch($matches[2])
+                {
+                    case "table":
+                        $response=$this->tableView($node->getNodeid(),$tocRepository,$sentencesRepository,$request,$tagsRepository,$collectionsRepository);
+                        break;
+                    case "transl":
+                        $response=$this->translationView($node->getNodeid(), $request, $tocRepository, $sentencesRepository, $paragraphsRepository, $sourcesRepository, 
+                        $tagsRepository);
+                        break;
+                    case "prologue":
+                        $response=$this->tableView($node->getNodeid(), $tocRepository,$sentencesRepository,$request,$tagsRepository,$collectionsRepository,true);
+                        break;
+                }
+            }
+            else
+            {
+                $response=new Response("not found",404);
+            }
+        }
+        
+        if(preg_match("/^(.+)\/p\/(\d+)$/", $request->getRequestUri(),$matches))
+        {
+            $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+            $node=array_pop($nodes);
+            if($node)
+            {
+                 $response=$this->paragraphView($matches[2], $tocRepository, $paragraphsRepository, $sentencesRepository, $request);
+            }
+            else
+            {
+                $response=new Response("not found",404);
+            }
+        }
+        
+        
+        if(!$response)
+        {
+            $response=new Response("not found",404);
+        }
+        
+        return $response;
+    }
 }
 

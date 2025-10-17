@@ -11,7 +11,7 @@
 {{ collection.notes|raw }}
 {% endif %}
 {% if form is defined %}
-<b>{% trans %}Print view{% endtrans %}</b> <a href="#hide" class="hide btn" id="hide">{% trans %}Settings{% endtrans %}</a><a href="#show" class="show btn" id="show">{% trans %}hide{% endtrans %}</a>
+<div style="background-color: Ivory;"><b>{% trans %}Print view{% endtrans %}</b> <a href="#hide" class="hide btn" id="hide">{% trans %}Settings{% endtrans %}</a><a href="#show" class="show btn" id="show">{% trans %}hide{% endtrans %}</a>
 <div class="spoiler">
 {{ form_start(form,{'attr' : {'style' : 'display: inline'}}) }}
 <table>
@@ -42,7 +42,7 @@
 {{ form_row(form.submit,{'label': 'Submit','attr' : {'style' : 'font-size:14pt'}}) }}
 {{ form_end(form) }}
 <hr>
-</div>
+</div></div>
 {% endif %}
 
 <div><a href="{{ path('collections_list') }}">{% trans %}Top{% endtrans %}</a></div>

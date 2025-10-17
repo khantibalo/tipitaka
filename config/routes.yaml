@@ -438,6 +438,24 @@ collection_view_mobile:
    requirements:   
         collectionid: '\d+'
 
+hier_path_toc:
+    path: /{hierpath}
+    controller: App\Controller\TOCController::fromHierpath
+    requirements:        
+        hierpath: ^(canon|comm|subcomm|other)(?!.*\/table|.*\/transl|.*\/prologue|.*\/p\/\d+|.*\/s\/\d+).*$ 
+
+hier_path_transl:
+    path: /{hierpath}
+    controller: App\Controller\ViewController::fromHierpath
+    requirements:   
+        hierpath: ^(canon|comm|subcomm|other).+(\/table|\/transl|\/p\/\d+|\/prologue)$
+
+hier_path_sentence:
+    path: /{hierpath}
+    controller: App\Controller\CommentsController::fromHierpath
+    requirements:
+       hierpath: ^(canon|comm|subcomm|other).+\/s\/.+$				 
+
 #not all redirects could be implemented here.
 #some, e.g. index.php?NodeID=X can only be implemented on the web server side
 

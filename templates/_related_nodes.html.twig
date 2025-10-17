@@ -5,7 +5,8 @@
     <ul>
     {% for relatedNode in related %}
     {% set route=relatedNode.TranslationSourceID ? 'translation_view' : (relatedNode.HasTableView ? 'table_view' : 'view_node') %}
-    <li><a href="{{ path(route,{id: relatedNode.nodeid}) }}"{% if target is defined %}{{ 'target="'~target~'"' }}{% endif %}>{{ relatedNode.trname ?? relatedNode.title  }}</a></li>
+    {% set suffix=relatedNode.TranslationSourceID ? '/transl' : (relatedNode.HasTableView ? '/table' : '') %}
+    <li><a href="{{ relatedNode.urlfull ? relatedNode.urlfull ~ suffix : path(route,{id: relatedNode.nodeid}) }}"{% if target is defined %}{{ 'target="'~target~'"' }}{% endif %}>{{ relatedNode.trname ?? relatedNode.title  }}</a></li>
     {% endfor %}
     </ul>
 </div>

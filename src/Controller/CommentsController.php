@@ -223,5 +223,26 @@ class CommentsController  extends AbstractController
         return $this->render('comments_list_all.html.twig', ['pageid'=>$pageid,'comments'=>$comments
         ]);
     }
+    
+    public function fromHierpath(Request $request,TipitakaTocRepository $tocRepository,TipitakaSentencesRepository $sentencesRepository,
+        TipitakaCommentsRepository $commentsRepository,  TranslatorInterface $translator, TipitakaCollectionsRepository $collectionsRepository)
+    {
+        $matches=array();
+        if(preg_match("/^(.+)\/s\/(\d+)$/", $request->getRequestUri(),$matches))
+        {
+            $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+            $node=array_pop($nodes);
+            if($node)
+            {
+                $response=$this->listBySentence($matches[2], $sentencesRepository,$commentsRepository,$request,$tocRepository,$translator,$collectionsRepository);
+            }
+            else
+            {
+                $response=new Response("not found",404);
+            }
+        }
+        
+        return $response;
+    }
 }
 

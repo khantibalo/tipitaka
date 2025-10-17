@@ -71,7 +71,7 @@ class TipitakaCollectionItems
     private $hidepalinameprint = '0';
 
     /**
-     * @var \TipitakaToc
+     * @var TipitakaToc
      *
      * @ORM\ManyToOne(targetEntity="TipitakaToc")
      * @ORM\JoinColumns({
@@ -81,7 +81,7 @@ class TipitakaCollectionItems
     private $nodeid;
 
     /**
-     * @var \TipitakaUsers
+     * @var TipitakaUsers
      *
      * @ORM\ManyToOne(targetEntity="TipitakaUsers")
      * @ORM\JoinColumns({

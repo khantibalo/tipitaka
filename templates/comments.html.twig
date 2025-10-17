@@ -21,12 +21,12 @@
     {{ include('_translation_node_path.html.twig') }}
     {% if paragraphid and nodeid is empty %}
     &gt;&gt;
-    <a href="{{ path('view_paragraph',{id: paragraphid}) }}">{% trans %}paragraph{% endtrans %}</a>
+    <a href="{{ node.urlfull ? (node.urlfull ~ '/p/' ~ paragraphid) : path('view_paragraph',{id: paragraphid}) }}">{% trans %}paragraph{% endtrans %}</a>
     {% endif %}
     {% if nodeid %}
     &gt;&gt;
-    <a href="{{ path('table_view',{id: nodeid, _fragment: "sent#{sentenceid}"}) }}">{% trans %}Table view{% endtrans %}</a>
-    &nbsp;&nbsp;(<a href="{{ path('view_paragraph',{id: paragraphid}) }}">{% trans %}paragraph{% endtrans %}</a>)
+    <a href="{{ node.urlfull ? (node.urlfull ~ '/table' ~ "#sent#{sentenceid}") : path('table_view',{id: nodeid, _fragment: "sent#{sentenceid}"}) }}">{% trans %}Table view{% endtrans %}</a>
+    &nbsp;&nbsp;(<a href="{{ node.urlfull ? (node.urlfull ~ '/p/' ~ paragraphid) : path('view_paragraph',{id: paragraphid}) }}">{% trans %}paragraph{% endtrans %}</a>)
     {% endif %}
     </div>
 {% endif %}
