@@ -89,7 +89,7 @@
             <tr {% if loop.index % 2 ==0 %}style="background-color:LightGrey"{% endif %}>
             <td style="width:20px">{{ loop.index }}</td>
     		<td style="width:50px">
-    			<a href="{{ path('view_paragraph', {id: paragraph.paragraphid}) }}">{% trans %}View{% endtrans %}</a>{% if paragraph.hastranslation%}&nbsp;T{% endif %}		
+    			<a href="{{ paragraph.urlfull ? (paragraph.urlfull ~ "/p/" ~ paragraph.paragraphid) : path('view_paragraph', {id: paragraph.paragraphid}) }}">{% trans %}View{% endtrans %}</a>{% if paragraph.hastranslation%}&nbsp;T{% endif %}		
     		</td>
             <td style="width:100px"><a href="{{ path('bookmark_paragraph_add', {id: paragraph.paragraphid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>        
     	    <td style="width:100px"><small>{{ paragraph.textpath }}</small></td>
@@ -117,7 +117,7 @@
             <tr {% if loop.index % 2 ==0 %}style="background-color:LightGrey"{% endif %}>
             <td style="width:20px">{{ loop.index }}</td>
     		<td style="width:50px">
-    			<a href="{{ path('view_paragraph', {id: translationItem.paragraphid}) }}">{% trans %}View{% endtrans %}</a>	
+    			<a href="{{ translationItem.urlfull ? (translationItem.urlfull ~ "/p/" ~ translationItem.paragraphid) : path('view_paragraph', {id: translationItem.paragraphid}) }}">{% trans %}View{% endtrans %}</a>	
     		</td>
             <td style="width:100px"><a href="{{ path('bookmark_paragraph_add', {id: translationItem.paragraphid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>        
     	    <td style="width:100px"><small>{{ translationItem.textpath }}</small></td>

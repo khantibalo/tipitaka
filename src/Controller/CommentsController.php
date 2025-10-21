@@ -184,9 +184,14 @@ class CommentsController  extends AbstractController
         
         for($i=0;$i<sizeof($items);$i++)
         {
-            $items[$i]['link']=$this->generateUrl('comments',['sentenceid'=>$items[$i]['sentenceid'],
-                '_fragment'=>"c".$items[$i]['commentid']
-            ],UrlGeneratorInterface::ABSOLUTE_URL);
+            if($items[$i]['urlfull'])
+            {
+                $items[$i]['link']=rel2abs($items[$i]['urlfull']."/s/".$items[$i]['sentenceid']."#c".$items[$i]['commentid']);
+            }
+            else 
+            {
+                $items[$i]['link']=$this->generateUrl('comments',['sentenceid'=>$items[$i]['sentenceid'], '_fragment'=>"c".$items[$i]['commentid']]);
+            }                
         }
         
         $response=$this->render('rss_feed.html.twig',['title'=>$title,'link'=>$link,'description'=>$description,

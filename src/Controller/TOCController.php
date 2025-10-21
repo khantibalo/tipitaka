@@ -222,7 +222,7 @@ class TOCController extends AbstractController
                 $formView=$form->createView();
                 
                 $response=$this->render('node_name_edit.html.twig',['nodeid'=>$nodeid,
-                    'form'=>$formView,'message'=>$translator->trans('Name in this language already exists')]);                
+                    'form'=>$formView,'message'=>$translator->trans('Name in this language already exists')]);    ///$ex->getMessage().$ex->getTraceAsString()
             }
         }
         else

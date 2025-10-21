@@ -16,7 +16,7 @@ function QTEdit(stid)
 		$('<textarea/>', {
         id: 'eta'+stid,
         style: 'width:100%',
-        rows: 5,
+        rows: 8,
         text: $('#et'+stid).text()
     });
 	var bSave =

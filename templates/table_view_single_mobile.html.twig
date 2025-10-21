@@ -12,7 +12,7 @@
 {{ include('_related_nodes.html.twig') }}
 {{ include('_column_view.html.twig') }}
 <p class="{{ node.typename }}">{{ node.trname ?? node.title }}
-{% if node.TranslationSourceID %}<a href="{{ path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
+{% if node.TranslationSourceID %}<a href="{{ node.urlfull ? node.urlfull ~ '/transl' : path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
     <a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}original{% endtrans %}</a>   
 </p>
 {% if sentences|length>0 %}

@@ -6,7 +6,7 @@
 {{ include('_user_navigation.html.twig') }}
 {% for comment in comments %}
 <div>
-<a href="{{ path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.title}}</a>
+<a href="{{ comment.urlfull ? (comment.urlfull~ '/s/' ~ comment.sentenceid) : path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.title}}</a>
 {% if '<' in comment.CommentText %}
 <div>{{comment.CommentText|convertquote|raw}}</div>
 {% else %}

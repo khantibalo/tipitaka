@@ -30,7 +30,7 @@
 
 {{ include('_related_nodes.html.twig', {'target': '_blank'}) }}
 {{ collectionItem.notes|raw  }}
-<p class="{{ node.typename }}">{{ collectionItemName ?? (node.trname ?? node.title) }} <a href="{{ path('table_view',{id: node.nodeid}) }}">{% trans %}This text in the library{% endtrans %}</a></p>
+<p class="{{ node.typename }}">{{ collectionItemName ?? (node.trname ?? node.title) }} <a href="{{ node.urlfull ? node.urlfull ~ '/table' : path('table_view',{id: node.nodeid}) }}">{% trans %}This text in the library{% endtrans %}</a></p>
 {% if coll_view_mode==1 %}   
     {% if sentences|length>0 %}
     {% set colWidth=90/(sources|length+1) %}

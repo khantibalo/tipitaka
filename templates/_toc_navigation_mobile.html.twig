@@ -4,7 +4,7 @@
 {% set isTranslation= tocPage is defined and tocPage=='translation' %}
 {% if not isTranslation %}
     {% if thisNode is defined and thisNode.HasTranslation  %}
-    <a href="{{ path('translation_toc_node', {id: thisNode.nodeid}) }}">
+    <a href="{{ thisNode.urlfull ?? path('translation_toc_node', {id: thisNode.nodeid}) }}">
     {% else %}
     <a href="{{ path('toc') }}">
     {% endif %} 

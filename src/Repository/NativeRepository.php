@@ -70,7 +70,7 @@ class NativeRepository extends ServiceEntityRepository
     {
         $qbFinalQuery=SqlQueryBuilder::getQueryBuilder()
         ->select("c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,".
-         "c.hastranslation,toc.textpath,s.sentencetext")
+         "c.hastranslation,toc.textpath,s.sentencetext,toc.urlfull")
         ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
         ->from("tipitaka_toc toc")
         ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
@@ -111,7 +111,7 @@ class NativeRepository extends ServiceEntityRepository
                     {
                         $finalQuery=SqlQueryBuilder::getQueryBuilder()
                         ->select("toc.textpath,c.paragraphid, ".
-                            "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, s.sentencetext")
+                            "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, s.sentencetext,toc.urlfull")
                             ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
                             ->from("tipitaka_toc toc")
                             ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
@@ -148,7 +148,7 @@ class NativeRepository extends ServiceEntityRepository
                     {                                                
                         $finalQuery=SqlQueryBuilder::getQueryBuilder()
                         ->select("c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation, ".
-                            "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext")
+                            "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext,toc.urlfull")
                             ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
                             ->from("tipitaka_toc toc")
                             ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
@@ -322,7 +322,7 @@ class NativeRepository extends ServiceEntityRepository
         $paragraph_line=implode(",",$paragraph_ids);
 
         $qbFinalQuery=SqlQueryBuilder::getQueryBuilder()
-        ->select("st.translation,c.paragraphid,toc.textpath,se.sentencetext")
+        ->select("st.translation,c.paragraphid,toc.textpath,se.sentencetext,toc.urlfull")
         ->from("tipitaka_sentence_translations st")
         ->innerJoin("tipitaka_sources so", "st.sourceid=so.sourceid")
         ->innerJoin("tipitaka_languages l", "so.languageid=l.languageid")
@@ -363,7 +363,7 @@ class NativeRepository extends ServiceEntityRepository
         ->limit("0,400");
         
         $qbLastTranslationsWithDetails=SqlQueryBuilder::getQueryBuilder()
-        ->select("T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,T.hastableview,T.translationsourceid")
+        ->select("T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,T.hastableview,T.translationsourceid,T.urlfull")
         ->fromSubquery($qb400LastTranslations, "ST")
         ->innerJoin("tipitaka_sentences S", "ST.sentenceid=S.sentenceid")
         ->innerJoin("tipitaka_paragraphs C", "S.paragraphid=C.paragraphid")
@@ -379,7 +379,7 @@ class NativeRepository extends ServiceEntityRepository
                 
         $qbLastTranslations=SqlQueryBuilder::getQueryBuilder()
         ->select("DT.textpath,DT.title,MAX(DT.dateupdated) As updated,DT.nodeid,".
-            "DT.hastableview as HasTableView,DT.translationsourceid as TranslationSourceID")
+            "DT.hastableview as HasTableView,DT.translationsourceid as TranslationSourceID,DT.urlfull")
         ->selectSubquery($qbNodeNames, "trname")
         ->fromSubquery($qbLastTranslationsWithDetails, "DT")
         ->groupBy("DT.textpath,DT.title,DT.nodeid,DT.hastableview,DT.translationsourceid")

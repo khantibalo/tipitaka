@@ -28,7 +28,7 @@
     {% endif %}
     <a name="{{ node.nodeid }}"></a>
     <p class="{{ node.typename }}">{{ node.trname ?? node.title }}
-    <a href="{{ path('table_view', {id: node.nodeid}) }}">{% trans %}table{% endtrans %}</a>
+    <a href="{{ node.urlfull ? node.urlfull ~ '/table' :path('table_view', {id: node.nodeid}) }}">{% trans %}table{% endtrans %}</a>
     <a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}original{% endtrans %}</a>
     </p>
     {% if showsidebar %}
@@ -38,7 +38,7 @@
     {% for paragraph in paragraphs|filter(i=>i.nodeid==node.nodeid) %}
         {% if showsidebar %}
         <tr>
-        <td style="width:50px"><a href="{{ path('view_paragraph', {id: paragraph.paragraphid}) }}">{% trans %}View{% endtrans %}</a>{% if paragraph.hastranslation and showT %}&nbsp;T{% endif %}</td>
+        <td style="width:50px"><a href="{{ node.urlfull ? node.urlfull ~ '/p/' ~ paragraph.paragraphid : path('view_paragraph', {id: paragraph.paragraphid}) }}">{% trans %}View{% endtrans %}</a>{% if paragraph.hastranslation and showT %}&nbsp;T{% endif %}</td>
         <td style="width:100px"><a href="{{ path('bookmark_paragraph_add', {id: paragraph.paragraphid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>
         <td>
         {% endif %}

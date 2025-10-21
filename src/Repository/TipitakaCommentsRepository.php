@@ -94,7 +94,7 @@ class TipitakaCommentsRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('DATE_DIFF(CURRENT_DATE(),c.createddate) As DaysAgo,c.commenttext As CommentText,s.sentenceid,c.commentid,toc.title')
+        ->select('DATE_DIFF(CURRENT_DATE(),c.createddate) As DaysAgo,c.commenttext As CommentText,s.sentenceid,c.commentid,toc.title,toc.urlfull')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaComments','c')
         ->join('c.sentenceid','s')
@@ -112,7 +112,7 @@ class TipitakaCommentsRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('c.createddate As pubDate,c.commenttext As description,s.sentenceid,c.commentid,toc.title,a.username as creator')
+        ->select('c.createddate As pubDate,c.commenttext As description,s.sentenceid,c.commentid,toc.title,a.username as creator,toc.urlfull')
         ->from('App\Entity\TipitakaComments','c')
         ->join('c.sentenceid','s')
         ->join('s.paragraphid','cn')
@@ -129,7 +129,7 @@ class TipitakaCommentsRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('DATE_DIFF(CURRENT_DATE(),c.createddate) as DateDiff,c.commenttext As CommentText,s.sentenceid,c.commentid,toc.title')
+        ->select('DATE_DIFF(CURRENT_DATE(),c.createddate) as DateDiff,c.commenttext As CommentText,s.sentenceid,c.commentid,toc.title,toc.urlfull')
         ->from('App\Entity\TipitakaComments','c')
         ->join('c.sentenceid','s')
         ->join('s.paragraphid','cn')

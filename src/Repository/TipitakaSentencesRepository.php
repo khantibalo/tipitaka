@@ -991,7 +991,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('st.translation,c.paragraphid,toc.textpath,se.sentencetext')
+        ->select('st.translation,c.paragraphid,toc.textpath,se.sentencetext,toc.urlfull')
         ->from('App\Entity\TipitakaSentenceTranslations','st')
         ->innerJoin('st.sourceid', 'so')
         ->innerJoin('so.languageid', 'l')

@@ -8,11 +8,11 @@
     {% for item in items %}   
     <item>
       <title>{{ titleFormat|format(item.title) }}</title>
-      <link>{{ item.link }}</link>
+      <link>{{ absolute_url(item.link) }}</link>
       <description>{{ item.description|nl2br|escape }}</description>
       <pubDate>{{ item.pubDate|date('r','UTC') }}</pubDate>
 	  <dc:creator>{{ item.creator }}</dc:creator>
-	  <guid>{{ item.link }}</guid>      
+	  <guid>{{ absolute_url(item.link) }}</guid>      
     </item>
     {% endfor %}
   </channel>

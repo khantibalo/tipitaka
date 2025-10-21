@@ -117,10 +117,17 @@ class TipitakaTagsRepository extends ServiceEntityRepository
     }
     
     public function getTocTagWithStats($locale,$tagid)
-    {
+    {        
         $entityManager = $this->getEntityManager();
+        
+        $namesSubquery=$entityManager->createQueryBuilder()
+        ->select('COUNT(tn1.tagid)')
+        ->from('App\Entity\TipitakaTagNames','tn1')
+        ->where('tn1.tagid=t.tagid');
+        
         $query = $entityManager->createQueryBuilder()
         ->select('t.tagid,tn.title,ty.tagtypeid, COUNT(t.tagid) As TagCount,t.paliname')
+        ->addSelect('('.$namesSubquery->getDQL().') AS NameCount')
         ->from('App\Entity\TipitakaTagNames','tn')
         ->innerJoin('tn.tagid', 't')
         ->innerJoin('tn.languageid','l')

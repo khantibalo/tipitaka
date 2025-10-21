@@ -19,7 +19,8 @@
     </td>
     <td>
     {% set route=lastItem.TranslationSourceID ? 'translation_view' : (lastItem.HasTableView ? 'table_view' : 'view_node') %}
-    <a href="{{ path(route,{id: lastItem.nodeid}) }}">{{ lastItem.trname ?? lastItem.title }}</a>
+    {% set suffix=lastItem.TranslationSourceID ? '/transl' : '/table' %}
+    <a href="{{ lastItem.urlfull ? lastItem.urlfull ~ suffix :  path(route,{id: lastItem.nodeid}) }}">{{ lastItem.trname ?? lastItem.title }}</a>
     </td>
     </tr>
     {% endfor %}
@@ -31,7 +32,7 @@
 <h3>{% trans %}New comments{% endtrans %}</h3>
     {% for comment in comments %}
     <div>
-    <a href="{{ path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.trname ?? comment.title}}</a>
+    <a href="{{ comment.urlfull ? (comment.urlfull~ '/s/' ~ comment.sentenceid) : path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.trname ?? comment.title}}</a>
     <div>{{comment.CommentText|shorten }}</div>
     <div><small>
     {% if comment.DaysAgo==0 %}

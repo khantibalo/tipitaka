@@ -9,7 +9,7 @@
     <div>
     {% trans %}new source link{% endtrans %}
     {% if showNewSource %}
-    	<a href="{{ path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
+    	<a href="{{ node.urlfull ? node.urlfull ~ '/table' : path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
     {% else %}
     	{% trans %}hide{% endtrans %} <a href="{{ path('table_view',{id : node.nodeid,showNewSource : 'yes'}) }}">{% trans %}show{% endtrans %}</a>
     {% endif %}|
@@ -17,7 +17,7 @@
 {% if is_granted(userRole) %}    
     {% trans %}code link{% endtrans %} 
     {% if showCode %}
-    	<a href="{{ path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
+    	<a href="{{ node.urlfull ? node.urlfull ~ '/table' : path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
     {% else %}
     	{% trans %}hide{% endtrans %} <a href="{{ path('table_view',{id : node.nodeid,showCode : 'yes'}) }}">{% trans %}show{% endtrans %}</a>
     {% endif %}
@@ -25,7 +25,7 @@
 {% if is_granted(authorRole) %}|
     {% trans %}align tools{% endtrans %} 
     {% if showAlign %}
-    	<a href="{{ path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
+    	<a href="{{ node.urlfull ? node.urlfull ~ '/table' : path('table_view',{id : node.nodeid}) }}">{% trans %}hide{% endtrans %}</a> {% trans %}show{% endtrans %}
     {% else %}
     	{% trans %}hide{% endtrans %} <a href="{{ path('table_view',{id : node.nodeid,showAlign : 'yes'}) }}">{% trans %}show{% endtrans %}</a>
     {% endif %}
@@ -38,7 +38,7 @@
 {{ include('_related_nodes.html.twig') }}
 {{ include('_column_view.html.twig') }}
 <p class="{{ node.typename }}">{{ node.trname ?? node.title }}
-{% if node.TranslationSourceID %}<a href="{{ path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
+{% if node.TranslationSourceID %}<a href="{{ node.urlfull ? node.urlfull ~ '/transl' : path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
     <a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}original{% endtrans %}</a>
     {% if is_granted(editorRole) and showAlign %}&nbsp;<a href="{{ path('node_names',{nodeid: node.nodeid }) }}">({% trans %}Edit names{% endtrans %})</a>{% endif %}
 </p>

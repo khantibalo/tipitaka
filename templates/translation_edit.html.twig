@@ -9,7 +9,7 @@
 {{ form_label(form.author, 'authorName') }}: {{ form_widget(form.author) }}<br>
 {% endif %} 
 {{ form_label(form.translation, 'Translation') }}<br>
-{{ form_widget(form.translation,{"attr" : {"style" : "width: 100%", "rows": 5 }}) }}<br>
+{{ form_widget(form.translation,{"attr" : {"style" : "width: 100%", "rows": 8 }}) }}<br>
 {# {{ form_label(form.parenttranslationid, 'Parent translation id') }}{{ form_widget(form.parenttranslationid) }}<br> #}
 {{ form_widget(form.save,{'label': 'Save'}) }} {{ form_widget(form.saveAndNext,{'label': 'SaveAndEditNext'}) }}
 <a href="{{ cancelUrl }}">{% trans %}Cancel{% endtrans %}</a>

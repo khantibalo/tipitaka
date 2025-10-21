@@ -47,8 +47,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         $path=str_replace("\\","\\\\",$path);  
         
         $query = $entityManager->createQueryBuilder()
-        ->select('toc.nodeid','tt.name As typename','toc.title','toc.HasTableView','toc.haschildnodes',
-            's.sourceid as TranslationSourceID')
+        ->select('toc.nodeid,tt.name As typename,toc.title,toc.HasTableView,toc.haschildnodes,s.sourceid as TranslationSourceID,toc.urlfull')
         ->from('App\Entity\TipitakaToc','toc')
         ->innerJoin('toc.titletypeid', 'tt')
         ->leftJoin('toc.TranslationSourceID', 's')
@@ -368,27 +367,47 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         $entityManager->persist($nn);
         $entityManager->flush();
         
+        $node=$nn->getNodeid();
+        $urlFull=$this->findUrlFull($node);
         $matches=array();
         
-        if(preg_match("|\d+\.([-\d]+)|u", $nn->getName(),$matches))
+        if(preg_match("|\d+[\.:]([-\d]+)|u", $nn->getName(),$matches))
         {
             $node=$nn->getNodeid();
             $node->setUrlpart($matches[1]);
-            $urlFull=$this->findUrlFull($node);
             $node->setUrlfull($urlFull."/".$matches[1]);
             $entityManager->persist($node);
             $entityManager->flush();
         }
         else 
         {
-            if(preg_match("|\d+|u", $nn->getName(),$matches))
+            if(preg_match("|(\d+).|u", $nn->getName(),$matches))
             {
-                $node=$nn->getNodeid();
-                $node->setUrlpart($matches[0]);  
-                $urlFull=$this->findUrlFull($node);
-                $node->setUrlfull($urlFull."/".$matches[0]);
+                $node->setUrlpart($matches[1]);
+                $node->setUrlfull($urlFull."/".$matches[1]);
                 $entityManager->persist($node);
                 $entityManager->flush();
+            }
+            else
+            {
+                if(preg_match("|\d+-\d+|u", $nn->getName(),$matches))
+                {
+                    $node->setUrlpart($matches[0]);
+                    $node->setUrlfull($urlFull."/".$matches[0]);
+                    $entityManager->persist($node);
+                    $entityManager->flush();
+                }
+                else 
+                {
+                    if(preg_match("|\d+|u", $nn->getName(),$matches))
+                    {
+                        $node=$nn->getNodeid();
+                        $node->setUrlpart($matches[0]);  
+                        $node->setUrlfull($urlFull."/".$matches[0]);
+                        $entityManager->persist($node);
+                        $entityManager->flush();
+                    }
+                }
             }
         }        
     }
@@ -592,7 +611,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('toc.nodeid,toc.title,toc.haschildnodes,toc.HasTableView,s.sourceid as TranslationSourceID,ty.canview')
+        ->select('toc.nodeid,toc.title,toc.haschildnodes,toc.HasTableView,s.sourceid as TranslationSourceID,ty.canview,toc.urlfull')
         ->addSelect('('.$this->getNamesSubquery()->getDQL().') AS trname')
         ->from('App\Entity\TipitakaTocTags','tt')
         ->innerJoin('tt.nodeid','toc')
@@ -781,7 +800,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
                         $name=current($names);
                         $matches=array();
                         
-                        if(preg_match("|\d+\.([-\d]+)|u", $name->getName(),$matches))
+                        if(preg_match("|\d+[\.:]([-\d]+)|u", $name->getName(),$matches))
                         {
                             $child->setUrlpart($matches[1]);
                             $child->setUrlfull($parentFullUrl."/".$matches[1]);
@@ -790,22 +809,62 @@ class TipitakaTocRepository  extends ServiceEntityRepository
                         }
                         else
                         {
-                            if(preg_match("|\d+|u", $name->getName(),$matches))
+                            if(preg_match("|(\d+).|u", $name->getName(),$matches))
                             {
-                                $child->setUrlpart($matches[0]);
-                                $child->setUrlfull($parentFullUrl."/".$matches[0]);
+                                $child->setUrlpart($matches[1]);
+                                $child->setUrlfull($parentFullUrl."/".$matches[1]);
                                 $entityManager->persist($child);
                                 $entityManager->flush();
+                            }
+                            else
+                            {
+                                if(preg_match("|\d+-\d+|u", $name->getName(),$matches))
+                                {
+                                    $child->setUrlpart($matches[0]);
+                                    $child->setUrlfull($parentFullUrl."/".$matches[0]);
+                                    $entityManager->persist($child);
+                                    $entityManager->flush();
+                                }
+                                else
+                                {
+                                    if(preg_match("|\d+|u", $name->getName(),$matches))
+                                    {
+                                        $child->setUrlpart($matches[0]);
+                                        $child->setUrlfull($parentFullUrl."/".$matches[0]);
+                                        $entityManager->persist($child);
+                                        $entityManager->flush();
+                                    }
+                                }
                             }
                         }
                     }
                     
-                    if(empty($child->getUrlpart()))
+                    if(empty($child->getUrlpart()) && $child->getHasTranslation())
                     {
-                        $child->setUrlpart("part/$childid");
-                        $child->setUrlfull($parentFullUrl."/part/$childid");
-                        $entityManager->persist($child);
-                        $entityManager->flush();
+                        if(preg_match("|\d+-\d+|u", $child->getTitle(),$matches))
+                        {
+                            $child->setUrlpart($matches[0]);
+                            $child->setUrlfull($parentFullUrl."/".$matches[0]);
+                            $entityManager->persist($child);
+                            $entityManager->flush();
+                        }
+                        else 
+                        {
+                            if(preg_match("|(\d+).|u", $child->getTitle(),$matches))
+                            {
+                                $child->setUrlpart($matches[1]);
+                                $child->setUrlfull($parentFullUrl."/".$matches[1]);
+                                $entityManager->persist($child);
+                                $entityManager->flush();
+                            }
+                            else
+                            {
+                                $child->setUrlpart("part/$childid");
+                                $child->setUrlfull($parentFullUrl."/part/$childid");
+                                $entityManager->persist($child);
+                                $entityManager->flush();
+                            }
+                        }
                     }
                 }
                 else

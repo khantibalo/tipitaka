@@ -138,14 +138,10 @@ join:
 shiftdown:
    path: /translationid/{translationid}/shiftdown  
    controller: App\Controller\TranslateController::shiftDown
-   requirements:
-        translationid: '\d+' 
    
 shiftup:
    path: /translationid/{translationid}/shiftup
    controller: App\Controller\TranslateController::shiftUp
-   requirements:
-        translationid: '\d+' 
         
 sources_list:
    path: /sources/list

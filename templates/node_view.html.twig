@@ -24,9 +24,9 @@
     <td style="width:100px"><a href="{{ path('bookmark_node_add', {id: node.nodeid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>
     {% endif %}
     <td><p class="{{ node.typename }}">{{ node.title }}
-    {% if node.TranslationSourceID %}<a href="{{ path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
+    {% if node.TranslationSourceID %}<a href="{{ node.urlfull ? node.urlfull ~ '/transl' : path('translation_view', {id: node.nodeid}) }}">{% trans %}translation{% endtrans %}</a>{% endif %}
         {% if node.HasTableView %}
-        <a href="{{ path('table_view',{id: node.nodeid}) }}">{% trans %}Table view{% endtrans %}</a>
+        <a href="{{ node.urlfull ? node.urlfull ~ '/table' : path('table_view',{id: node.nodeid}) }}">{% trans %}Table view{% endtrans %}</a>
         {% else %}
             {% if is_granted(authorRole) %}            	        		
             	{% if node.haschildnodes %}	
