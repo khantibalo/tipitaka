@@ -50,7 +50,8 @@ class SearchController extends AbstractController
             ['choices'  => [
                 'SearchMode1' => '1',
                 'SearchMode2' => '2',
-                'SearchMode3' => '3'],
+                'SearchMode3' => '3',
+                'SearchMode4' => '4'],
                 'label' => false,
                 'expanded'=>false,
                 'multiple'=>false
@@ -196,7 +197,7 @@ class SearchController extends AbstractController
             $response=$this->render('search.html.twig', [
                 'form' => $form->createView(), 'bookmarks'=>$bookmarks_str,'searchItems'=>$searchItems,
                 'scope'=>$scope,'searchString'=>$searchString,'language'=>$lang,'translations'=>$translations,
-                'searchError'=>$searchError, 'inTranslated'=>$inTranslated
+                'searchError'=>$searchError, 'inTranslated'=>$inTranslated,'ignorediac'=>$searchMode==4
             ]);
         }
         

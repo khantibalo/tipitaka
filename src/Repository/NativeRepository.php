@@ -107,6 +107,14 @@ class NativeRepository extends ServiceEntityRepository
                         $searchString=preg_quote($searchString);
                         break;
                     }
+                case 4:
+                    {
+                        $finalQuery=$this->getTranslationSearchBaseQuery()
+                        ->andWhere("s.sentencetext LIKE :ss COLLATE utf8mb4_general_ci");
+                        
+                        $searchString="%$searchString%";
+                        break;
+                    }
                 default:
                     {
                         $finalQuery=SqlQueryBuilder::getQueryBuilder()
@@ -142,6 +150,14 @@ class NativeRepository extends ServiceEntityRepository
                         ->andWhere("c.text REGEXP CONCAT('\\\\w', :ss, '\\\\b')");
                         
                         $searchString=preg_quote($searchString);
+                        break;
+                    }
+                case 4:
+                    {
+                        $finalQuery=$this->getGlobalSearchBaseQuery()
+                        ->andWhere("c.text LIKE :ss COLLATE utf8mb4_general_ci");
+                        
+                        $searchString="%$searchString%";                        
                         break;
                     }
                 default:

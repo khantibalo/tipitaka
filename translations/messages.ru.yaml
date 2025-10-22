@@ -263,3 +263,4 @@ download print view pdf: Скачать файл pdf (оглавление в к
 URL full: Ссылка полностью
 Calculate for this node: Вычислить для этого узла
 Calculate for child nodes: Вычислить для дочерних узлов
+SearchMode4: Искать без учёта диакритики (нет языка запросов)

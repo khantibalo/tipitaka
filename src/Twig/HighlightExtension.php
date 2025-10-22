@@ -13,7 +13,7 @@ class HighlightExtension extends AbstractExtension
         ];
     }
     
-    public function highlight($haystack, $needle,$word=false)
+    public function highlight($haystack, $needle,$word=false,$ignorediac=false)
     {
         if(!$word)
         {
@@ -37,7 +37,9 @@ class HighlightExtension extends AbstractExtension
                 {
                     $matches=array();
                     $needleItemQuote=preg_quote($needleItem);
+
                     preg_match_all("/$needleItemQuote/iu", $haystack, $matches);
+                    
                     if (is_array($matches[0]) && count($matches[0]) >= 1) {
                         foreach ($matches[0] as $match) {
                             $haystack = str_replace($match, '<span class="match">'.$match.'</span>', $haystack);
@@ -49,7 +51,31 @@ class HighlightExtension extends AbstractExtension
         else 
         {            
             $matches=array();
-            preg_match_all("/$needle/iu", $haystack, $matches);//this was originally $needle+
+            if($ignorediac)
+            {
+                $new_needle="";
+                foreach(mb_str_split($needle) as $char)
+                {
+                    if(str_contains("āīūṭñṃṇṅḷḍ",$char))
+                    {
+                        $char_re=str_ireplace(["ā","ī","ū","ṭ","ñ","ṃ","ṇ","ṅ","ḷ","ḍ"],
+                            ["[āa]","[īi]","[ūu]","[ṭt]","[ñn]","[ṃm]","[ṇn]","[ṅn]","[ḷl]","[ḍd]"], $char);
+                        
+                    }
+                    else
+                    {
+                        $char_re=str_ireplace(["a","i","u","t","n","m","l","d"],
+                            ["[āa]","[īi]","[ūu]","[ṭt]","[ñṇnṅ]","[ṃm]","[ḷl]","[ḍd]"], $char);
+                    }
+                    
+                    $new_needle=$new_needle.$char_re;
+                }
+                
+                $needle=$new_needle;
+            }
+            
+            preg_match_all("/$needle/iu", $haystack, $matches);
+            
             if (is_array($matches[0]) && count($matches[0]) >= 1) 
             {
                 foreach ($matches[0] as $match) {

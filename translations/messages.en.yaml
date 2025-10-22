@@ -263,3 +263,4 @@ download print view pdf: download in pdf format
 URL full: Full url
 Calculate for this node: Calculate for this node 
 Calculate for child nodes: Calculate for child nodes
+SearchMode4: Search ignoring diacritics (no query language)
