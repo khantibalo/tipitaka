@@ -20,7 +20,7 @@
 {% for node in nodes %}
     <tr>
     {% if view_settings.printview is empty %}
-    <td style="width:50px"><a href="{{ path('view_node', {id: node.nodeid}) }}">{% trans %}View{% endtrans %}</a></td>
+    <td style="width:50px"><a href="{{ node.urlfull ? node.urlfull ~ '/table' : path('view_node', {id: node.nodeid}) }}">{% trans %}View{% endtrans %}</a></td>
     <td style="width:100px"><a href="{{ path('bookmark_node_add', {id: node.nodeid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>
     {% endif %}
     <td><p class="{{ node.typename }}">{{ node.title }}
@@ -40,7 +40,7 @@
     {% for paragraph in paragraphs|filter(i=>i.nodeid==node.nodeid) %}
         <tr>
         {% if view_settings.printview is empty %}
-        <td style="width:50px"><a href="{{ path('view_paragraph', {id: paragraph.paragraphid}) }}">{% trans %}View{% endtrans %}</a>{% if paragraph.hastranslation and showT %}&nbsp;T{% endif %}</td>
+        <td style="width:50px"><a href="{{ node.urlfull ? node.urlfull ~ "/p/" ~ paragraph.paragraphid : path('view_paragraph', {id: paragraph.paragraphid}) }}">{% trans %}View{% endtrans %}</a>{% if paragraph.hastranslation and showT %}&nbsp;T{% endif %}</td>
         <td style="width:100px"><a href="{{ path('bookmark_paragraph_add', {id: paragraph.paragraphid}) }}">{% trans %}Bookmark{% endtrans %}</a></td>
         {% endif %}
         <td>

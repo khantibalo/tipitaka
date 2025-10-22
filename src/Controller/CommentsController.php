@@ -186,7 +186,7 @@ class CommentsController  extends AbstractController
         {
             if($items[$i]['urlfull'])
             {
-                $items[$i]['link']=rel2abs($items[$i]['urlfull']."/s/".$items[$i]['sentenceid']."#c".$items[$i]['commentid']);
+                $items[$i]['link']=$items[$i]['urlfull']."/s/".$items[$i]['sentenceid']."#c".$items[$i]['commentid'];
             }
             else 
             {

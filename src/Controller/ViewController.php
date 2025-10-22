@@ -108,7 +108,27 @@ class ViewController extends AbstractController
             ); 
     }
     
-    public function paragraphView($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
+    public function paragraphViewOld($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
+        TipitakaSentencesRepository $sentencesRepository,Request $request)
+    {
+        $response=NULL;
+        
+        $paragraph=$paragraphsRepository->find($id);
+        $node=$paragraph->getNodeid();
+        if($node->getUrlfull())
+        {
+            $response=$this->redirect($node->getUrlfull()."/p/$id");
+        }
+        else 
+        {
+            $response=$this->paragraphView($id, $tocRepository,$paragraphsRepository,$sentencesRepository,$request);
+        }
+        
+        return $response;
+    }
+    
+    
+    protected function paragraphView($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
         TipitakaSentencesRepository $sentencesRepository,Request $request)
     {
         $paragraph=$paragraphsRepository->getParagraph($id);
@@ -274,7 +294,26 @@ class ViewController extends AbstractController
         return $view_settings;
     }
     
-    public function tableView($id,TipitakaTocRepository $tocRepository,TipitakaSentencesRepository $sentencesRepository,Request $request,
+    public function tableViewOld($id,TipitakaTocRepository $tocRepository,TipitakaSentencesRepository $sentencesRepository,Request $request,
+        TipitakaTagsRepository $tagsRepository,TipitakaCollectionsRepository $collectionsRepository,$prologue=false)
+    {  
+        $node=$tocRepository->find($id);
+        $response=null;
+        
+        if($node->getUrlfull())
+        {
+            $response=$this->redirect($node->getUrlfull()."/table");
+        }
+        else 
+        {
+            $response=$this->tableView($id, $tocRepository, $sentencesRepository, $request, $tagsRepository, $collectionsRepository);
+        }
+        
+        return $response;
+    }
+    
+    
+    protected function tableView($id,TipitakaTocRepository $tocRepository,TipitakaSentencesRepository $sentencesRepository,Request $request,
         TipitakaTagsRepository $tagsRepository,TipitakaCollectionsRepository $collectionsRepository,$prologue=false)
     {                
         $node=$tocRepository->getNodeWithNameTranslation($id,$request->getLocale());
@@ -585,7 +624,27 @@ class ViewController extends AbstractController
         
     }
     
-    public function translationView($id,Request $request,TipitakaTocRepository $tocRepository,
+    public function translationViewOld($id,Request $request,TipitakaTocRepository $tocRepository,
+        TipitakaSentencesRepository $sentencesRepository,TipitakaParagraphsRepository $paragraphsRepository,
+        TipitakaSourcesRepository $sourcesRepository,TipitakaTagsRepository $tagsRepository)
+    {
+        $response=null;
+        
+        $node=$tocRepository->find($id);
+        
+        if($node->getUrlfull())
+        {
+            $response=$this->redirect($node->getUrlfull()."/transl");
+        }
+        else
+        {
+            $response=$this->translationView($id,$request,$tocRepository,$sentencesRepository,$paragraphsRepository,$sourcesRepository,$tagsRepository);
+        }        
+        
+        return $response;
+    }
+    
+    protected function translationView($id,Request $request,TipitakaTocRepository $tocRepository,
         TipitakaSentencesRepository $sentencesRepository,TipitakaParagraphsRepository $paragraphsRepository,
         TipitakaSourcesRepository $sourcesRepository,TipitakaTagsRepository $tagsRepository)
     {

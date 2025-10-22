@@ -403,7 +403,7 @@ class NativeRepository extends ServiceEntityRepository
         ->limit("0,400");
         
         $qbLastTranslationsWithDetails=SqlQueryBuilder::getQueryBuilder()
-        ->select("T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,U.username")
+        ->select("T.nodeid,T1.textpath,T.title,C.paragraphid,ST.dateupdated,U.username,T.urlfull")
         ->fromSubquery($qb400LastTranslations, "ST")
         ->innerJoin("tipitaka_sentences S", "ST.sentenceid=S.sentenceid")
         ->innerJoin("tipitaka_paragraphs C", "S.paragraphid=C.paragraphid")
@@ -412,10 +412,10 @@ class NativeRepository extends ServiceEntityRepository
         ->innerJoin("tipitaka_users U", "ST.userid=U.userid");
         
         $qbLastTranslationsFeed=SqlQueryBuilder::getQueryBuilder()
-        ->select("DT.NodeID as nodeid, DT.textpath As description,DT.title,DT.paragraphid, ".
-            "MIN(DT.dateupdated) As pubDate,DT.username As creator")
+        ->select("DT.NodeID as nodeid, DT.textpath As description,DT.title, ".
+            "MIN(DT.dateupdated) As pubDate,DT.username As creator,DT.urlfull")
         ->fromSubquery($qbLastTranslationsWithDetails, "DT")
-        ->groupBy("DT.nodeid,DT.textpath,DT.title,DT.paragraphid,DT.username")
+        ->groupBy("DT.nodeid,DT.textpath,DT.title,DT.username,DT.urlfull") //DT.paragraphid
         ->orderBy("MAX(DT.dateupdated) DESC")
         ->limit("0,$maxResults");
         

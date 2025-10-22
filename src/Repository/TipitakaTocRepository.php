@@ -839,7 +839,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
                         }
                     }
                     
-                    if(empty($child->getUrlpart()) && $child->getHasTranslation())
+                    if(empty($child->getUrlpart()) && $child->getHasTableView())
                     {
                         if(preg_match("|\d+-\d+|u", $child->getTitle(),$matches))
                         {

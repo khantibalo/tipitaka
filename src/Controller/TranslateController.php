@@ -791,7 +791,14 @@ class TranslateController extends AbstractController
         
         for($i=0;$i<sizeof($items);$i++)
         {
-            $items[$i]['link']=$this->generateUrl('view_node',['id'=>$items[$i]['nodeid']]);
+            if($items[$i]['urlfull'])
+            {
+                $items[$i]['link']=$items[$i]['urlfull']."/table";
+            }
+            else 
+            {
+                $items[$i]['link']=$this->generateUrl('view_node',['id'=>$items[$i]['nodeid']]);
+            }
         }
         
         $response=$this->render('rss_feed.html.twig',['title'=>$title,'link'=>$link,'description'=>$description,

@@ -21,7 +21,7 @@ view_node:
         
 view_paragraph:
     path: /p/{id}
-    controller: App\Controller\ViewController::paragraphView
+    controller: App\Controller\ViewController::paragraphViewOld
     requirements:
         id: '\d+'
         
@@ -112,7 +112,7 @@ quote_sentences:
 #that should be /node/{id}/table but deliberately made this way to disallow other paths in robots.txt   
 table_view:
    path: /node/table/{id}
-   controller: App\Controller\ViewController::tableView
+   controller: App\Controller\ViewController::tableViewOld
    requirements:
         id: '\d+' 
         
@@ -215,7 +215,7 @@ table_enable:
    
 translation_view:
    path: /node/translation/{id}
-   controller: App\Controller\ViewController::translationView
+   controller: App\Controller\ViewController::translationViewOld
    requirements:
         id: '\d+' 
               
