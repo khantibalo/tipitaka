@@ -115,7 +115,7 @@ class ViewController extends AbstractController
         
         $paragraph=$paragraphsRepository->find($id);
         $node=$paragraph->getNodeid();
-        if($node->getUrlfull())
+        if($node->getUrlfull() && empty($request->getQueryString()))
         {
             $response=$this->redirect($node->getUrlfull()."/p/$id");
         }
@@ -300,7 +300,7 @@ class ViewController extends AbstractController
         $node=$tocRepository->find($id);
         $response=null;
         
-        if($node->getUrlfull())
+        if($node->getUrlfull() && empty($request->getQueryString()))
         {
             $response=$this->redirect($node->getUrlfull()."/table");
         }
@@ -632,7 +632,7 @@ class ViewController extends AbstractController
         
         $node=$tocRepository->find($id);
         
-        if($node->getUrlfull())
+        if($node->getUrlfull() && empty($request->getQueryString()))
         {
             $response=$this->redirect($node->getUrlfull()."/transl");
         }

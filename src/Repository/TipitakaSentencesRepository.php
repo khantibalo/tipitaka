@@ -306,7 +306,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('toc.nodeid')
+        ->select('toc.nodeid,toc.urlfull')
         ->from('App\Entity\TipitakaSentences','s')
         ->innerJoin('s.paragraphid', 'c')
         ->innerJoin('c.nodeid', 'toc')

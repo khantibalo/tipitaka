@@ -157,7 +157,7 @@ source_edit:
    
 comments:
    path: /comments/sentenceid/{sentenceid}
-   controller: App\Controller\CommentsController::listBySentence
+   controller: App\Controller\CommentsController::fromOldUrl
    requirements:
         sentenceid: '\d+' 
               

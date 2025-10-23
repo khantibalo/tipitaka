@@ -18,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CommentsController  extends AbstractController
 {   
-    public function listBySentence($sentenceid,TipitakaSentencesRepository $sentenceRepository,
+    protected function listBySentence($sentenceid,TipitakaSentencesRepository $sentenceRepository,
         TipitakaCommentsRepository $commentsRepository,Request $request,TipitakaTocRepository $tocRepository,
         TranslatorInterface $translator, TipitakaCollectionsRepository $collectionsRepository)
     {                
@@ -236,7 +236,7 @@ class CommentsController  extends AbstractController
         if(preg_match("/^(.+)\/s\/(\d+)$/", $request->getRequestUri(),$matches))
         {
             $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
-            $node=array_pop($nodes);
+            $node=end($nodes);
             if($node)
             {
                 $response=$this->listBySentence($matches[2], $sentencesRepository,$commentsRepository,$request,$tocRepository,$translator,$collectionsRepository);
@@ -245,6 +245,26 @@ class CommentsController  extends AbstractController
             {
                 $response=new Response("not found",404);
             }
+        }
+        
+        return $response;
+    }
+    
+    public function fromOldUrl($sentenceid,TipitakaSentencesRepository $sentenceRepository,
+        TipitakaCommentsRepository $commentsRepository,Request $request,TipitakaTocRepository $tocRepository,
+        TranslatorInterface $translator, TipitakaCollectionsRepository $collectionsRepository)
+    {
+        $response=null;
+        
+        $node=$sentenceRepository->getNodeIdBySentenceId($sentenceid);
+        
+        if($node['urlfull'])
+        {
+            $response=$this->redirect($node['urlfull']."/s/$sentenceid");
+        }
+        else
+        {
+            $response=$this->listBySentence($sentenceid, $sentenceRepository, $commentsRepository, $request, $tocRepository, $translator, $collectionsRepository);
         }
         
         return $response;
