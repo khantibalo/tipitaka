@@ -13,11 +13,11 @@ class HighlightExtension extends AbstractExtension
         ];
     }
     
-    public function highlight($haystack, $needle,$word=false,$ignorediac=false)
+    public function highlight($haystack, $needle,$word=false)
     {
         if(!$word)
         {
-            $needle=str_replace(["\"","*"], "", $needle);
+            $needle=str_replace(["\"","*","\\","/"], "", $needle);
         }
         
         // return $haystack if there is no highlight color or strings given, nothing to do.
@@ -51,28 +51,6 @@ class HighlightExtension extends AbstractExtension
         else 
         {            
             $matches=array();
-            if($ignorediac)
-            {
-                $new_needle="";
-                foreach(mb_str_split($needle) as $char)
-                {
-                    if(str_contains("āīūṭñṃṇṅḷḍ",$char))
-                    {
-                        $char_re=str_ireplace(["ā","ī","ū","ṭ","ñ","ṃ","ṇ","ṅ","ḷ","ḍ"],
-                            ["[āa]","[īi]","[ūu]","[ṭt]","[ñn]","[ṃm]","[ṇn]","[ṅn]","[ḷl]","[ḍd]"], $char);
-                        
-                    }
-                    else
-                    {
-                        $char_re=str_ireplace(["a","i","u","t","n","m","l","d"],
-                            ["[āa]","[īi]","[ūu]","[ṭt]","[ñṇnṅ]","[ṃm]","[ḷl]","[ḍd]"], $char);
-                    }
-                    
-                    $new_needle=$new_needle.$char_re;
-                }
-                
-                $needle=$new_needle;
-            }
             
             preg_match_all("/$needle/iu", $haystack, $matches);
             

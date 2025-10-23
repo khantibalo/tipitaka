@@ -55,7 +55,7 @@
 </tr>
 </table>
 {{ form_widget(form.search, {'label': 'SearchButton'}) }}
-<a href="{{ path('search') }}">{% trans %}New search{% endtrans %}</a> 
+<a href="{{ path('search') }}">{% trans %}New search{% endtrans %}</a>
 {{ form_end(form) }}
 {% if scope=='toc' %}
     {% if searchItems|length==0 %}
@@ -98,7 +98,7 @@
                 {% if not paragraph.paranum is empty %}
                 <span class="paranum">{{ paragraph.paranum }}</span><span class="dot">.</span>
                 {% endif %}  
-                {{ paragraph.text|capitalize(paragraph.caps)|highlight(searchString,0,ignorediac)|raw }}
+                {{ paragraph.text|capitalize(paragraph.caps)|highlight(searchString)|raw }}
                 </p>
     		</td>
     		<td>

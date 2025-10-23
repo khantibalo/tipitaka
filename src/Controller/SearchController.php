@@ -194,10 +194,34 @@ class SearchController extends AbstractController
                 $searchItems=$searchItemsFiltered;
             }            
             
+            
+            if($searchMode==4)
+            {
+                $new_searchString="";
+                foreach(mb_str_split($searchString) as $char)
+                {
+                    if(str_contains("āīūṭñṃṇṅḷḍ",$char))
+                    {
+                        $char_re=str_ireplace(["ā","ī","ū","ṭ","ñ","ṃ","ṇ","ṅ","ḷ","ḍ"],
+                            ["[āa]","[īi]","[ūu]","[ṭt]","[ñnṇṅ]","[ṃm]","[ñnṇṅ]","[ñnṇṅ]","[ḷl]","[ḍd]"], $char);
+                        
+                    }
+                    else
+                    {
+                        $char_re=str_ireplace(["a","i","u","t","n","m","l","d"],
+                            ["[āa]","[īi]","[ūu]","[ṭt]","[ñṇnṅ]","[ṃm]","[ḷl]","[ḍd]"], $char);
+                    }
+                    
+                    $new_searchString.=$char_re;
+                }
+                
+                $searchString=$new_searchString;
+            }
+            
             $response=$this->render('search.html.twig', [
                 'form' => $form->createView(), 'bookmarks'=>$bookmarks_str,'searchItems'=>$searchItems,
                 'scope'=>$scope,'searchString'=>$searchString,'language'=>$lang,'translations'=>$translations,
-                'searchError'=>$searchError, 'inTranslated'=>$inTranslated,'ignorediac'=>$searchMode==4
+                'searchError'=>$searchError, 'inTranslated'=>$inTranslated
             ]);
         }
         
