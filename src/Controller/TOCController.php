@@ -510,7 +510,7 @@ class TOCController extends AbstractController
         TipitakaTagsRepository $tagsRepository)
     {
         $nodes=$tocRepository->findBy(["urlfull"=>$request->getRequestUri()]);
-        $node=array_pop($nodes);
+        $node=end($nodes);
         if($node)
         {
             $response=$this->translationListById($node->getNodeid(),$tocRepository,$request,$translator,$tagsRepository);

@@ -10,11 +10,12 @@ use Symfony\Component\Routing\RouterInterface;
 use App\Repository\TipitakaParagraphsRepository;
 use App\Repository\TipitakaSentencesRepository;
 use App\Security\Roles;
+use App\Repository\TipitakaTocRepository;
 
 class StatisticsController extends AbstractController
 {
     public function logRequest(Request $request,TipitakaStatisticsRepository $statisticsRepository,RouterInterface $router,
-        TipitakaParagraphsRepository $paragraphsRepository,TipitakaSentencesRepository $sentencesRepository)
+        TipitakaParagraphsRepository $paragraphsRepository,TipitakaSentencesRepository $sentencesRepository,TipitakaTocRepository $tocRepository)
     {
         $url= $request->get("url");
                         
@@ -53,6 +54,48 @@ class StatisticsController extends AbstractController
                         $sentence=$sentencesRepository->getNodeIdBySentenceId($params["sentenceid"]);
                         $stat->setNodeid($sentence["nodeid"]);
                         break;
+                    case "hier_path_sentence":
+                        {
+                            $matches=array();
+                            if(preg_match("/^(.+)\/s\/(\d+)$/", $params["hierpath"],$matches))
+                            {
+                                $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+                                $node=end($nodes);
+                                $stat->setNodeid($node->getNodeid());
+                            }
+                            break;
+                        }
+                    case "hier_path_transl":
+                        {
+                            $matches=array();
+                            if(preg_match("/^(.+)\/(table|transl|prologue)$/", $params["hierpath"],$matches))
+                            {
+                                $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+                                $node=end($nodes);
+                                $stat->setNodeid($node->getNodeid());
+                            }
+                            else 
+                            {
+                                if(preg_match("/^(.+)\/p\/(\d+)$/", $params["hierpath"],$matches))
+                                {
+                                    $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+                                    $node=end($nodes);
+                                    $stat->setNodeid($node->getNodeid());
+                                }
+                            }
+                            $stat->setPath(NULL);
+                            break;
+                        }
+                    case "hier_path_toc":
+                        {
+                            $nodes=$tocRepository->findBy(["urlfull"=>$params["hierpath"]]);
+                            $node=end($nodes);
+                            if($node)
+                            {
+                                $stat->setNodeid($node->getNodeid());
+                            }
+                            break;
+                        }
                 }                                
             }            
             

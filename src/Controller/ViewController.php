@@ -832,7 +832,7 @@ class ViewController extends AbstractController
         if(preg_match("/^(.+)\/(table|transl|prologue)$/", $request->getRequestUri(),$matches))
         {            
             $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
-            $node=array_pop($nodes);
+            $node=end($nodes);
             if($node)
             {
                 switch($matches[2])
@@ -858,7 +858,7 @@ class ViewController extends AbstractController
         if(preg_match("/^(.+)\/p\/(\d+)$/", $request->getRequestUri(),$matches))
         {
             $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
-            $node=array_pop($nodes);
+            $node=end($nodes);
             if($node)
             {
                  $response=$this->paragraphView($matches[2], $tocRepository, $paragraphsRepository, $sentencesRepository, $request);
