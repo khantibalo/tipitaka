@@ -28,14 +28,17 @@
 		<p></p>
 		{% if collectionItem.nodeid %}	
 			{% for paragraph in paragraphs|filter(p=>p.collectionitemid==collectionItem.collectionitemid) %}
-			<p class="{{ paragraph.paragraphtype }}">				
-				{% for sentence in sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
-					{% set other=otherTranslations[collectionItem.nodeid] is empty ? [] : otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) %}	
-					{% if other|length>0 %}
-						{{ (other|first).translation }}
-					{% endif %}
-				{% endfor %}
-				</p>
+    			{% set sentencesFiltered=sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
+    			{% if sentencesFiltered|length %}
+    				<p class="{{ paragraph.paragraphtype }}">				
+    				{% for sentence in  sentencesFiltered %}
+    					{% set other=otherTranslations[collectionItem.nodeid] is empty ? [] : otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) %}	
+    					{% if other|length>0 %}
+    						{{ (other|first).translation }}
+    					{% endif %}
+    				{% endfor %}
+    				</p>
+    			{% endif %}
 			{% endfor %}
 		{% endif %}
 		{{ collectionItem.notesBottom|raw }}
