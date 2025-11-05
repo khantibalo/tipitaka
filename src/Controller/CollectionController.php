@@ -212,6 +212,8 @@ class CollectionController extends AbstractController
                 'comments'=>$comments,'shownav'=>$form->get("shownav")->getData()
             ];
             
+            $fixFileName=str_replace("\"", "'", $collection["name"]);
+            
             switch($rendermode)
             {
                 case "disp":
@@ -222,7 +224,7 @@ class CollectionController extends AbstractController
                     
                     $disposition = HeaderUtils::makeDisposition(
                         HeaderUtils::DISPOSITION_ATTACHMENT,
-                        $collection["name"].'.html',
+                        "$fixFileName.html",
                         'collection.html'
                         );
                     
@@ -233,7 +235,7 @@ class CollectionController extends AbstractController
                     
                     $disposition = HeaderUtils::makeDisposition(
                         HeaderUtils::DISPOSITION_ATTACHMENT,
-                        $collection["name"].'.fb2',
+                        "$fixFileName.fb2",
                         'collection.fb2'
                         );
                     
@@ -297,12 +299,12 @@ class CollectionController extends AbstractController
                     $response->setContent($pdfEncodedContent);
                     $disposition = HeaderUtils::makeDisposition(
                         HeaderUtils::DISPOSITION_ATTACHMENT,
-                        $collection["name"].'.pdf',
+                        "$fixFileName.pdf",
                         'collection.pdf'
                         );
                     
                     $response->headers->set('Content-Disposition', $disposition);
-		    $response->headers->set('Content-Type', 'application/pdf');
+		            $response->headers->set('Content-Type', 'application/pdf');
                     
                     //$response->setStatusCode(Response::HTTP_NOT_FOUND);
                     //$response->setContent("node id=".$collectionItem['nodeid']." has no translations");
