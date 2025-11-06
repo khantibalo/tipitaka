@@ -253,7 +253,7 @@ class TOCController extends AbstractController
             );
     }
     
-    public function translationListById($id,TipitakaTocRepository $tocRepository,Request $request,
+    protected function translationListById($id,TipitakaTocRepository $tocRepository,Request $request,
         TranslatorInterface $translator,TipitakaTagsRepository $tagsRepository)
     {
         $node=$tocRepository->find($id);
@@ -519,6 +519,23 @@ class TOCController extends AbstractController
         {
             $response=new Response("not found",404);
         }        
+        
+        return $response;
+    }
+    
+    public function fromOldUrl($id,TipitakaTocRepository $tocRepository,Request $request,
+        TranslatorInterface $translator,TipitakaTagsRepository $tagsRepository)
+    {
+        $node=$tocRepository->find($id);
+        
+        if($node->getUrlfull() && empty($request->getQueryString()))
+        {
+            $response=$this->redirect($node->getUrlfull());
+        }
+        else
+        {
+            $response=$this->translationListById($id,$tocRepository,$request,$translator,$tagsRepository);
+        }
         
         return $response;
     }

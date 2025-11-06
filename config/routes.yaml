@@ -197,7 +197,7 @@ toc:
 
 translation_toc_node:
     path: /toc/translations/{id}
-    controller: App\Controller\TOCController::translationListById
+    controller: App\Controller\TOCController::fromOldUrl
     requirements:
         id: '\d+' 
         
