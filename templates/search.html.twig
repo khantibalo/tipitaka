@@ -21,9 +21,9 @@
 {{ form_label(form.scopeChoice, 'ScopeLabel') }}
 </td>
 <td>
-{{ form_widget(form.scopeChoice[0]) }}{{ form_label(form.scopeChoice[0], 'table of contents') }}<br>
+{{ form_widget(form.scopeChoice[0]) }}{{ form_label(form.scopeChoice[0], 'table of contents') }}<a href="#" onclick="javascript: document.getElementById('tocsearchhint').style.display = 'inline';"><i class="twa twa-lg twa-information" style="font-size: .7rem;"></i></a><span style="display: none" id="tocsearchhint">{% trans %}TOC search hint{% endtrans %}</span><br>
 {{ form_widget(form.scopeChoice[1]) }}{{ form_label(form.scopeChoice[1], 'text') }}<br>
-{{ form_widget(form.scopeChoice[2],{"attr": {(bookmarks is empty ? 'disabled' : 'style') : (bookmarks is empty ? 'disabled' : '') }}) }}{{ form_label(form.scopeChoice[2], 'SearchBookmarks',{'label_html': true}) }}
+{{ form_widget(form.scopeChoice[2],{"attr": {(bookmarks is empty ? 'disabled' : 'style') : (bookmarks is empty ? 'disabled' : '') }}) }}{{ form_label(form.scopeChoice[2], 'bookmarks',{'label_html': true}) }}<a href="#" onclick="javascript: document.getElementById('bkmsearchhint').style.display = 'inline';"><i class="twa twa-lg twa-information" style="font-size: .7rem;"></i></a><span style="display: none" id="bkmsearchhint">{% trans %}bookmarks search hint{% endtrans %}</span>
 {% if not bookmarks is empty %}
 <a href="{{ path("bookmarks") }}">{% trans %}View{% endtrans %}</a>
 {% endif %}

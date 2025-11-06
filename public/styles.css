@@ -148,6 +148,10 @@ table.bordercell
           
 .twa-globe-with-meridians {
   background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f310.svg"); }
+  
+.twa-information {
+	background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/2139.svg");
+}  
       
 .collLevel1,
 .collLevel2,
