@@ -20,7 +20,7 @@ not found: не найдено
 more than one paragraph with this number: с этим номером больше одного абзаца
 GoButton: Вперёд
 SearchFieldLabel: "Поиск:"
-table of contents: Оглавление
+table of contents: "Оглавление - укажите язык (в примере - русский) и введите номер через пробел, например: СН 56.11"
 text: Текст
 ScopeLabel: "Где:"
 SearchButton: Искать
@@ -264,3 +264,4 @@ URL full: Ссылка полностью
 Calculate for this node: Вычислить для этого узла
 Calculate for child nodes: Вычислить для дочерних узлов
 SearchMode4: Искать без учёта диакритики (нет языка запросов)
+SearchBookmarks: Закладки - в разделе <a href="/toc/full">все тексты</a> добавьте в закладки нужные разделы, затем вернитесь на эту страницу для поиска в них

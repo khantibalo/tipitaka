@@ -23,7 +23,7 @@
 <td>
 {{ form_widget(form.scopeChoice[0]) }}{{ form_label(form.scopeChoice[0], 'table of contents') }}<br>
 {{ form_widget(form.scopeChoice[1]) }}{{ form_label(form.scopeChoice[1], 'text') }}<br>
-{{ form_widget(form.scopeChoice[2],{"attr": {(bookmarks is empty ? 'disabled' : 'style') : (bookmarks is empty ? 'disabled' : '') }}) }}{{ form_label(form.scopeChoice[2], 'bookmarks') }}
+{{ form_widget(form.scopeChoice[2],{"attr": {(bookmarks is empty ? 'disabled' : 'style') : (bookmarks is empty ? 'disabled' : '') }}) }}{{ form_label(form.scopeChoice[2], 'SearchBookmarks',{'label_html': true}) }}
 {% if not bookmarks is empty %}
 <a href="{{ path("bookmarks") }}">{% trans %}View{% endtrans %}</a>
 {% endif %}
