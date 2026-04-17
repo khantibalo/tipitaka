@@ -12,3 +12,6 @@ Disallow: /search
 Disallow: /quote/sentenceid/
 Disallow: /user/
 Disallow: /toc/collections/item/
+Disallow: /*/p/*
+Disallow: /*/s/*
+

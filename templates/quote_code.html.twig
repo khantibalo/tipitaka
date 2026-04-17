@@ -14,7 +14,7 @@
 <br/>SentenceID:<input type="text" value="{% for id in ids %}{{ id.sentenceid }}{% if not loop.last %},{% endif %}{% endfor %}" style="width:500px"> 
 <textarea rows="5" style="width:100%">
 {% autoescape 'html' %}
-<a href="{{ url('view_paragraph',{id: paraid}) }}">{{ title }}</a>
+<a href="{{ node.urlfull ? absolute_url(node.urlfull ~ '/p/' ~ paraid) : url('view_paragraph',{id: paraid}) }}">{{ title }}</a>
 <blockquote class="{{ class_key }}{{ (ids|first).id }}"></blockquote>
 <script src="{{ absolute_url(asset('quote.js')) }}" type="text/javascript"></script>
 <script type="text/javascript">{{ function_name }}("{{ class_key }}{{ (ids|first).id }}","{% for id in ids %}{% if loop.index0!=0 %},{% endif %}{{ id.id }}{% endfor %}","{{ url('index') }}");</script>
@@ -22,7 +22,7 @@
 </textarea>
 
 {% trans %}preview{% endtrans %}<br/>
-<a href="{{ url('view_paragraph',{id: paraid}) }}">{{ title }}</a>
+<a href="{{ node.urlfull ? absolute_url(node.urlfull ~ '/p/' ~ paraid) : url('view_paragraph',{id: paraid}) }}">{{ title }}</a>
 <blockquote class="{{ class_key }}{{ (ids|first).id }}"></blockquote>
 <script src="{{ asset('quote.js') }}" type="text/javascript"></script>
 <script type="text/javascript">{{ function_name }}("{{ class_key }}{{ (ids|first).id }}","{% for id in ids %}{% if loop.index0!=0 %},{% endif %}{{ id.id }}{% endfor %}","{{ url('index') }}");</script>

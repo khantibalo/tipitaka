@@ -62,20 +62,22 @@ class QuoteController extends AbstractController
         if($request->get('pali'))
         {            
             $paraid=$request->get('pali');
-            $id=[0=>['id'=>$request->get('pali')]];
-            $paragraph=$paragraphsRepository->getParagraph($request->get('pali'));            
-            $title=$paragraph['nodetitle'];	
+            $id=[0=>['id'=>$paraid]];
+            $paragraph=$paragraphsRepository->find($paraid);
+            $node=$paragraph->getNodeid();            
+            $title=$node->getTitle();	
             $class_key='TipParagraphs';
             $function_name='getPali';
             $sentenceid=0;
+
         }                
                 
         if($request->get('sentencetranslation'))
         {
-            $paraid=$request->get('paragraphid');
-            $id=$request->get('paragraphid');                
-            $paragraph=$paragraphsRepository->getParagraph($id);
-            $title=$paragraph['nodetitle'];            
+            $paraid=$request->get('paragraphid');               
+            $paragraph=$paragraphsRepository->find($paraid);
+            $node=$paragraph->getNodeid(); 
+            $title=$node->getTitle();            
             $class_key='SentenceTransl';
             $function_name='getSentenceTranslation';
             $translation=$sentencesRepository->getTranslation($request->get('sentencetranslation'));
@@ -104,7 +106,7 @@ class QuoteController extends AbstractController
         
         return $this->render('quote_code.html.twig', ['ids'=>$id,'title'=>$title, 
             'class_key'=>$class_key,'function_name'=>$function_name,'paraid'=>$paraid,'form'=>$formView,
-            'sentenceid'=>$sentenceid
+            'sentenceid'=>$sentenceid,'node'=>$node
         ]);
     }
         
