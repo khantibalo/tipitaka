@@ -198,6 +198,20 @@ class TipitakaToc
     private $urlfull;
     
     /**
+     * @var int
+     *
+     * @ORM\Column(name="nextid", type="integer", nullable=true)
+     */
+    private $nextid;
+    
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="previd", type="integer", nullable=true)
+     */
+    private $previd;
+    
+    /**
      * @return \App\Entity\TipitakaSources
      */
     public function getTranslationSourceID(): ?TipitakaSources
@@ -531,4 +545,13 @@ class TipitakaToc
         return $this;
     }
 
+    public function getNextid(): ?int
+    {
+        return $this->nextid;
+    }
+    
+    public function getPrevid(): ?int
+    {
+        return $this->previd;
+    }
 }

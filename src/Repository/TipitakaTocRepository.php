@@ -81,12 +81,28 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         {
             if(!$result[0]['Prev'])
             {
-                $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',false);
+                $node=$this->find($nodeid);
+                if($node->getPrevid())
+                {
+                    $result[0]['Prev']=$node->getPrevid();
+                }
+                else
+                {
+                    $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',false);
+                }
             }
             
             if(!$result[0]['Next'])
             {
-                $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',false);
+                $node=$this->find($nodeid);
+                if($node->getNextid())
+                {
+                    $result[0]['Next']=$node->getNextid();
+                }
+                else
+                {
+                    $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',false);
+                }
             }
         }
         
@@ -117,12 +133,28 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         
         if(!$result[0]['Prev'])
         {
-            $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',true);
+            $node=$this->find($nodeid);
+            if($node->getPrevid())
+            {
+                $result[0]['Prev']=$node->getPrevid();
+            }
+            else
+            {
+                $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',true);
+            }
         }
         
         if(!$result[0]['Next'])
         {
-            $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',true);
+            $node=$this->find($nodeid);
+            if($node->getNextid())
+            {
+                $result[0]['Next']=$node->getNextid();
+            }
+            else
+            {
+                $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',true);
+            }
         }
             
         return $result;

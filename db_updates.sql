@@ -2,3 +2,4 @@ ALTER TABLE `tipitaka_tags` CHANGE `paliname` `paliname` VARCHAR(255) CHARACTER 
 ALTER TABLE `tipitaka_collection_items` ADD `notes_bottom` TEXT NULL AFTER `default_view`; 
 ALTER TABLE `tipitaka_toc` ADD `urlpart` VARCHAR(20) NULL AFTER `disabletranslalign`, ADD `urlfull` VARCHAR(255) NULL AFTER `urlpart`; 
 ALTER TABLE `tipitaka_toc` ADD INDEX `urlfull` (`urlfull`); 
+ALTER TABLE `tipitaka_toc` ADD `nextid` INT NULL AFTER `urlfull`, ADD `previd` INT NULL AFTER `nextid`;
