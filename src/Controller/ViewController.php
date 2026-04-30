@@ -300,7 +300,7 @@ class ViewController extends AbstractController
         $node=$tocRepository->find($id);
         $response=null;
         
-        if($node->getUrlfull() && empty($request->getQueryString()))
+        if($node && $node->getUrlfull() && empty($request->getQueryString()))
         {
             $response=$this->redirect($node->getUrlfull()."/table");
         }

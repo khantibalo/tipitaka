@@ -40,25 +40,31 @@ class TipitakaTocRepository  extends ServiceEntityRepository
     
     public function listAllChildNodes($nodeid)
     {
+        $childNodes=[];
         $entityManager = $this->getEntityManager();
+        
         $node=$this->find($nodeid);
-                
-        $path=$node->getPath()."%";
-        $path=str_replace("\\","\\\\",$path);  
+        if($node)
+        {
+            $path=$node->getPath()."%";
+            $path=str_replace("\\","\\\\",$path);  
+            
+            $query = $entityManager->createQueryBuilder()
+            ->select('toc.nodeid,tt.name As typename,toc.title,toc.HasTableView,toc.haschildnodes,s.sourceid as TranslationSourceID,toc.urlfull')
+            ->from('App\Entity\TipitakaToc','toc')
+            ->innerJoin('toc.titletypeid', 'tt')
+            ->leftJoin('toc.TranslationSourceID', 's')
+            ->where('toc.nodeid=:id')
+            ->orWhere('toc.path LIKE :path ')
+            ->orderBy('toc.nodeid')
+            ->getQuery()
+            ->setParameter('id',$nodeid)
+            ->setParameter('path',$path);        
+            
+            $childNodes=$query->getResult();
+        }
         
-        $query = $entityManager->createQueryBuilder()
-        ->select('toc.nodeid,tt.name As typename,toc.title,toc.HasTableView,toc.haschildnodes,s.sourceid as TranslationSourceID,toc.urlfull')
-        ->from('App\Entity\TipitakaToc','toc')
-        ->innerJoin('toc.titletypeid', 'tt')
-        ->leftJoin('toc.TranslationSourceID', 's')
-        ->where('toc.nodeid=:id')
-        ->orWhere('toc.path LIKE :path ')
-        ->orderBy('toc.nodeid')
-        ->getQuery()
-        ->setParameter('id',$nodeid)
-        ->setParameter('path',$path);        
-        
-        return $query->getResult();
+        return $childNodes;
     }
     
     public function getBackNextNode($nodeid)

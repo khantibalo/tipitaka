@@ -773,7 +773,7 @@ class CollectionController extends AbstractController
     {
         $collectionItem=$collectionsRepository->find($collectionitemid);
 
-        if($collectionItem->getParentid() && $collectionItem->getNodeid())
+        if($collectionItem && $collectionItem->getParentid() && $collectionItem->getNodeid())
         {
             $collection=$collectionsRepository->fetchCollection($collectionItem->getParentid(),$request->getLocale());
             $collectionItemName=NULL;

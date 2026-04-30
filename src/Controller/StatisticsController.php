@@ -48,11 +48,17 @@ class StatisticsController extends AbstractController
                         break;
                     case "view_paragraph":
                         $paragraph=$paragraphsRepository->getParagraph($params["id"]);
-                        $stat->setNodeid($paragraph["nodeid"]);
+                        if($paragraph)
+                        {
+                            $stat->setNodeid($paragraph["nodeid"]);
+                        }
                         break;
                     case "comments":
                         $sentence=$sentencesRepository->getNodeIdBySentenceId($params["sentenceid"]);
-                        $stat->setNodeid($sentence["nodeid"]);
+                        if($sentence)
+                        {
+                            $stat->setNodeid($sentence["nodeid"]);
+                        }
                         break;
                     case "hier_path_sentence":
                         {
@@ -60,8 +66,11 @@ class StatisticsController extends AbstractController
                             if(preg_match("/^(.+)\/s\/(\d+)$/", $params["hierpath"],$matches))
                             {
                                 $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
-                                $node=end($nodes);
-                                $stat->setNodeid($node->getNodeid());
+                                if($nodes)
+                                {
+                                    $node=end($nodes);
+                                    $stat->setNodeid($node->getNodeid());
+                                }
                             }
                             break;
                         }
@@ -71,16 +80,22 @@ class StatisticsController extends AbstractController
                             if(preg_match("/^(.+)\/(table|transl|prologue)$/", $params["hierpath"],$matches))
                             {
                                 $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
-                                $node=end($nodes);
-                                $stat->setNodeid($node->getNodeid());
+                                if($nodes)
+                                {
+                                    $node=end($nodes);
+                                    $stat->setNodeid($node->getNodeid());
+                                }
                             }
                             else 
                             {
                                 if(preg_match("/^(.+)\/p\/(\d+)$/", $params["hierpath"],$matches))
                                 {
                                     $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
-                                    $node=end($nodes);
-                                    $stat->setNodeid($node->getNodeid());
+                                    if($nodes)
+                                    {
+                                        $node=end($nodes);
+                                        $stat->setNodeid($node->getNodeid());
+                                    }
                                 }
                             }
                             $stat->setPath(NULL);
@@ -88,10 +103,10 @@ class StatisticsController extends AbstractController
                         }
                     case "hier_path_toc":
                         {
-                            $nodes=$tocRepository->findBy(["urlfull"=>$params["hierpath"]]);
-                            $node=end($nodes);
-                            if($node)
+                            $nodes=$tocRepository->findBy(["urlfull"=>$params["hierpath"]]);                            
+                            if($nodes)
                             {
+                                $node=end($nodes);
                                 $stat->setNodeid($node->getNodeid());
                             }
                             break;
@@ -99,7 +114,10 @@ class StatisticsController extends AbstractController
                 }                                
             }            
             
-            $statisticsRepository->logRequest($stat);
+            if($stat->getNodeid())
+            {
+                $statisticsRepository->logRequest($stat);
+            }
         }
         
         return new Response("OK");
