@@ -19,23 +19,29 @@ class TipitakaTocRepository  extends ServiceEntityRepository
     
     public function listPathNodes($nodeid)
     {
+        $pathNodes=[];
         $entityManager = $this->getEntityManager();
         $node=$this->find($nodeid);
         
-        $path=$node->getPath();
-                
-        $parent_nodes=str_replace("\\",",",trim($path,"\\"));
+        if($node)
+        {
+            $path=$node->getPath();
+                    
+            $parent_nodes=str_replace("\\",",",trim($path,"\\"));
+            
+            $query = $entityManager->createQueryBuilder()
+            ->select('toc','tt')
+            ->from('App\Entity\TipitakaToc','toc')
+            ->innerJoin('toc.titletypeid', 'tt')
+            ->where('toc.nodeid IN (:pn)')
+            ->orderBy('toc.path')
+            ->getQuery()
+            ->setParameter('pn', explode(',',$parent_nodes));
+            
+            $pathNodes=$query->getResult();
+        }
         
-        $query = $entityManager->createQueryBuilder()
-        ->select('toc','tt')
-        ->from('App\Entity\TipitakaToc','toc')
-        ->innerJoin('toc.titletypeid', 'tt')
-        ->where('toc.nodeid IN (:pn)')
-        ->orderBy('toc.path')
-        ->getQuery()
-        ->setParameter('pn', explode(',',$parent_nodes));            
-        
-        return $query->getResult();
+        return $pathNodes;
     }
     
     public function listAllChildNodes($nodeid)

@@ -367,9 +367,12 @@ class ViewController extends AbstractController
         if($prologue)
         {
             $childNodes=$tocRepository->listAllChildNodes($nodeid);
-            $next_id=$childNodes[1]['nodeid'];
-            $nextNode=$tocRepository->find($next_id);
-            $next_urlfull=$nextNode->getUrlfull();
+            if($childNodes)
+            {
+                $next_id=$childNodes[1]['nodeid'];
+                $nextNode=$tocRepository->find($next_id);
+                $next_urlfull=$nextNode->getUrlfull();
+            }
         }
         else 
         {
