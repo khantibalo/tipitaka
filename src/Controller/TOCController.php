@@ -36,110 +36,117 @@ class TOCController extends AbstractController
            
     public function fullTocListById($id,TipitakaTocRepository $tocRepository,Request $request, 
         TipitakaParagraphsRepository $paragraphsRepository,TranslatorInterface $translator)
-    {
+    {        
         $child_nodes=$tocRepository->findBy(['parentid'=>$id],['nodeid'=>'ASC']);
         
         $path_nodes=$tocRepository->listPathNodes($id);
 
-        $node=$path_nodes[sizeof($path_nodes)-1];
-
-        $ptsFormView=NULL;
-        $pageRangeMin=NULL;
-        $pageRangeMax=NULL;
-        $response=NULL;
-        $paraFormView=NULL;
-        $paraFormMessage=NULL;
-        
-        if(is_numeric($node->getMinVolumeNumber()) && is_numeric($node->getMaxVolumeNumber()) &&
-            is_numeric($node->getMinPageNumber()) && is_numeric($node->getMaxPageNumber()))
+        if($path_nodes)
         {
-            $choices=array();
+            $node=$path_nodes[sizeof($path_nodes)-1];
+    
+            $ptsFormView=NULL;
+            $pageRangeMin=NULL;
+            $pageRangeMax=NULL;
+            $response=NULL;
+            $paraFormView=NULL;
+            $paraFormMessage=NULL;
             
-            for($i=$node->getMinVolumeNumber();$i<=$node->getMaxVolumeNumber();$i++)
+            if(is_numeric($node->getMinVolumeNumber()) && is_numeric($node->getMaxVolumeNumber()) &&
+                is_numeric($node->getMinPageNumber()) && is_numeric($node->getMaxPageNumber()))
             {
-                $choices["$i"]=$i;
-            }
-            
-            if($node->getMinVolumeNumber()==$node->getMaxVolumeNumber())
-            {
-                $pageRangeMin=$node->getMinPageNumber();
-                $pageRangeMax=$node->getMaxPageNumber();                   
-            }
-            
-            $formPTS = $this->createFormBuilder(null,  array('csrf_protection' => false))
-            ->add('volume', ChoiceType::class,
-                ['choices'  => $choices,
-                    'label' => false,
-                    'expanded'=>false,
-                    'multiple'=>false
-                ])
-            ->add('page', IntegerType::class,['required' => true,'label' => false])
-            ->add('search', SubmitType::class,['label' => $translator->trans('GoButton')])
-            ->getForm();
-            
-            $formPTS->handleRequest($request);
-            
-            $ptsFormView=$formPTS->createView();
-            
-            $formPara = $this->createFormBuilder()
-            ->add('paranum', IntegerType::class,['required' => true,'label' => false])
-            ->add('search', SubmitType::class,['label' => $translator->trans('GoButton')])
-            ->getForm();
-            
-            $formPara->handleRequest($request);
-            
-            if ($formPTS->isSubmitted() && $formPTS->isValid())
-            {
-                $data = $formPTS->getData();
+                $choices=array();
                 
-                $id=$tocRepository->getPTSParagraphId($node->getPath(),$data['volume'],$data['page']);
-                
-                if($id)
-                {                                       
-                    $response=$this->redirectToRoute('view_paragraph', ['id'=>$id['paragraphid']]);
-                }
-            }
-            else
-            {
-                if (!$formPara->isSubmitted())
+                for($i=$node->getMinVolumeNumber();$i<=$node->getMaxVolumeNumber();$i++)
                 {
-                    $formPTS->get("volume")->setData($choices[$node->getMinVolumeNumber()]);
+                    $choices["$i"]=$i;
                 }
-            }
-                        
-            if ($formPara->isSubmitted() && $formPara->isValid())
-            {
-                $data = $formPara->getData();
                 
-                $paragraphsList=$paragraphsRepository->findParagraphByParanum($node->getPath(),$data['paranum']);
-                
-                if(sizeof($paragraphsList)==0)
+                if($node->getMinVolumeNumber()==$node->getMaxVolumeNumber())
                 {
-                    $paraFormMessage=$translator->trans('not found');
+                    $pageRangeMin=$node->getMinPageNumber();
+                    $pageRangeMax=$node->getMaxPageNumber();                   
                 }
                 
-                if(sizeof($paragraphsList)>1)
+                $formPTS = $this->createFormBuilder(null,  array('csrf_protection' => false))
+                ->add('volume', ChoiceType::class,
+                    ['choices'  => $choices,
+                        'label' => false,
+                        'expanded'=>false,
+                        'multiple'=>false
+                    ])
+                ->add('page', IntegerType::class,['required' => true,'label' => false])
+                ->add('search', SubmitType::class,['label' => $translator->trans('GoButton')])
+                ->getForm();
+                
+                $formPTS->handleRequest($request);
+                
+                $ptsFormView=$formPTS->createView();
+                
+                $formPara = $this->createFormBuilder()
+                ->add('paranum', IntegerType::class,['required' => true,'label' => false])
+                ->add('search', SubmitType::class,['label' => $translator->trans('GoButton')])
+                ->getForm();
+                
+                $formPara->handleRequest($request);
+                
+                if ($formPTS->isSubmitted() && $formPTS->isValid())
                 {
-                    $paraFormMessage=$translator->trans('more than one paragraph with this number');
+                    $data = $formPTS->getData();
+                    
+                    $id=$tocRepository->getPTSParagraphId($node->getPath(),$data['volume'],$data['page']);
+                    
+                    if($id)
+                    {                                       
+                        $response=$this->redirectToRoute('view_paragraph', ['id'=>$id['paragraphid']]);
+                    }
+                }
+                else
+                {
+                    if (!$formPara->isSubmitted())
+                    {
+                        $formPTS->get("volume")->setData($choices[$node->getMinVolumeNumber()]);
+                    }
+                }
+                            
+                if ($formPara->isSubmitted() && $formPara->isValid())
+                {
+                    $data = $formPara->getData();
+                    
+                    $paragraphsList=$paragraphsRepository->findParagraphByParanum($node->getPath(),$data['paranum']);
+                    
+                    if(sizeof($paragraphsList)==0)
+                    {
+                        $paraFormMessage=$translator->trans('not found');
+                    }
+                    
+                    if(sizeof($paragraphsList)>1)
+                    {
+                        $paraFormMessage=$translator->trans('more than one paragraph with this number');
+                    }
+                    
+                    if(sizeof($paragraphsList)==1)
+                    {
+                        $response=$this->redirectToRoute('view_paragraph', ['id'=>$paragraphsList[0]['paragraphid']]);
+                    }
                 }
                 
-                if(sizeof($paragraphsList)==1)
-                {
-                    $response=$this->redirectToRoute('view_paragraph', ['id'=>$paragraphsList[0]['paragraphid']]);
-                }
+                $paraFormView=$formPara->createView();
             }
             
-            $paraFormView=$formPara->createView();
+            if(!$response)
+            {
+                $response=$this->render('full_toc.html.twig',
+                    ['child_nodes'=>$child_nodes,'path_nodes'=>$path_nodes,'ptsForm' => $ptsFormView,
+                        'pageRangeMin'=>$pageRangeMin,'pageRangeMax'=>$pageRangeMax,'showForm'=>($ptsFormView!=NULL),
+                        'paraForm'=>$paraFormView,'paraFormMessage'=>$paraFormMessage,'editorRole'=>Roles::Editor, 'expandRoute'=>'full_toc_node'
+                        ,'thisNode'=>$node]
+                    );
+            }
         }
-        
-        if(!$response)
+        else
         {
-            $response=$this->render('full_toc.html.twig',
-                ['child_nodes'=>$child_nodes,'path_nodes'=>$path_nodes,'ptsForm' => $ptsFormView,
-                    'pageRangeMin'=>$pageRangeMin,'pageRangeMax'=>$pageRangeMax,'showForm'=>($ptsFormView!=NULL),
-                    'paraForm'=>$paraFormView,'paraFormMessage'=>$paraFormMessage,'editorRole'=>Roles::Editor, 'expandRoute'=>'full_toc_node'
-                    ,'thisNode'=>$node]
-                );
+            $response=new Response('not found',404);
         }
         
         return $response;

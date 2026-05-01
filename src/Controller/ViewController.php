@@ -26,86 +26,94 @@ class ViewController extends AbstractController
         $prologue=$request->query->get('prologue');
         
         $node=$tocRepository->findOneBy(['nodeid'=>$id]);
-        
-        $path_nodes=$tocRepository->listPathNodes($id);
-                
-        $nodes=$tocRepository->listAllChildNodes($id);
-        
-        if($prologue)
+        if($node)
         {
-            $nodes=array($nodes[0]);
-        }
-        
-        $paragraphs=$paragraphsRepository->listByNode($node);
-                              
-        $pn=$paragraphsRepository->listPageNumbersByNode($node);
-        
-        $notes=$paragraphsRepository->listNotesByNode($node);        
+            $path_nodes=$tocRepository->listPathNodes($id);
+                    
+            $nodes=$tocRepository->listAllChildNodes($id);
+            
+            if($prologue)
+            {
+                $nodes=array($nodes[0]);
+            }
+            
+            $paragraphs=$paragraphsRepository->listByNode($node);
+                                  
+            $pn=$paragraphsRepository->listPageNumbersByNode($node);
+            
+            $notes=$paragraphsRepository->listNotesByNode($node);        
+                            
+            $back_id='';
+            $next_id='';
+            $back_prologue=false;
+            
+            if($prologue)
+            {
+                $childNodes=$tocRepository->listAllChildNodes($id);
+                $next_id=$childNodes[1]['nodeid'];
+            }
+            else
+            {        
+                $backnext=$tocRepository->getBackNextNode($id);
                         
-        $back_id='';
-        $next_id='';
-        $back_prologue=false;
-        
-        if($prologue)
-        {
-            $childNodes=$tocRepository->listAllChildNodes($id);
-            $next_id=$childNodes[1]['nodeid'];
+                if(sizeof($backnext)>0)
+                {
+                    if($backnext[0]['Prev'])
+                    {
+                        $back_id=$backnext[0]['Prev'];
+                    }
+                    
+                    if($backnext[0]['Next'])
+                    {
+                        $next_id=$backnext[0]['Next'];
+                    }
+                }
+                
+                if($back_id=='')
+                {
+                    $parentNode=$path_nodes[sizeof($path_nodes)-2];
+                    if($parentNode->getHasprologue())
+                    {
+                        $back_id=$parentNode->getNodeid();
+                        $back_prologue=true;
+                    }
+                }
+            }
+            
+            $view_settings=$this->getViewSettings('view_node',$id,$back_id,$next_id,$request);
+            
+            $ci=new CapitalizeExtension();
+            
+            for($i=0;$i<sizeof($paragraphs);$i++)
+            {
+                $item=$paragraphs[$i];
+                $paragraphs[$i]['text']=$ci->capitalize($item['text'],$item['caps']);
+                            
+                $pid=(string)$item['paragraphid'];
+                                       
+                $paragraph_pn=array_key_exists($pid, $pn) ? $pn[$pid] : array();
+                $paragraph_notes=array_key_exists($pid, $notes) ? $notes[$pid] : array();
+                
+                $paragraphs[$i]['text']=$this->formatParagraph($paragraphs[$i]['text'],$paragraphs[$i]['bold'],
+                    $paragraph_pn,$paragraph_notes,$view_settings);
+            }
+            
+            $tags=$tagsRepository->listByOneNodeId($id,$request->getLocale());
+            
+            $related=$tocRepository->listRelatedNodes($id,$request->getLocale());
+                    
+            $response=$this->render('node_view.html.twig',
+                ['node'=>$node,'path_nodes'=>$path_nodes,'nodes'=>$nodes,'paragraphs'=>$paragraphs,
+                    'view_settings'=>$view_settings,'authorRole'=>Roles::Author,'backPrologue'=>$back_prologue,
+                    'tags'=>$tags,'authorRole'=>Roles::Author,'related'=>$related]
+                ); 
         }
         else
-        {        
-            $backnext=$tocRepository->getBackNextNode($id);
-                    
-            if(sizeof($backnext)>0)
-            {
-                if($backnext[0]['Prev'])
-                {
-                    $back_id=$backnext[0]['Prev'];
-                }
-                
-                if($backnext[0]['Next'])
-                {
-                    $next_id=$backnext[0]['Next'];
-                }
-            }
-            
-            if($back_id=='')
-            {
-                $parentNode=$path_nodes[sizeof($path_nodes)-2];
-                if($parentNode->getHasprologue())
-                {
-                    $back_id=$parentNode->getNodeid();
-                    $back_prologue=true;
-                }
-            }
-        }
-        
-        $view_settings=$this->getViewSettings('view_node',$id,$back_id,$next_id,$request);
-        
-        $ci=new CapitalizeExtension();
-        
-        for($i=0;$i<sizeof($paragraphs);$i++)
         {
-            $item=$paragraphs[$i];
-            $paragraphs[$i]['text']=$ci->capitalize($item['text'],$item['caps']);
-                        
-            $pid=(string)$item['paragraphid'];
-                                   
-            $paragraph_pn=array_key_exists($pid, $pn) ? $pn[$pid] : array();
-            $paragraph_notes=array_key_exists($pid, $notes) ? $notes[$pid] : array();
-            
-            $paragraphs[$i]['text']=$this->formatParagraph($paragraphs[$i]['text'],$paragraphs[$i]['bold'],
-                $paragraph_pn,$paragraph_notes,$view_settings);
+            $response=new Response('not found',404);
         }
         
-        $tags=$tagsRepository->listByOneNodeId($id,$request->getLocale());
-        
-        $related=$tocRepository->listRelatedNodes($id,$request->getLocale());
-                
-        return $this->render('node_view.html.twig',
-            ['node'=>$node,'path_nodes'=>$path_nodes,'nodes'=>$nodes,'paragraphs'=>$paragraphs,
-                'view_settings'=>$view_settings,'authorRole'=>Roles::Author,'backPrologue'=>$back_prologue,
-                'tags'=>$tags,'authorRole'=>Roles::Author,'related'=>$related]
-            ); 
+        return $response;
     }
     
     public function paragraphViewOld($id, TipitakaTocRepository $tocRepository,TipitakaParagraphsRepository $paragraphsRepository,
@@ -655,7 +663,7 @@ class ViewController extends AbstractController
         //this will show a translation from the source that is specified in node edit form
         $node=$tocRepository->getNodeWithNameTranslation($id,$request->getLocale());
                         
-        if($node['TranslationSourceID'])
+        if($node && $node['TranslationSourceID'])
         {
             $nodeObj=$tocRepository->find($id);
             $nodes=$tocRepository->listAllChildNodesWithNamesTranslation($nodeObj,$request->getLocale());//that should be the language of the source            
@@ -832,6 +840,7 @@ class ViewController extends AbstractController
         TipitakaParagraphsRepository $paragraphsRepository, TipitakaSourcesRepository $sourcesRepository)
     {
         $matches=array();
+        $response=null;
         if(preg_match("/^(.+)\/(table|transl|prologue)$/", $request->getRequestUri(),$matches))
         {            
             $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
