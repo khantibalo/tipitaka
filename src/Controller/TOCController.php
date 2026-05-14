@@ -535,7 +535,7 @@ class TOCController extends AbstractController
     {
         $node=$tocRepository->find($id);
         
-        if($node->getUrlfull() && empty($request->getQueryString()))
+        if($node && $node->getUrlfull() && empty($request->getQueryString()))
         {
             $response=$this->redirect($node->getUrlfull());
         }

@@ -1,5 +1,8 @@
 {% extends 'base.html.twig' %}
 {% set showT=false %}
+{% block meta %}
+<meta name="robots" content="noindex,nofollow" />
+{% endblock %}
 {% block title %}{{ paragraph.nodetitle }}{% endblock %}
 {% block navigation %}
 {% if view_settings.printview is empty %}

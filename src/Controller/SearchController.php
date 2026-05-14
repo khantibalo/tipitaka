@@ -113,9 +113,11 @@ class SearchController extends AbstractController
             $searchMode=$request->get('mode');
             
             if(!is_null($request->get('b')))
+            {
                 $bookmarks_str=$request->get('b');
+            }
             
-            if(!empty($searchString) && !empty($scope))
+            if(!empty($searchString) && !empty($scope) && mb_strlen($searchString)>3)
             {                
                 $form->get("searchString")->setData($searchString);
                 $form->get("scopeChoice")->setData($scope);
