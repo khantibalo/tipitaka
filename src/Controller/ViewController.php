@@ -122,14 +122,21 @@ class ViewController extends AbstractController
         $response=NULL;
         
         $paragraph=$paragraphsRepository->find($id);
-        $node=$paragraph->getNodeid();
-        if($node->getUrlfull() && empty($request->getQueryString()))
+        if($paragraph)
         {
-            $response=$this->redirect($node->getUrlfull()."/p/$id");
+            $node=$paragraph->getNodeid();
+            if($node->getUrlfull() && empty($request->getQueryString()))
+            {
+                $response=$this->redirect($node->getUrlfull()."/p/$id");
+            }
+            else 
+            {
+                $response=$this->paragraphView($id, $tocRepository,$paragraphsRepository,$sentencesRepository,$request);
+            }
         }
         else 
         {
-            $response=$this->paragraphView($id, $tocRepository,$paragraphsRepository,$sentencesRepository,$request);
+            $response=new Response('not found',404);
         }
         
         return $response;
