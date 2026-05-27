@@ -266,4 +266,6 @@ Calculate for child nodes: Calculate for child nodes
 SearchMode4: Search ignoring diacritics (no query language)
 bookmarks search hint: Go to <a href="/toc/full">all texts</a> and bookmark those you want to search in. Then return to this page.
 TOC search hint: set English search language and use a space, e.g. SN 56.11
+Tag: Tag
+Include in print view: Include in print view
 

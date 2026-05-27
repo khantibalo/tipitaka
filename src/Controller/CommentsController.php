@@ -4,6 +4,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -78,6 +79,7 @@ class CommentsController  extends AbstractController
                         'multiple'=>false,
                         'required' => true
                     ]);
+                $fb->add('tag', TextType::class,['required' => false]);
             }
                 
             $form=$fb->getForm();
@@ -95,7 +97,12 @@ class CommentsController  extends AbstractController
                 
                 if($this->isGranted(Roles::Editor) && $form->has('forprint') && $form->get('forprint')->getData()!='0')
                 {
-                    $comment->setForprint($form->get('forprint')->getData());
+                    $comment->setForprint($form->get('forprint')->getData());                    
+                }
+                
+                if($this->isGranted(Roles::Editor) && $form->has('tag'))
+                {
+                    $comment->setTag($form->get('tag')->getData());
                 }
 
                 $commentsRepository->add($comment);

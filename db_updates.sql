@@ -3,3 +3,6 @@ ALTER TABLE `tipitaka_collection_items` ADD `notes_bottom` TEXT NULL AFTER `defa
 ALTER TABLE `tipitaka_toc` ADD `urlpart` VARCHAR(20) NULL AFTER `disabletranslalign`, ADD `urlfull` VARCHAR(255) NULL AFTER `urlpart`; 
 ALTER TABLE `tipitaka_toc` ADD INDEX `urlfull` (`urlfull`); 
 ALTER TABLE `tipitaka_toc` ADD `nextid` INT NULL AFTER `urlfull`, ADD `previd` INT NULL AFTER `nextid`;
+
+ALTER TABLE `tipitaka_comments` ADD `tag` VARCHAR(50) NULL AFTER `authorname`;
+ALTER TABLE `tipitaka_collection_items` ADD `tag` VARCHAR(50) NULL AFTER `notes_bottom`;

@@ -102,7 +102,14 @@ class TipitakaCollectionItems
      * @ORM\Column(name="notes_bottom", type="text", length=65535, nullable=true)
      */
     private $notesBottom;
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="tag", type="text", length=50, nullable=true)
+     */
+    private $tag;
     
+
 
     public function getCollectionitemid(): ?int
     {
@@ -237,6 +244,18 @@ class TipitakaCollectionItems
     public function setNotesBottom(?string $notesBottom): static
     {
         $this->notesBottom = $notesBottom;
+        
+        return $this;
+    }
+    
+    public function getTag(): ?string
+    {
+        return $this->tag;
+    }
+    
+    public function setTag(?string $tag): static
+    {
+        $this->tag = $tag;
         
         return $this;
     }

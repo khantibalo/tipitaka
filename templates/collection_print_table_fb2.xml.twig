@@ -38,7 +38,11 @@
 					{% for sentence in sentences|filter(s=>s.paragraphid==paragraph.paragraphid and s.collectionitemid==collectionItem.collectionitemid) %}
 					{% set pali=collectionItem.nodeid in paliTranslations|keys ? paliTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid) : "" %}
 					{% set other=collectionItem.nodeid in otherTranslations|keys ? otherTranslations[collectionItem.nodeid]|filter(t=>t.sentenceid==sentence.sentenceid)  : "" %}
-					{% set sentenceComments=comments|filter(c=>c.sentenceid==sentence.sentenceid) %}
+					{% if collectionItem.tag %}
+					    {% set sentenceComments=comments|filter(c=>c.sentenceid==sentence.sentenceid and c.tag==collectionItem.tag) %}
+					{% else %}
+						{% set sentenceComments=comments|filter(c=>c.sentenceid==sentence.sentenceid and c.tag is empty) %}
+					{% endif %}
 					{% set comment1=sentenceComments|filter(c=>c.forprint==1)|first %}
 					{% set comment2=sentenceComments|filter(c=>c.forprint==2)|first %}
 					{% set comment3=sentenceComments|filter(c=>c.forprint==3)|first %}

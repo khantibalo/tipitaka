@@ -360,6 +360,7 @@ class CollectionController extends AbstractController
                 'required' => true
             ])
         ->add('vieworder', IntegerType::class,['required' => true])
+
         ->add('save', SubmitType::class);
                 
         $form=$form->getForm();
@@ -551,6 +552,7 @@ class CollectionController extends AbstractController
         ->add('vieworder', IntegerType::class,['required' => true])
         ->add('notes', TextareaType::class,['required' => false,'label' => false])
         ->add('notesBottom', TextareaType::class,['required' => false,'label' => false])
+        ->add('tag', TextType::class,['required' => false,'label' => false])
         ->add('level', IntegerType::class,['required' => true])
         ->add('save', SubmitType::class);
         
@@ -590,6 +592,7 @@ class CollectionController extends AbstractController
                 $item->setLevel($form->get("level")->getData());       
                 $item->setNotes($form->get("notes")->getData());
                 $item->setNotesBottom($form->get("notesBottom")->getData());
+                $item->setTag($form->get("tag")->getData());
                 
                 $collectionsRepository->updateCollectionItem($item);                
             }
@@ -628,6 +631,7 @@ class CollectionController extends AbstractController
                 $form->get("hidepalinameprint")->setData($item->getHidepalinameprint());     
                 $form->get("notes")->setData($item->getNotes());
                 $form->get("notesBottom")->setData($item->getNotesBottom());
+                $form->get("tag")->setData($item->getTag());
             }
             
             $formView=$form->createView();

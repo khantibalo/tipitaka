@@ -113,7 +113,7 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         ->andWhere('ci.collectionitemid=cin2.collectionitemid');
                 
         $query = $entityManager->createQueryBuilder()
-        ->select('ci.collectionitemid,ci.vieworder,ci.level,toc.nodeid,toc.HasTableView,so.sourceid as TranslationSourceID,ci.parentid,toc.title,ci.limitrows,ci.hidetitleprint,ci.hidepalinameprint,ci.notes,ci.notesBottom')
+        ->select('ci.collectionitemid,ci.vieworder,ci.level,toc.nodeid,toc.HasTableView,so.sourceid as TranslationSourceID,ci.parentid,toc.title,ci.limitrows,ci.hidetitleprint,ci.hidepalinameprint,ci.notes,ci.notesBottom,ci.tag')
         ->addSelect('('.$nodeNameSubQuery->getDQL().') AS nodeName')
         ->addSelect('('.$colItemNameSubQuery->getDQL().') AS colItemName')
         ->addSelect('('.$altPaliNameSubQuery->getDQL().') AS altPaliName')
@@ -220,7 +220,7 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query=$entityManager->createQueryBuilder()
-        ->select('co.commentid,co.commenttext,co.forprint,s.sentenceid')
+        ->select('co.commentid,co.commenttext,co.forprint,s.sentenceid,co.tag')
         ->from('App\Entity\TipitakaComments','co')
         ->innerjoin('co.sentenceid','s')
         ->innerJoin('s.paragraphid', 'c')

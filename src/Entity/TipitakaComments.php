@@ -75,6 +75,14 @@ class TipitakaComments
      * })
      */
     private $authorid;
+    
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="tag", type="text", length=50, nullable=true)
+     */
+    private $tag;
+    
 
     public function getCommentid(): ?int
     {
@@ -165,5 +173,16 @@ class TipitakaComments
         return $this;
     }
 
+    public function getTag(): ?string
+    {
+        return $this->tag;
+    }
+    
+    public function setTag(?string $tag): static
+    {
+        $this->tag = $tag;
+        
+        return $this;
+    }
 
 }

@@ -70,7 +70,8 @@
     <b>{% trans %}Comment{% endtrans %}</b><br>
     {{ form_widget(form.comment,{"attr" : {"rows": 5,"cols" : 60,"maxlength": 2000 }}) }}<br>
     {% if is_granted(editorRole) %}  
-        {{ form_widget(form.forprint,{'label' : 'Include in print view'}) }}<br>
+        {{ form_label(form.tag,'Include in print view') }}:{{ form_widget(form.forprint) }}<br>
+        {{ form_label(form.tag,'Tag') }}:{{ form_widget(form.tag) }}<br>
     {% endif %}
     {{ form_widget(form.submit,{'label' : 'Save'}) }}
     {{ form_end(form) }}
