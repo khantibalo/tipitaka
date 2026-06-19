@@ -76,13 +76,15 @@ class TipitakaStatisticsRepository extends ServiceEntityRepository
         
         $entityManager->flush();  
         
+        /*
         $query = $entityManager->createQueryBuilder()
         ->delete('App\Entity\TipitakaStatistics','s')
         ->where('DATE_DIFF(CURRENT_DATE(),s.accessdate)>:sl')
         ->getQuery()
         ->setParameter('sl',30);
         
-        $query->execute();      
+        $query->execute();
+        */      
     }
     
     public function listStatsAgg()
