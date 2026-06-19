@@ -6,3 +6,4 @@ ALTER TABLE `tipitaka_toc` ADD `nextid` INT NULL AFTER `urlfull`, ADD `previd` I
 
 ALTER TABLE `tipitaka_comments` ADD `tag` VARCHAR(50) NULL AFTER `authorname`;
 ALTER TABLE `tipitaka_collection_items` ADD `tag` VARCHAR(50) NULL AFTER `notes_bottom`;
+ALTER TABLE `tipitaka_statistics` ADD UNIQUE `date_path` (`accessdate`, `path`);

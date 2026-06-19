@@ -19,7 +19,10 @@ class StatisticsController extends AbstractController
     {
         $url= $request->get("url");
                         
-        if(filter_var($url, FILTER_VALIDATE_URL))
+        $referer=$request->headers->get("referer");
+        $response=new Response("OK");
+        
+        if(filter_var($url, FILTER_VALIDATE_URL) && $referer && str_contains($referer, 'tipitaka'))
         {
             $stat=new TipitakaStatistics();
             
@@ -119,8 +122,12 @@ class StatisticsController extends AbstractController
                 $statisticsRepository->logRequest($stat);
             }
         }
+        else 
+        {
+            $response=new Response('not found',404);
+        }
         
-        return new Response("OK");
+        return $response;
     }
     
     public function viewStatsAgg(TipitakaStatisticsRepository $statisticsRepository)
