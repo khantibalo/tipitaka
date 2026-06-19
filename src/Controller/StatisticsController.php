@@ -18,11 +18,13 @@ class StatisticsController extends AbstractController
         TipitakaParagraphsRepository $paragraphsRepository,TipitakaSentencesRepository $sentencesRepository,TipitakaTocRepository $tocRepository)
     {
         $url= $request->get("url");
-                        
-        $referer=$request->headers->get("referer");
+        //TODO: better detection
+        $bot_agents=["crawl","bot","spider"];
+        $is_bot=array_reduce($bot_agents, fn($a, $n) => $a || str_contains($request->headers->get("user-agent"), $n), false);
+
         $response=new Response("OK");
         
-        if(filter_var($url, FILTER_VALIDATE_URL) && $referer && str_contains($referer, 'tipitaka'))
+        if(filter_var($url, FILTER_VALIDATE_URL) && !$is_bot)
         {
             $stat=new TipitakaStatistics();
             
