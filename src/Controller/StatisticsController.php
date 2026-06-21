@@ -18,25 +18,22 @@ class StatisticsController extends AbstractController
         TipitakaParagraphsRepository $paragraphsRepository,TipitakaSentencesRepository $sentencesRepository,TipitakaTocRepository $tocRepository)
     {
         $url= $request->get("url");
-        //TODO: better detection
-        $bot_agents=["crawl","bot","spider"];
-        $is_bot=array_reduce($bot_agents, fn($a, $n) => $a || str_contains($request->headers->get("user-agent"), $n), false);
+        $is_bot=preg_match('/(bot|crawl|spider)/i',$request->headers->get("user-agent"));
 
-        $response=new Response("OK");
-        
         if(filter_var($url, FILTER_VALIDATE_URL) && !$is_bot)
         {
+            $response=new Response("OK");
             $stat=new TipitakaStatistics();
-            
+
             $stat->setAccessdate((new \DateTime())->setTime(0,0));
-                        
+
             $path=parse_url($url,PHP_URL_PATH);
             $stat->setPath($url);
-            
+
             $path=str_replace("/tipitaka","",$path);
-            
+
             $params=$router->match($path);
-                        
+
             if(isset($params["_route"]))
             {
                 switch($params["_route"])
@@ -126,7 +123,7 @@ class StatisticsController extends AbstractController
         }
         else 
         {
-            $response=new Response('not found',404);
+            $response=new Response('access denied',403);
         }
         
         return $response;
