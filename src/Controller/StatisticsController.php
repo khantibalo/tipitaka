@@ -19,7 +19,7 @@ class StatisticsController extends AbstractController
     {
         $url= $request->get("url");
         $is_bot=preg_match('/(bot|crawl|spider)/i',$request->headers->get("user-agent"));
-	$has_cookies=$request->headers->get("cookie");
+        $has_cookies=$request->headers->get("cookie");
 
         if(filter_var($url, FILTER_VALIDATE_URL) && !$is_bot && $has_cookies)
         {

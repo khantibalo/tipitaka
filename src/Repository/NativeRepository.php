@@ -119,15 +119,16 @@ class NativeRepository extends ServiceEntityRepository
                     {
                         $finalQuery=SqlQueryBuilder::getQueryBuilder()
                         ->select("toc.textpath,c.paragraphid, ".
-                            "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, s.sentencetext,toc.urlfull")
-                            ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
-                            ->from("tipitaka_toc toc")
-                            ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
-                            ->innerJoin("tipitaka_paragraphtypes ct", "c.paragraphtypeid=ct.paragraphtypeid")
-                            ->innerJoin("tipitaka_sentences s", "s.paragraphid=c.paragraphid")
-                            ->andWhereSubquery("EXISTS", $this->getTranslationWhereSubquery())
-                            ->andWhere("MATCH (s.sentencetext) AGAINST (:ss in boolean mode)");
+                        "MATCH (s.sentencetext) AGAINST (:ss in boolean mode) AS score, s.sentencetext,toc.urlfull")
+                        ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
+                        ->from("tipitaka_toc toc")
+                        ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
+                        ->innerJoin("tipitaka_paragraphtypes ct", "c.paragraphtypeid=ct.paragraphtypeid")
+                        ->innerJoin("tipitaka_sentences s", "s.paragraphid=c.paragraphid")
+                        ->andWhereSubquery("EXISTS", $this->getTranslationWhereSubquery())
+                        ->andWhere("MATCH (s.sentencetext) AGAINST (:ss in boolean mode)");
                         
+                        $searchString=$this->fixFullTextSearchString($searchString);
                         break;
                     }
             }
@@ -164,14 +165,15 @@ class NativeRepository extends ServiceEntityRepository
                     {                                                
                         $finalQuery=SqlQueryBuilder::getQueryBuilder()
                         ->select("c.nodeid,c.paragraphid, paranum, c.text, c.caps, ct.name As paragraphTypeName,c.hastranslation, ".
-                            "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext,toc.urlfull")
-                            ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
-                            ->from("tipitaka_toc toc")
-                            ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
-                            ->innerJoin("tipitaka_paragraphtypes ct", "c.paragraphtypeid=ct.paragraphtypeid")
-                            ->leftJoin("tipitaka_sentences s", "s.paragraphid=c.paragraphid")
-                            ->andWhere("MATCH (c.text) AGAINST (:ss in boolean mode)");
-                        
+                        "MATCH (c.text) AGAINST (:ss in boolean mode) AS score, toc.textpath,s.sentencetext,toc.urlfull")
+                        ->selectSubquery($this->getTranslationSelectSubquery(), "translation")
+                        ->from("tipitaka_toc toc")
+                        ->innerJoin("tipitaka_paragraphs c", "toc.nodeid=c.nodeid")
+                        ->innerJoin("tipitaka_paragraphtypes ct", "c.paragraphtypeid=ct.paragraphtypeid")
+                        ->leftJoin("tipitaka_sentences s", "s.paragraphid=c.paragraphid")
+                        ->andWhere("MATCH (c.text) AGAINST (:ss in boolean mode)");
+                    
+                        $searchString=$this->fixFullTextSearchString($searchString);
                         break;
                     }
             }
@@ -184,6 +186,24 @@ class NativeRepository extends ServiceEntityRepository
         }
         
         return $finalQuery;
+    }
+    
+    private function fixFullTextSearchString($searchString): string
+    {
+        $fixedString=mb_trim($searchString,",.;'\":");
+        //modify if there is more than one word (=contains spaces)        
+        if(str_contains($fixedString, " "))
+        {
+            //don't modify if it contains full-text search operators
+            $has_operators=preg_match('/[\+\-"]/',$fixedString);
+            if(!$has_operators)
+            {
+                //add +before each word so it finds passages containing all of them only
+                $fixedString="+".str_replace(" ", " +", $fixedString);
+            }
+        }
+        
+        return $fixedString;
     }
     
     //this is possible to do with DQL, but the result is very slow query
