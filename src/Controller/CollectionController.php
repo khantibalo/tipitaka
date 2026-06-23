@@ -40,11 +40,14 @@ class CollectionController extends AbstractController
     
     public function viewCollection($collectionid,Request $request,TipitakaCollectionsRepository $collectionsRepository,
         TranslatorInterface $translator, TipitakaSentencesRepository $sentencesRepository)
-    {                
-        $collectionItems=array();
-    
+    {
+	$collection=$collectionsRepository->fetchCollection($collectionid,$request->getLocale());
+	if(!$collection)
+	{
+		return new Response('not found',404);
+	}
+
         $collectionItems=$collectionsRepository->listCollectionItems($collectionid,$request->getLocale());
-        $collection=$collectionsRepository->fetchCollection($collectionid,$request->getLocale());
 
         $form = $this->createFormBuilder()
         ->add('shownav', CheckboxType::class,['required' => false,'label' => false,'data'=>true])

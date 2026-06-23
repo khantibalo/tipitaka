@@ -47,7 +47,7 @@ class TipitakaCollectionsRepository  extends ServiceEntityRepository
         ->setParameter('locale', $locale)
         ->setParameter('cid', $collectionitemid);
         
-        return $query->getSingleResult();
+        return $query->getOneOrNullResult();
     }
     
     public function getCollectionItemName($collectionitemid,$locale)

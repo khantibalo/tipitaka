@@ -265,15 +265,22 @@ class CommentsController  extends AbstractController
         
         $node=$sentenceRepository->getNodeIdBySentenceId($sentenceid);
         
-        if($node['urlfull'])
-        {
-            $response=$this->redirect($node['urlfull']."/s/$sentenceid");
+	if($node)
+	{
+	        if($node['urlfull'])
+        	{
+            		$response=$this->redirect($node['urlfull']."/s/$sentenceid");
+        	}
+        	else
+        	{
+            		$response=$this->listBySentence($sentenceid, $sentenceRepository, $commentsRepository, $request, $tocRepository, $translator, $collectionsRepository);
+        	}
+	}
+	else
+	{
+		$response=new Response("not found",404);
         }
-        else
-        {
-            $response=$this->listBySentence($sentenceid, $sentenceRepository, $commentsRepository, $request, $tocRepository, $translator, $collectionsRepository);
-        }
-        
+
         return $response;
     }
 }
