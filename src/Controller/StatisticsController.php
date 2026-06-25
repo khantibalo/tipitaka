@@ -19,9 +19,10 @@ class StatisticsController extends AbstractController
     {
         $url= $request->get("url");
         $is_bot=preg_match('/(bot|crawl|spider)/i',$request->headers->get("user-agent"));
-        $has_cookies=$request->headers->get("cookie");
+        $has_uid=$request->cookies->get("uid");
+	$printview=str_contains($url,"printview=");
 
-        if(filter_var($url, FILTER_VALIDATE_URL) && !$is_bot && $has_cookies)
+        if(filter_var($url, FILTER_VALIDATE_URL) && !$is_bot && $has_uid && !$printview)
         {
             $response=new Response("OK");
             $stat=new TipitakaStatistics();
@@ -124,7 +125,7 @@ class StatisticsController extends AbstractController
         }
         else 
         {
-            $response=new Response('access denied',403);
+            $response=new Response('not found',404);
         }
         
         return $response;
