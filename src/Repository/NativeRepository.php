@@ -358,14 +358,14 @@ class NativeRepository extends ServiceEntityRepository
         $paragraph_line=implode(",",$paragraph_ids);
 
         $qbFinalQuery=SqlQueryBuilder::getQueryBuilder()
-        ->select("st.translation,c.paragraphid,toc.textpath,se.sentencetext,toc.urlfull")
+        ->select("st.translation,c.paragraphid,toc.textpath,se.sentencetext,toc.urlfull,MATCH (st.translation) AGAINST (:ss in boolean mode) AS score")
         ->from("tipitaka_sentence_translations st")
         ->innerJoin("tipitaka_sources so", "st.sourceid=so.sourceid")
         ->innerJoin("tipitaka_languages l", "so.languageid=l.languageid")
         ->innerJoin("tipitaka_sentences se", "st.sentenceid=se.sentenceid")
         ->innerJoin("tipitaka_paragraphs c", "c.paragraphid=se.paragraphid")
         ->innerJoin("tipitaka_toc toc", "toc.nodeid=c.nodeid")
-        ->andWhere("st.translation LIKE :ss")
+        ->andWhere("MATCH (st.translation) AGAINST (:ss in boolean mode)")
         ->andWhere("l.languageid=:lid");
                 
         $orArray=array();
@@ -380,11 +380,35 @@ class NativeRepository extends ServiceEntityRepository
             $orArray[]=$path_line;
         }
         
-        $qbFinalQuery->andWhereOrArray($orArray);
-                
+        $qbFinalQuery->andWhereOrArray($orArray);        
+        $qbFinalQuery->orderBy("score DESC");
+        
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($qbFinalQuery->getSql());
-        $result=$stmt->executeQuery(['ss'=>'%'.$searchString.'%','lid'=>$languageid]);
+        $searchString=$this->fixFullTextSearchString($searchString);
+        $result=$stmt->executeQuery(['ss'=>$searchString,'lid'=>$languageid]);
+        
+        return $result->fetchAllAssociative();
+    }
+
+    public function searchTranslations($searchString,$languageid)
+    {        
+        $qbFinalQuery=SqlQueryBuilder::getQueryBuilder()
+        ->select("st.translation,c.paragraphid,toc.textpath,se.sentencetext,toc.urlfull,MATCH (st.translation) AGAINST (:ss in boolean mode) AS score")
+        ->from("tipitaka_sentence_translations st")
+        ->innerJoin("tipitaka_sources so", "st.sourceid=so.sourceid")
+        ->innerJoin("tipitaka_languages l", "so.languageid=l.languageid")
+        ->innerJoin("tipitaka_sentences se", "st.sentenceid=se.sentenceid")
+        ->innerJoin("tipitaka_paragraphs c", "c.paragraphid=se.paragraphid")
+        ->innerJoin("tipitaka_toc toc", "toc.nodeid=c.nodeid")
+        ->andWhere("MATCH (st.translation) AGAINST (:ss in boolean mode)")
+        ->andWhere("l.languageid=:lid")
+        ->orderBy("score DESC");
+        
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($qbFinalQuery->getSql());
+        $searchString=$this->fixFullTextSearchString($searchString);
+        $result=$stmt->executeQuery(['ss'=>$searchString,'lid'=>$languageid]);
         
         return $result->fetchAllAssociative();
     }

@@ -87,33 +87,33 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         ->setParameter('id', $nodeid)
         ->setParameter('nul', NULL);
         
-        $result=$query->getResult();
+        $result=$query->getResult(); //TODO: use getOneOrNullResult
         
         if(sizeof($result)>0)
         {
-            if(!$result[0]['Prev'])
+            $node=$this->find($nodeid);
+            
+            if($node->getPrevid())
             {
-                $node=$this->find($nodeid);
-                if($node->getPrevid())
-                {
-                    $result[0]['Prev']=$node->getPrevid();
-                }
-                else
+                $result[0]['Prev']=$node->getPrevid();
+            }
+            else
+            {
+                if(!$result[0]['Prev'])
                 {
                     $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',false);
                 }
             }
             
-            if(!$result[0]['Next'])
+            if($node->getNextid())
             {
-                $node=$this->find($nodeid);
-                if($node->getNextid())
+                $result[0]['Next']=$node->getNextid();
+            }
+            else
+            {
+                if(!$result[0]['Next'])
                 {
-                    $result[0]['Next']=$node->getNextid();
-                }
-                else
-                {
-                    $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',false);
+                    $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',false);                    
                 }
             }
         }
@@ -126,7 +126,7 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
         ->select('MAX(CASE WHEN toc1.nodeid<:id THEN toc1.nodeid ELSE :nul END) as Prev',
-        'MIN(CASE WHEN toc1.nodeid>:id THEN toc1.nodeid ELSE :nul END) As Next')
+            'MIN(CASE WHEN toc1.nodeid>:id THEN toc1.nodeid ELSE :nul END) As Next')
         ->from('App\Entity\TipitakaToc','toc1')
         ->innerJoin('App\Entity\TipitakaToc', 'toc2',Join::WITH,'toc1.parentid=toc2.parentid')
         ->where('toc2.nodeid=:id')
@@ -136,36 +136,36 @@ class TipitakaTocRepository  extends ServiceEntityRepository
         ->setParameter('id', $nodeid)
         ->setParameter('nul', NULL);
         
-        $result=$query->getResult();
+        $result=$query->getResult();//TODO: use getOneOrNullResult
         
         if(sizeof($result)==0)
         {
             $result[0]=array();
         }
         
-        if(!$result[0]['Prev'])
+        $node=$this->find($nodeid);
+        
+        if($node->getPrevid())
         {
-            $node=$this->find($nodeid);
-            if($node->getPrevid())
+            $result[0]['Prev']=$node->getPrevid();
+        }
+        else
+        {
+            if(!$result[0]['Prev'])
             {
-                $result[0]['Prev']=$node->getPrevid();
-            }
-            else
-            {
-                $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',true);
+                $result[0]['Prev']=$this->findBackNextNodeWithHiddenParent($nodeid,'Prev',true);            
             }
         }
         
-        if(!$result[0]['Next'])
+        if($node->getNextid())
         {
-            $node=$this->find($nodeid);
-            if($node->getNextid())
+            $result[0]['Next']=$node->getNextid();
+        }
+        else
+        {
+            if(!$result[0]['Next'])
             {
-                $result[0]['Next']=$node->getNextid();
-            }
-            else
-            {
-                $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',true);
+                $result[0]['Next']=$this->findBackNextNodeWithHiddenParent($nodeid,'Next',true);                
             }
         }
             

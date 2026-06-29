@@ -150,7 +150,7 @@ class SearchController extends AbstractController
                         }
                         else
                         {
-                            $searchItems=$sentencesRepository->searchTranslation($searchString,$lang);
+                            $searchItems=$nativeRepository->searchTranslations($searchString,$lang);
                         }
                     }
                     

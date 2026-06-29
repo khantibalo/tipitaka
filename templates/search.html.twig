@@ -9,7 +9,7 @@
 {{ form_label(form.searchString, 'SearchFieldLabel') }}
 </td>
 <td>
-{{ form_widget(form.searchString) }}
+{{ form_widget(form.searchString,{"attr": {'style' : 'width:80%'}}) }}
 {{ include('_palibox.html.twig',{searchControlId: 'form_searchString'}) }}
 {% if searchError %}
 <span style="color:red">{% trans %}SearchStringError{% endtrans %}</span>
