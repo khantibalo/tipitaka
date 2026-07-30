@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\TipitakaTags;
 use App\Entity\TipitakaTagNames;
@@ -200,12 +201,21 @@ class TagsController extends AbstractController
     public function tocTagNodesList($tagid, Request $request,TipitakaTagsRepository $tagsRepository,
         TipitakaTocRepository $tocRepository)
     {       
-        $tagTypes=$tagsRepository->listTagTypes();        
-        $tags=$tagsRepository->getTocTagWithStats($request->getLocale(),$tagid);
-        $nodes=$tocRepository->listNodesByTag($tagid,$request->getLocale());
+        $tag=$tagsRepository->find($tagid); 
+        if($tag)
+        {
+            $tagTypes=$tagsRepository->listTagTypes();        
+            $tags=$tagsRepository->getTocTagWithStats($request->getLocale(),$tagid);        
+            $nodes=$tocRepository->listNodesByTag($tagid,$request->getLocale());
+            $response=$this->render('toc_tags_list.html.twig', ['tags'=>$tags,'tagTypes'=>$tagTypes,
+                'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>NULL,'tagid'=>$tagid]);
+        }
+        else
+        {
+            $response=new Response('not found',404);
+        }
         
-        return $this->render('toc_tags_list.html.twig', ['tags'=>$tags,'tagTypes'=>$tagTypes,
-            'nodes'=>$nodes,'authorRole'=>Roles::Author,'tagtypeid'=>NULL,'tagid'=>$tagid]);
+        return $response;
     }
     
     public function editTagName(TipitakaSentencesRepository $sentencesRepository,TranslatorInterface $translator,Request $request,
