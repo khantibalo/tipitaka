@@ -9,11 +9,13 @@
 {{ form_label(form.searchString, 'SearchFieldLabel') }}
 </td>
 <td>
-{{ form_widget(form.searchString,{"attr": {'style' : 'width:80%'}}) }}
-{{ include('_palibox.html.twig',{searchControlId: 'form_searchString'}) }}
+{{ form_widget(form.searchString,{"attr": {'style' : 'width:99%'}}) }}
 {% if searchError %}
 <span style="color:red">{% trans %}SearchStringError{% endtrans %}</span>
 {% endif %}
+</td>
+<td>
+{{ include('_palibox.html.twig',{searchControlId: 'form_searchString'}) }}
 </td>
 </tr>
 <tr>
@@ -28,6 +30,8 @@
 <a href="{{ path("bookmarks") }}">{% trans %}View{% endtrans %}</a>
 {% endif %}
 </td>
+<td>
+</td>
 </tr>
 <tr>
 <td style="width:100px">
@@ -35,6 +39,8 @@
 </td>
 <td>
 {{ form_widget(form.lang) }}
+</td>
+<td>
 </td>
 </tr>
 <tr>
@@ -44,6 +50,8 @@
 <td>
 {{ form_widget(form.inTranslated) }}
 </td>
+<td>
+</td>
 </tr>
 <tr>
 <td>
@@ -51,6 +59,8 @@
 </td>
 <td>
 {{ form_widget(form.searchMode) }}
+</td>
+<td>
 </td>
 </tr>
 </table>

@@ -190,16 +190,16 @@ class NativeRepository extends ServiceEntityRepository
     
     private function fixFullTextSearchString($searchString): string
     {
-        $fixedString=mb_trim($searchString,",.;'\":");
-        //modify if there is more than one word (=contains spaces)        
-        if(str_contains($fixedString, " "))
+        $operators=strpbrk($searchString,'"+-*<>()~');
+        
+        if($operators===false)
         {
-            //don't modify if it contains full-text search operators
-            $has_operators=preg_match('/[\+\-"]/',$fixedString);
-            if(!$has_operators)
+            $fixedString=mb_trim($searchString,",.;':");
+            //modify if there is more than one word (=contains spaces) and it is not exact match        
+            if(str_contains($fixedString, " "))
             {
-                //add +before each word so it finds passages containing all of them only
-                $fixedString="+".str_replace(" ", " +", $fixedString);
+                 //add +before each word so it finds passages containing all of them only
+                 $fixedString="+".str_replace(" ", " +", $fixedString);
             }
         }
         
