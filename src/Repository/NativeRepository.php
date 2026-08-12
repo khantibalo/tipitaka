@@ -190,6 +190,7 @@ class NativeRepository extends ServiceEntityRepository
     
     private function fixFullTextSearchString($searchString): string
     {
+        $fixedString=$searchString;
         $operators=strpbrk($searchString,'"+-*<>()~');
         
         if($operators===false)
