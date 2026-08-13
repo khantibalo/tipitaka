@@ -64,7 +64,7 @@
                 	<span id="et{{ translation.sentencetranslationid }}">{{ source.hasformatting ? translation.translation|raw : translation.translation }}</span>
                 	<span id="ec{{ translation.sentencetranslationid }}">
                 	{% if is_granted(userRole) %}
-                    	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>
+                    	{% if view_settings.printview is empty %}<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>{% endif %}
                     	{% if view_settings.printview is empty and is_granted(editorRole) or (view_settings.printview is empty and translation.userid==app.user.userid and is_granted(authorRole)) %}
                     		<a href="{{ path('translation_edit',{translationid : translation.sentencetranslationid }) }}">{% trans %}Edit{% endtrans %}</a>
                     		<a href="javascript:QTEdit({{ translation.sentencetranslationid }});">{% trans %}Quick Edit{% endtrans %}</a>    
