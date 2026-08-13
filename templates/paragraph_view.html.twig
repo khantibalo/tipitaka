@@ -65,7 +65,7 @@
                 	<span id="ec{{ translation.sentencetranslationid }}">
                 	{% if is_granted(userRole) %}
                     	<br><small><span id="ecd{{ translation.sentencetranslationid }}">{{ translation.dateupdated|date('Y-m-d H:i:s') }}</span></small>
-                    	{% if is_granted(editorRole) or (translation.userid==app.user.userid and is_granted(authorRole)) %}
+                    	{% if view_settings.printview is empty and is_granted(editorRole) or (view_settings.printview is empty and translation.userid==app.user.userid and is_granted(authorRole)) %}
                     		<a href="{{ path('translation_edit',{translationid : translation.sentencetranslationid }) }}">{% trans %}Edit{% endtrans %}</a>
                     		<a href="javascript:QTEdit({{ translation.sentencetranslationid }});">{% trans %}Quick Edit{% endtrans %}</a>    
                     	{% endif %}
@@ -75,7 +75,7 @@
                     {% endif %}                        
                     </span>
                 {% else %}
-                    {% if is_granted(authorRole) %}
+                    {% if view_settings.printview is empty and is_granted(authorRole) %}
                     	<span id="ncse{{ sentence.sentenceid }}so{{ source.sourceid }}">
                 		<a href="{{ path('translation_edit',{sentenceid : sentence.sentenceid,sourceid :  source.sourceid}) }}">{% trans %}Translate{% endtrans %}</a>
 	        			<a href="javascript:QTNew({{ sentence.sentenceid }},{{ source.sourceid }});">{% trans %}Quick Edit{% endtrans %}</a>  
@@ -90,7 +90,7 @@
 		    {{ sentence.lastcomment }}<br>
 			<a href="{{ urlfull ? (urlfull ~ '/s/' ~  sentence.sentenceid) : path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
 		{% else %}
-		    {% if is_granted(userRole) %}
+		    {% if view_settings.printview is empty and is_granted(userRole) %}
 				<a href="{{ urlfull ? (urlfull ~ '/s/' ~  sentence.sentenceid) : path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}Add new comment{% endtrans %}</a>
 			{% endif %}
 		{% endif %}
@@ -103,18 +103,18 @@
     </tr>
     {% endfor %}
     </table>
-    {% if is_granted(authorRole) %}
+    {% if view_settings.printview is empty and is_granted(authorRole) %}
     <a href="{{ path('quote_code',{pali: paragraph.paragraphid}) }}">{% trans %}Code for pali{% endtrans %}</a>
     {% endif %}    
 {% endif %}    
-{% if is_granted(authorRole) %}
+{% if view_settings.printview is empty and is_granted(authorRole) %}
     {% if sentences is empty %}
     <a href="{{ path('paragraph_split',{id : paragraph.paragraphid }) }}">{% trans %}Split for translation{% endtrans %}</a>
     {% else %}
         <a href="{{ path('view_paragraph',{id : paragraph.paragraphid,showNewSource : 'yes'}) }}">{% trans %}Show new source{% endtrans %}</a>        
     {% endif %}	
 {% endif %}
-{% if is_granted(userRole) %}
+{% if view_settings.printview is empty and is_granted(userRole) %}
 	{% if sentences is not empty %}
 	<a href="{{ path('view_paragraph',{id : paragraph.paragraphid,showCode : 'yes'}) }}">{% trans %}Show code{% endtrans %}</a>
 	{% endif %}	
