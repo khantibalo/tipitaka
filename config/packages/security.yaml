@@ -93,7 +93,9 @@ security:
       - { path: ^/node/\d+/clean_empty_rows, roles: ROLE_AUTHOR }      
       - { path: ^/comments/list_all/pageid/\d+, roles: ROLE_USER }  
       - { path: ^/node/\d+/pali_import, roles: ROLE_EDITOR } 
-
+      - { path: ^/node/\d+/sources, roles: ROLE_ADMIN }
+      - { path: ^/node/\d+/source/\d+/delete, roles: ROLE_ADMIN }
+      - { path: ^/node/\d+/sentences/delete, roles: ROLE_ADMIN }	  	  
       
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

@@ -926,9 +926,64 @@ class TipitakaTocRepository  extends ServiceEntityRepository
             }
             
             $childid++;
-        }
-        
+        }                
     }
     
+    public function updateHasTranslation($nodeid)
+    {
+        $entityManager = $this->getEntityManager();
+        
+        $queryPid = $entityManager->createQueryBuilder()
+        ->select('p.paragraphid')
+        ->from('App\Entity\TipitakaSentences','s')        
+        ->innerJoin('s.paragraphid', 'p')
+        ->innerJoin('p.nodeid', 'toc')        
+        ->where('toc.nodeid=:nodeid')
+        ->leftJoin('App\Entity\TipitakaSentenceTranslations', 'st',Join::WITH,'st.sentenceid=s.sentenceid')
+        ->groupBy('p.paragraphid')
+        ->having('count(st.sentencetranslationid)=0')
+        ->getQuery()
+        ->setParameter('nodeid',$nodeid);
+        
+        $query = $entityManager->createQueryBuilder()
+        ->select('p')
+        ->from('App\Entity\TipitakaParagraphs','p')
+        ->where('p.paragraphid=:paragraphid')
+        ->getQuery();       
+        
+        $pids=$queryPid->getResult();
+        foreach($pids as $pid)
+        {
+            $paragraph=$query->setParameter('paragraphid',$pid['paragraphid'])->getOneOrNullResult();
+            if($paragraph)
+            {
+                $paragraph->setHastranslation(false);
+            }
+        }
+        
+        $entityManager->flush();
+        
+        $query = $entityManager->createQueryBuilder()
+        ->select('count(p.paragraphid) as pc')
+        ->from('App\Entity\TipitakaParagraphs','p')
+        ->innerJoin('p.nodeid', 'toc')
+        ->where('p.hastranslation=1')
+        ->andWhere('toc.nodeid=:nodeid')
+        ->getQuery()
+        ->setParameter('nodeid',$nodeid);
+        
+        $results=$query->getOneOrNullResult();
+        
+        if($results["pc"]==0)
+        {            
+            $node=$this->find($nodeid);
+            if($node)
+            {
+                $node->setHasTranslation(false);
+                $node->setHasTableView(false);
+                $entityManager->flush();
+            }
+        }
+    }
 }
 

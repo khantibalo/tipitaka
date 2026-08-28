@@ -105,7 +105,7 @@ class ViewController extends AbstractController
             $response=$this->render('node_view.html.twig',
                 ['node'=>$node,'path_nodes'=>$path_nodes,'nodes'=>$nodes,'paragraphs'=>$paragraphs,
                     'view_settings'=>$view_settings,'authorRole'=>Roles::Author,'backPrologue'=>$back_prologue,
-                    'tags'=>$tags,'authorRole'=>Roles::Author,'related'=>$related]
+                    'tags'=>$tags,'adminRole'=>Roles::Admin,'related'=>$related]
                 ); 
         }
         else

@@ -58,17 +58,16 @@ class TipitakaParagraphsRepository extends ServiceEntityRepository
         
         $result=array();
         
-        $iterable=$query->iterate(['id'=>$node->getNodeid(),'path'=>$this->preparePath($node)],Query::HYDRATE_ARRAY);
+        $iterable=$query->toIterable(['id'=>$node->getNodeid(),'path'=>$this->preparePath($node)],Query::HYDRATE_ARRAY);
         foreach($iterable as $item)
         {
-            $value=array_pop($item);
-            $pid=(string)$value['paragraphid'];
+            $pid=(string)$item['paragraphid'];
             if(!array_key_exists($pid, $result))
             {
                 $result[$pid]=array();
             }
             
-            $result[$pid][]=$value;
+            $result[$pid][]=$item;
         }
         
         return $result;
@@ -106,17 +105,16 @@ class TipitakaParagraphsRepository extends ServiceEntityRepository
         
         $result=array();
         
-        $iterable=$query->iterate(['id'=>$node->getNodeid(),'path'=>$this->preparePath($node)],Query::HYDRATE_ARRAY);
+        $iterable=$query->toIterable(['id'=>$node->getNodeid(),'path'=>$this->preparePath($node)],Query::HYDRATE_ARRAY);
         foreach($iterable as $item)
         {
-            $value=array_pop($item);
-            $pid=(string)$value['paragraphid'];
+            $pid=(string)$item['paragraphid'];
             if(!array_key_exists($pid, $result))
             {
                 $result[$pid]=array();
             }
             
-            $result[$pid][]=$value;
+            $result[$pid][]=$item;
         }
         
         return $result;

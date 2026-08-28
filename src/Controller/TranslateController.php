@@ -959,5 +959,36 @@ class TranslateController extends AbstractController
         
         return $this->redirect($request->headers->get('referer','/'));
     }
+    
+    public function nodeSourcesList($nodeid,TipitakaSentencesRepository $sentencesRepository, Request $request,
+        TipitakaTocRepository $tocRepository)
+    {
+        $sources=$sentencesRepository->listNodeSources($nodeid);
+        $node=$tocRepository->getNodeWithNameTranslation($nodeid,$request->getLocale());
+        
+        $response=$this->render('node_sources.html.twig', ['nodeid' => $nodeid,
+            'sources'=>$sources,'node'=>$node
+        ]);
+        
+        return $response;
+    }
+    
+    public function nodeSourceDelete($nodeid,$sourceid, Request $request, TipitakaSourcesRepository $sourcesRepository,
+        TipitakaTocRepository $tocRepository)
+    {
+        $sourcesRepository->deleteSourceFromNode($nodeid,$sourceid);
+        $tocRepository->updateHasTranslation($nodeid);
+        
+        return $this->redirect($request->headers->get('referer','/'));
+        //return new Response('<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>OK</body></html>');
+    }
+    
+    public function nodeSentencesDelete($nodeid, Request $request,TipitakaSentencesRepository $sentencesRepository, TipitakaTocRepository $tocRepository)
+    {
+        $sentencesRepository->deleteNodeSentences($nodeid);
+        $tocRepository->updateHasTranslation($nodeid);
+        
+        return $this->redirect($request->headers->get('referer','/'));
+    }
 }
 

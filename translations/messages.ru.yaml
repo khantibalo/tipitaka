@@ -150,7 +150,7 @@ Add folder: Добавить заголовок
 Add item: Добавить текст
 Level: Уровень дерева
 Limit rows: Только эти строки (sentenceid)
-ConfirmScript: "javascript: return confirm('Вы уверены');"
+ConfirmScript: "javascript: return confirm('Вы уверены?');"
 Collection item names: Имена элементов подборок
 Return to collection: Вернуться в подборку
 Edit collection item name: Редактировать имена элемента подборки
@@ -268,3 +268,5 @@ bookmarks search hint: В разделе <a href="/toc/full">все тексты
 TOC search hint: "укажите язык (в примере - русский) и введите номер через пробел, например: СН 56.11"
 Tag: Метка
 Include in print view: Включить в вид для печати
+Delete all sentences: Удалить все предложения
+

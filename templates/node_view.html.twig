@@ -80,5 +80,7 @@
     {% endif %}
     </center>
     </div>
+    
+{% if is_granted(adminRole) %}&nbsp;<a href="{{ path('node_sources',{nodeid: node.nodeid }) }}">({% trans %}Sources{% endtrans %})</a>{% endif %}    
 {% endif %}
 {% endblock %}

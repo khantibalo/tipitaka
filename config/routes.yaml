@@ -452,6 +452,25 @@ hier_path_sentence:
     requirements:
        hierpath: ^(canon|comm|subcomm|other).+\/s\/.+$				 
 
+node_sources:
+    path: /node/{nodeid}/sources
+    controller: App\Controller\TranslateController::nodeSourcesList
+    requirements:
+       nodeid: '\d+' 
+
+node_source_delete:
+    path: /node/{nodeid}/source/{sourceid}/delete
+    controller: App\Controller\TranslateController::nodeSourceDelete
+    requirements:
+        nodeid: '\d+' 	   
+        sourceid: '\d+'
+
+node_sentences_delete:
+    path: /node/{nodeid}/sentences/delete
+    controller: App\Controller\TranslateController::nodeSentencesDelete
+    requirements:
+        nodeid: '\d+' 		
+
 #not all redirects could be implemented here.
 #some, e.g. index.php?NodeID=X can only be implemented on the web server side
 

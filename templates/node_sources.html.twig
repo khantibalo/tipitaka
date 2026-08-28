@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit node columns{% endblock %}
+{% block content %}
+<p class="{{ node.typename }}">{{ node.trname ?? node.title }}</p>
+<table class="bordercell" style="width:100%">
+<tr>
+<td></td>
+<td>{% trans %}Name{% endtrans %}</td>
+</tr>
+{% for source in sources %}
+<tr>
+<td><a href="{{ path('node_source_delete',{sourceid: source.sourceid,nodeid: nodeid}) }}" onclick="{{ 'ConfirmScript' | trans }}">{% trans %}Delete{% endtrans %}</a></td>
+<td style="width:100%">{{ source.sourcename }} - {{ source.languagename }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% if sources is empty %}
+<a href="{{ path('node_sentences_delete',{nodeid: nodeid}) }}" onclick="{{ 'ConfirmScript' | trans }}">{% trans %}Delete all sentences{% endtrans %}</a>
+<br><br>
+{% endif %}
+
+<a href="{{ path('table_view',{id: nodeid})  }}">{% trans %}Return to node page{% endtrans %}</a>
+
+{% endblock %}

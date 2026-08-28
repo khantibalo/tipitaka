@@ -1171,4 +1171,25 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
         
         return $query->getSingleResult();
     }
+    
+    public function deleteNodeSentences($nodeid)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('s')
+        ->from('App\Entity\TipitakaSentences','s')
+        ->innerJoin('s.paragraphid', 'c')
+        ->innerJoin('c.nodeid', 'toc')
+        ->where('toc.nodeid=:nodeid')
+        ->getQuery()
+        ->setParameter('nodeid',$nodeid);
+        
+        $sentences=$query->getResult();
+        foreach($sentences as $sentence)
+        {
+            $entityManager->remove($sentence);
+        }
+        
+        $entityManager->flush();
+    }
 }
