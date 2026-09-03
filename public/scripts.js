@@ -1,3 +1,9 @@
+var quickEditConfig;
+
+$(function() {
+	quickEditConfig = JSON.parse(document.getElementById('quickEditConfig').textContent);
+});
+
 function palichar_onchange(text_field_id,sel_control)
 {
 	if(sel_control.value!="")
@@ -21,13 +27,13 @@ function QTEdit(stid)
     });
 	var bSave =
 		$('<button/>', {
-        text: saveText, 
+        text: quickEditConfig.saveText,
         id: 'ebs'+stid,
         click: function() { QTEditSave(stid); }
     });
 	var bCancel =
 		$('<button/>', {
-        text: cancelText, 
+        text: quickEditConfig.cancelText,
         id: 'ebc'+stid,
         click: function() { QTEditCancel(stid); }
     });
@@ -49,7 +55,7 @@ function QTEditSave(stid)
 	var newTranslation=$('#eta'+stid).val();
 	
 	$.ajax({
-	    url: ajaxRoot+"/translation/update",
+	    url: quickEditConfig.ajaxRoot+"/translation/update",
 	    data: JSON.stringify({
 	        stid: stid,
 	        translation: newTranslation
@@ -68,15 +74,15 @@ function QTEditSave(stid)
 			
 			var lnkTranslate =
 				$('<a/>', {
-		        href: translateUrl.replace('sentenceidParam',json.sentenceid).
+		        href: quickEditConfig.translateUrl.replace('sentenceidParam',json.sentenceid).
 		        	replace('sourceidParam',json.sourceid),
-		        text: translateText
+		        text: quickEditConfig.translateText
 		    });
 			
 			var lnkQuickEdit=
 				$('<a/>', {
 			        href: "javascript:QTNew("+json.sentenceid+","+json.sourceid+");",
-			        text: quickEditText
+			        text: quickEditConfig.quickEditText
 			    });
 			
 			ncSpan.append(lnkTranslate);
@@ -97,7 +103,7 @@ function QTEditSave(stid)
 			QTEditCancel(stid);
 		}
 	}).fail(function( xhr, status, errorThrown ) {
-	    alert( saveError );
+	    alert( quickEditConfig.saveError );
 	    console.log( "Error: " + errorThrown );
 	    console.log( "Status: " + status );
 	    console.dir( xhr );
@@ -116,13 +122,13 @@ function QTNew(sentenceid,sourceid)
     });
 	var bSave =
 		$('<button/>', {
-        text: saveText, 
+        text: quickEditConfig.saveText, 
         id: 'nbsse'+sentenceid+'so'+sourceid,
         click: function() { QTNewSave(sentenceid,sourceid); }
     });
 	var bCancel =
 		$('<button/>', {
-        text: cancelText, 
+        text: quickEditConfig.cancelText, 
         id: 'nbcse'+sentenceid+'so'+sourceid,
         click: function() { QTNewCancel(sentenceid,sourceid); }
     });
@@ -135,7 +141,7 @@ function QTNewSave(sentenceid,sourceid)
 	var newTranslation=$('#ntase'+sentenceid+'so'+sourceid).val();
 	
 	$.ajax({
-	    url: ajaxRoot+"/translation/add",
+	    url: quickEditConfig.ajaxRoot+"/translation/add",
 	    data: JSON.stringify({
 	    	sentenceid: sentenceid,
 	    	sourceid: sourceid,
@@ -172,8 +178,8 @@ function QTNewSave(sentenceid,sourceid)
 		//translation edit
 		var lnkEdit =
 			$('<a/>', {
-	        href: editUrl.replace('stidParam',json.sentencetranslationid),
-	        text: editText
+	        href: quickEditConfig.editUrl.replace('stidParam',json.sentencetranslationid),
+	        text: quickEditConfig.editText
 	    });
 		
 		ecSpan.append(lnkEdit);
@@ -183,19 +189,19 @@ function QTNewSave(sentenceid,sourceid)
 		var lnkQuickEdit=
 			$('<a/>', {
 		        href: "javascript:QTEdit("+json.sentencetranslationid+");",
-		        text: quickEditText
+		        text: quickEditConfig.quickEditText
 		    });
 		
 		ecSpan.append(lnkQuickEdit);
 		ecSpan.append(" ");
 		
 		//show code
-		if(codeUrl!='')
+		if(quickEditConfig.codeUrl!='')
 		{
 			var lnkCode=
 				$('<a/>', {
-			        href: codeUrl.replace('stidParam',json.sentencetranslationid),
-			        text: codeText
+			        href: quickEditConfig.codeUrl.replace('stidParam',json.sentencetranslationid),
+			        text: quickEditConfig.codeText
 			    });
 			
 			ecSpan.append(lnkCode);
@@ -203,12 +209,12 @@ function QTNewSave(sentenceid,sourceid)
 		}
 		
 		//show align
-		if(shiftDownLink!='')
+		if(quickEditConfig.shiftDownLink!='')
 		{
 			var lnkShiftDown=
 				$('<a/>', {
-			        href: shiftDownLink.replace('stidParam',json.sentencetranslationid),
-			        text: shiftDownText
+			        href: quickEditConfig.shiftDownLink.replace('stidParam',json.sentencetranslationid),
+			        text: quickEditConfig.shiftDownText
 			    });
 			
 			ecSpan.append(" | ");
@@ -217,8 +223,8 @@ function QTNewSave(sentenceid,sourceid)
 			
 			var lnkShiftUp=
 				$('<a/>', {
-			        href: shiftUpLink.replace('stidParam',json.sentencetranslationid),
-			        text: shiftUpText
+			        href: quickEditConfig.shiftUpLink.replace('stidParam',json.sentencetranslationid),
+			        text: quickEditConfig.shiftUpText
 			    });
 			
 			ecSpan.append(lnkShiftUp);
@@ -232,7 +238,7 @@ function QTNewSave(sentenceid,sourceid)
 		$('#nbcse'+sentenceid+'so'+sourceid).remove();
 		
 	}).fail(function( xhr, status, errorThrown ) {
-	    alert( saveError );
+	    alert( quickEditConfig.saveError );
 	    console.log( "Error: " + errorThrown );
 	    console.log( "Status: " + status );
 	    console.dir( xhr );

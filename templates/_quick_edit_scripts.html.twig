@@ -1,34 +1,33 @@
+{% set codeUrl = (showCode and sentence is defined) ? path('quote_code', {sentencetranslation: 'stidParam', paragraphid: sentence.paragraphid}) : '' %}
+{% set shiftDownLink = (showAlign and not node.disabletranslalign) ? path('shiftdown', {translationid: 'stidParam'}) : '' %}
+{% set shiftUpLink = (showAlign and not node.disabletranslalign) ? path('shiftup', {translationid: 'stidParam'}) : '' %}
+{% if showAlign %}
+	{% set translateUrl = path('translation_edit', {sentenceid: 'sentenceidParam', sourceid: 'sourceidParam', return: 'node', showAlign: 'yes'}) %}
+	{% set editUrl = path('translation_edit', {translationid: 'stidParam', return: 'node', showAlign: 'yes'}) %}
+{% else %}
+	{% set translateUrl = path('translation_edit', {sentenceid: 'sentenceidParam', sourceid: 'sourceidParam', return: 'node'}) %}
+	{% set editUrl = path('translation_edit', {translationid: 'stidParam', return: 'node'}) %}
+{% endif %}
+<script type="application/json" id="quickEditConfig">
+{{ {
+	ajaxRoot: asset('ajax'),
+	saveError: 'Save error'|trans,
+	translateText: 'Translate'|trans,
+	quickEditText: 'Quick Edit'|trans,
+	editText: 'Edit'|trans,
+	saveText: 'Save'|trans,
+	cancelText: 'Cancel'|trans,
+	codeText: 'Code'|trans,
+	codeUrl: codeUrl,
+	shiftDownText: 'Shift down'|trans,
+	shiftUpText: 'Shift up'|trans,
+	shiftDownLink: shiftDownLink,
+	shiftUpLink: shiftUpLink,
+	translateUrl: translateUrl,
+	editUrl: editUrl
+}|json_encode|raw }}
+</script>
 <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
 {# <script type="text/javascript" src="{{ asset('jquery-3.5.0.js') }}"></script>  #}
 <script type="text/javascript" src="{{ asset('scripts.js') }}"></script>
-{# TODO: https://stackoverflow.com/questions/7581133/how-can-i-read-a-json-in-the-script-tag-from-javascript #}
-<script>
-	var ajaxRoot="{{ asset('ajax') }}";
-	var saveError="{% trans %}Save error{% endtrans %}";
-	var translateText="{% trans %}Translate{% endtrans %}";
-	var quickEditText="{% trans %}Quick Edit{% endtrans %}";
-	var editText="{% trans %}Edit{% endtrans %}";	
-	var saveText="{% trans %}Save{% endtrans %}";
-	var cancelText="{% trans %}Cancel{% endtrans %}"; 
-	
-	var codeText="{% trans %}Code{% endtrans %}";
-	var codeUrl="{{ (showCode and sentence is defined ) ? path('quote_code',{sentencetranslation : 'stidParam',paragraphid: sentence.paragraphid })|raw : ''  }}";
-
-	var shiftDownText="{% trans %}Shift down{% endtrans %}";
-	var shiftUpText="{% trans %}Shift up{% endtrans %}";
-
-	var shiftDownLink="{{ showAlign and not node.disabletranslalign ? path('shiftdown',{translationid : 'stidParam' })|raw : '' }}";
-	var shiftUpLink="{{ showAlign and not node.disabletranslalign ? path('shiftup',{translationid : 'stidParam' })|raw : '' }}";
-	
-	{% if showAlign %}
-	var translateUrl="{{ path('translation_edit',{sentenceid : 'sentenceidParam',sourceid : 'sourceidParam', return: 'node', showAlign: 'yes' })|raw }}";
-    {% else %}
-    var translateUrl="{{ path('translation_edit',{sentenceid : 'sentenceidParam',sourceid : 'sourceidParam', return: 'node'})|raw }}";
-    {% endif %} 
-
-    {% if showAlign %}
-    	var editUrl="{{ path('translation_edit',{translationid : 'stidParam', return: 'node', showAlign: 'yes' })|raw }}";
-    {% else %}
-    	var editUrl="{{ path('translation_edit',{translationid : 'stidParam', return: 'node' })|raw }}";
-    {% endif %}
-</script>
+{# quickEditConfig above no longer needs to precede scripts.js: it is read on jQuery's document-ready handler #}

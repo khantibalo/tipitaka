@@ -80,78 +80,78 @@ table.bordercell
   width: 1em;
   margin: 0 .05em 0 .1em;
   vertical-align: -0.1em;
+  background-image: url("icons.svg");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 1em 1em; }
+  background-position: 0 0;
+  background-size: 2000% 100%; }
 
 .twa-lg {
   height: 1.5em;
   width: 1.5em;
   margin: 0 0.0665em 0 0.133em;
-  vertical-align: -0.3em;
-  background-size: 1.5em 1.5em; }
- 
+  vertical-align: -0.3em; }
+
 .twa-united-kingdom-flag {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f1ec-1f1e7.svg"); }
-  
+  background-position: 0% 0; }
+
 .twa-russia-flag {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f1f7-1f1fa.svg"); }  
+  background-position: 5.2632% 0; }
 
 .twa-bookmark {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f516.svg"); }
+  background-position: 10.5263% 0; }
 
 .twa-closed-lock-with-key {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f510.svg"); }
-  
+  background-position: 15.7895% 0; }
+
 .twa-key {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f511.svg"); }
-    
+  background-position: 21.0526% 0; }
+
 .twa-input-latin-letters {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f524.svg"); }
+  background-position: 26.3158% 0; }
 
 .twa-right-pointing-magnifying-glass {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f50e.svg"); }
-  
+  background-position: 31.5789% 0; }
+
 .twa-open-book {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4d6.svg"); }
+  background-position: 36.8421% 0; }
 
 .twa-house {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f3e0.svg"); }
+  background-position: 42.1053% 0; }
 
 
 .twa-books {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4da.svg"); }
-  
+  background-position: 47.3684% 0; }
+
 .twa-green-book {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4d7.svg"); }
-  
+  background-position: 52.6316% 0; }
+
 .twa-label {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f3f7.svg"); }
+  background-position: 57.8947% 0; }
 
 .twa-bookmark-tabs {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4d1.svg"); }
-    
+  background-position: 63.1579% 0; }
+
 .twa-bear {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f43b.svg"); }
-      
+  background-position: 68.4211% 0; }
+
 .twa-speech-balloon {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4ac.svg"); } 
-    
+  background-position: 73.6842% 0; }
+
 .twa-busts-in-silhouette {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f465.svg"); }
-  
+  background-position: 78.9474% 0; }
+
 .twa-bar-chart {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f4ca.svg"); }
-    
+  background-position: 84.2105% 0; }
+
 .twa-door {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f6aa.svg"); }
-          
+  background-position: 89.4737% 0; }
+
 .twa-globe-with-meridians {
-  background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/1f310.svg"); }
-  
+  background-position: 94.7368% 0; }
+
 .twa-information {
-	background-image: url("https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/svg/2139.svg");
-}  
+	background-position: 100% 0;
+}
       
 .collLevel1,
 .collLevel2,
