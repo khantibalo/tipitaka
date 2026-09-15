@@ -21,7 +21,7 @@ function QTEdit(stid)
 	var taEdit =
 		$('<textarea/>', {
         id: 'eta'+stid,
-        style: 'width:100%',
+        style: 'width:100%;background-color: #fffde5',
         rows: 8,
         text: $('#et'+stid).text()
     });
