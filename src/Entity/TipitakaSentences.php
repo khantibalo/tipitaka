@@ -61,6 +61,13 @@ class TipitakaSentences
     private $legacyid;
     
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="bold", type="string", length=1000, nullable=true)
+     */
+    private $bold;
+    
+    /**
      * @return string
      */
     public function getLastcomment(): ?string
@@ -138,6 +145,18 @@ class TipitakaSentences
     public function setLegacyID($legacyid): self
     {
         $this->legacyid = $legacyid;
+        
+        return $this;
+    }
+    
+    public function getBold(): ?string
+    {
+        return $this->bold;
+    }
+    
+    public function setBold(?string $bold): self
+    {
+        $this->bold = $bold;
         
         return $this;
     }

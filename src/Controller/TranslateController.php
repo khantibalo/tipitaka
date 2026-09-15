@@ -47,20 +47,21 @@ class TranslateController extends AbstractController
             $ce=new CapitalizeExtension();
             $text=$ce->capitalize($paragraph->getText(),$paragraph->getCaps());
 
-            $text=$this->applyNotes($text, $notes);
+            $text=$this->applyNotes($text, $notes,$paragraph->getBold());
+            //$offset=0;
             
             if(!empty($paragraph->getParanum()))
             {
-                $text=$paragraph->getParanum().".".$text;
-            }
+                $text=$paragraph->getParanum().".".$text;                
+            }            
             
-            $ar_sentences =preg_split('/(?<=[.?!])\s+(?=[A-ZĀĪŪṬÑṂṆṄḶḌ"\'])/u', $text);
+            $ar_sentences =preg_split('/(?<=[.?!])\s+(?=[αA-ZĀĪŪṬÑṂṆṄḶḌ"\'])/u', $text);
             
             $sentenceRepository->addSentences($paragraph, $ar_sentences);                       
         }
     }
     
-    private function applyNotes($text,$notes)
+    private function applyNotes($text,$notes,$boldmarkups)
     {
         //copy all formatting objects into one array indexed by position
         $markup=array();
@@ -75,6 +76,22 @@ class TranslateController extends AbstractController
             }
             
             $markup[$position][]=$note;
+        }
+        
+        if($boldmarkups)
+        {
+            $boldPositions=explode(",",$boldmarkups);
+            for($i=0;$i<sizeof($boldPositions);$i++)
+            {
+                $position=$boldPositions[$i];
+                
+                if(!array_key_exists($position, $markup))
+                {
+                    $markup[$position]=array();
+                }
+                
+                $markup[$position][]=array("boldpos"=>$position);
+            }
         }
         
         if(sizeof($markup)>0)
@@ -96,6 +113,11 @@ class TranslateController extends AbstractController
                     if(array_key_exists('notetext',$markup_item))
                     {
                         $line.="[".$markup_item['notetext']."] ";
+                    }
+                    
+                    if(array_key_exists('boldpos', $markup_item))
+                    {
+                        $line.='α';
                     }
                 }
                 

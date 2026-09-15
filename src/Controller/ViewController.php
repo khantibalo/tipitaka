@@ -175,6 +175,7 @@ class ViewController extends AbstractController
             }
             
             $sentences=$sentencesRepository->listByParagraphid($id);
+            $this->apply_bold($sentences);
             
             $translations=$sentencesRepository->listTranslationsByParagraphid($id);
             
@@ -424,6 +425,7 @@ class ViewController extends AbstractController
         }
         
         $sentences=$sentencesRepository->listByNodeId($nodeid);
+        $this->apply_bold($sentences);
         
         $translations=$sentencesRepository->listTranslationsByNodeId($nodeid);
         
@@ -462,8 +464,10 @@ class ViewController extends AbstractController
         $path_nodes=$tocRepository->listPathNodesWithNamesTranslation($nodeid,$request->getLocale());
         
         $immediate_sentences=$sentencesRepository->listByNodeId($nodeid);
+        $this->apply_bold($immediate_sentences);
         
         $child_sentences=$sentencesRepository->listChildByNodeId($nodeid,$node['path']);
+        $this->apply_bold($child_sentences);
         
         $translations=$sentencesRepository->listChildTranslationsByNodeId($nodeid,$node['path']);
         
@@ -895,6 +899,55 @@ class ViewController extends AbstractController
         }
         
         return $response;
+    }
+    
+    private function apply_bold(&$sentences) 
+    {
+        for($j=0;$j<sizeof($sentences);$j++)
+        {            
+            if($sentences[$j]["bold"])
+            {
+                $text=$sentences[$j]["sentencetext"];
+                $markup=array();
+                $boldPositions=explode(",",$sentences[$j]["bold"]);                
+
+                for($i=0;$i<sizeof($boldPositions);$i++)
+                {
+                    $position=$boldPositions[$i];
+                    
+                    if(!array_key_exists($position, $markup))
+                    {
+                        $markup[$position]=array();
+                    }
+                    
+                    $markup[$position][]=array("boldpos"=>$position,"isbegin"=>($i % 2==0));
+                }
+
+                $result=array();
+                $current_pos=0;
+                
+                $keys=array_keys($markup);
+                asort($keys);
+                
+                mb_internal_encoding("UTF-8");
+                //iterate the array by keys in ascending order to process content from begining
+                foreach($keys as $position)
+                {
+                    $line=mb_substr($text, $current_pos,$position-$current_pos);
+                    
+                    foreach($markup[$position] as $markup_item)
+                    {
+                        $line.=$markup_item["isbegin"]=="1" ? "<span class=\"bld\">" : "</span>";
+                    }
+                    
+                    $current_pos=$position;
+                    $result[]=$line;
+                }
+                
+                $result[]=mb_substr($text,$current_pos);
+                $sentences[$j]["sentencetext"]=implode($result);
+            }
+        }
     }
 }
 

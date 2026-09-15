@@ -54,7 +54,7 @@
     {% for sentence in sentences %}
     <tr>
         <td>
-        {{ sentence.sentencetext }}
+        {{ sentence.sentencetext|raw }}
         </td>
         {% if sources|length>0 %}
             {% for source in sources %}

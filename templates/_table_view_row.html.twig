@@ -3,7 +3,7 @@
 	    <td style="vertical-align: top;">
 	    <a name="sent{{ sentence.sentenceid }}"></a> 
 	    {% if is_granted(authorRole) and showAlign %}{{ loop.index }} : {% endif %}
-	    {{ sentence.sentencetext }}
+	    {{ sentence.sentencetext|raw }}
 	    {% if is_granted(adminRole) and showAlign %}
 	    <a href="{{ path('sentence_edit',{sentenceid: sentence.sentenceid }) }}">{% trans %}Edit{% endtrans %}</a>
 	    {% endif %}

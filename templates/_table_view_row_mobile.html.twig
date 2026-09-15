@@ -2,7 +2,7 @@
 	{% if showPali %}
 	    <span style="display: block;font-size:Larger">
 	    <a name="sent{{ sentence.sentenceid }}"></a> 
-	    {{ sentence.sentencetext }}
+	    {{ sentence.sentencetext|raw }}
 	    </span>
     {% endif %}
     {% if sources|length>0 %}

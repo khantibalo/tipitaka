@@ -18,7 +18,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment')
+        ->select('s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,s.bold')
         ->from('App\Entity\TipitakaSentences','s')
         ->where('s.paragraphid=:id')
         ->orderBy('s.sentenceid')
@@ -61,14 +61,37 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     public function addSentences($paragraph,$ar_sentences)
     {
         $entityManager = $this->getEntityManager();   
-                        
+        mb_internal_encoding("UTF-8");
+        
         foreach($ar_sentences as $sentenceText)
         {
+            $bold_count=substr_count($sentenceText, "α");
+            if($bold_count % 2 != 0)
+            {
+                $sentenceText="α$sentenceText";
+            }
+                                    
+            $chrArray = preg_split('//u', $sentenceText, -1,PREG_SPLIT_NO_EMPTY);
+            $arBold=array();
+            
+            $alphaCount=0;
+            for($i=0;$i<sizeof($chrArray);$i++)
+            {
+                if($chrArray[$i]=='α')
+                {
+                    $arBold[]=$i-$alphaCount;
+                    $alphaCount++;
+                }
+            }  
+          
+            $bold=implode(",",$arBold);            
+            
             $sentence=new TipitakaSentences();
             
             $sentence->setParagraphid($paragraph);
-            $sentence->setSentencetext($sentenceText);
+            $sentence->setSentencetext(str_replace('α', '', $sentenceText));
             $sentence->setCommentcount(0);
+            $sentence->setBold($bold);
             
             $entityManager->persist($sentence);   
         }
@@ -249,7 +272,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,pt.name as paragraphTypeName')
+        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,pt.name as paragraphTypeName,s.bold')
         ->from('App\Entity\TipitakaSentences','s')
         ->innerJoin('s.paragraphid','c')
         ->innerJoin('c.paragraphtypeid', 'pt')
@@ -930,7 +953,7 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQueryBuilder()
-        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,toc.nodeid,pt.name as paragraphTypeName')
+        ->select('c.paragraphid,s.sentenceid,s.sentencetext,s.commentcount,s.lastcomment,toc.nodeid,pt.name as paragraphTypeName,s.bold')
         ->from('App\Entity\TipitakaSentences','s')
         ->innerJoin('s.paragraphid','c')
         ->innerJoin('c.paragraphtypeid','pt')

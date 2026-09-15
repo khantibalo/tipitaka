@@ -66,7 +66,7 @@
     	{% if showPali %}
         	<td style="vertical-align: top;"><a name="sent{{ sentence.sentenceid }}"></a>
 {% if is_granted(editorRole) and showAlign %}{{ loop.index }} : {% endif %}
-{{ sentence.sentencetext }}
+{{ sentence.sentencetext|raw }}
 	        {% if is_granted(editorRole) and showAlign %}
 	        <br><a href="{{ path('join',{sentenceid: sentence.sentenceid}) }}">{% trans %}Join{% endtrans %}</a>
 	        {% endif %}        
