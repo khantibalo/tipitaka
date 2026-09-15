@@ -183,6 +183,21 @@ class TipitakaParagraphsRepository extends ServiceEntityRepository
         return $query->getResult();
     }
     
+    public function listAllImmediateByNodeId($id)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQueryBuilder()
+        ->select('c.paragraphid')
+        ->from('App\Entity\TipitakaParagraphs','c')
+        ->innerJoin('c.nodeid', 'toc')
+        ->where('toc.nodeid=:id')
+        ->addOrderBy('c.paragraphid')
+        ->getQuery()
+        ->setParameter('id',$id);
+        
+        return $query->getResult();
+    }
+    
     public function findParagraphByParanum($path,$paranum)
     {
         $path=str_replace("\\","\\\\",$path); 

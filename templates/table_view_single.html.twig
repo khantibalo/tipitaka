@@ -152,6 +152,7 @@
     {% if is_granted(authorRole) and  showAlign  %}
 	<div>	
     <a href="{{ path('clean_empty_rows',{nodeid: node.nodeid }) }}">{% trans %}Clean empty rows{% endtrans %}</a>
+	<br><a href="{{ path('apply_sentences_bold',{nodeid: node.nodeid}) }}">{% trans %}AddBold{% endtrans %}</a>	        
     </div>
     {% endif %}
 {{ include('_back_next_navigation.html.twig') }}

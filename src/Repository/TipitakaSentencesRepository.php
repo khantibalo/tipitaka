@@ -1215,4 +1215,57 @@ class TipitakaSentencesRepository extends ServiceEntityRepository
         
         $entityManager->flush();
     }
+    
+    public function addBoldToSentences($nodeid,$paragraph,$ar_sentences)
+    {
+        $entityManager = $this->getEntityManager();
+        mb_internal_encoding("UTF-8");
+        
+        foreach($ar_sentences as $sentenceText)
+        {
+            $bold_count=substr_count($sentenceText, "α");
+            if($bold_count % 2 != 0)
+            {
+                $sentenceText="α$sentenceText";
+            }
+            
+            $chrArray = preg_split('//u', $sentenceText, -1,PREG_SPLIT_NO_EMPTY);
+            $arBold=array();
+            
+            $alphaCount=0;
+            for($i=0;$i<sizeof($chrArray);$i++)
+            {
+                if($chrArray[$i]=='α')
+                {
+                    $arBold[]=$i-$alphaCount;
+                    $alphaCount++;
+                }
+            }
+            
+            $bold=implode(",",$arBold);
+            
+            $findText=str_replace('α', '', $sentenceText);
+            
+            $query = $entityManager->createQueryBuilder()
+            ->select('s')
+            ->from('App\Entity\TipitakaSentences','s')
+            ->innerJoin('s.paragraphid', 'p')
+            ->innerJoin('p.nodeid', 'toc')
+            ->where('toc.nodeid=:nodeid')
+            ->andWhere('s.sentencetext=:findtext')
+            ->getQuery()
+            ->setParameter('nodeid',$nodeid)
+            ->setParameter('findtext',$findText);
+            
+            $results=$query->getResult();
+            
+            foreach($results as $sentence)
+            {
+                $sentence->setBold($bold);            
+                $entityManager->persist($sentence);
+            }
+        }
+        
+        $entityManager->flush();  
+    }
 }

@@ -471,6 +471,12 @@ node_sentences_delete:
     requirements:
         nodeid: '\d+' 		
 
+apply_sentences_bold:
+    path: /node/{nodeid}/sentences/bold
+    controller: App\Controller\TranslateController::sentencesApplyBold
+    requirements:
+        nodeid: '\d+' 		
+
 #not all redirects could be implemented here.
 #some, e.g. index.php?NodeID=X can only be implemented on the web server side
 

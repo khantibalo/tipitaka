@@ -1012,5 +1012,49 @@ class TranslateController extends AbstractController
         
         return $this->redirect($request->headers->get('referer','/'));
     }
+    
+    public function sentencesApplyBold($nodeid,TipitakaSentencesRepository $sentenceRepository,TipitakaParagraphsRepository $paragraphRepository,
+        TipitakaTocRepository $tocRepository)
+    {
+        $node=$tocRepository->find($nodeid);        
+        
+        if($node)
+        {
+            //this is available only for those nodes that have paragraphs
+            $arr_paraid=$paragraphRepository->listAllImmediateByNodeId($nodeid);
+            
+            foreach($arr_paraid as $paraid)
+            {
+                $paragraph=$paragraphRepository->find($paraid['paragraphid']);
+
+                $notes=$paragraphRepository->listNotesByParagraph($paraid['paragraphid']);
+                
+                $ce=new CapitalizeExtension();
+                $text=$ce->capitalize($paragraph->getText(),$paragraph->getCaps());
+                
+                $text=$this->applyNotes($text, $notes,$paragraph->getBold());
+                //$offset=0;
+                
+                if(!empty($paragraph->getParanum()))
+                {
+                    $text=$paragraph->getParanum().".".$text;
+                }
+                
+                $ar_sentences =preg_split('/(?<=[.?!])\s+(?=[αA-ZĀĪŪṬÑṂṆṄḶḌ"\'])/u', $text);
+                
+                $sentenceRepository->addBoldToSentences($nodeid,$paragraph, $ar_sentences);
+                
+            }            
+            
+            $response=$this->redirectToRoute('table_view',["id"=>$nodeid]);
+            //$response=new Response('<html><head></head><body></body></html>',200);
+        }
+        else
+        {
+            $response=new Response('node not found', 404);
+        }
+        
+        return $response;
+    }
 }
 
