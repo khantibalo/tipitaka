@@ -1,14 +1,14 @@
 var quickEditConfig;
 
 $(function() {
-	quickEditConfig = JSON.parse(document.getElementById('quickEditConfig').textContent);
+	quickEditConfig = JSON.parse($('#quickEditConfig').get(0).textContent);
 });
 
 function palichar_onchange(text_field_id,sel_control)
 {
 	if(sel_control.value!="")
 	{
-		var field=document.getElementById(text_field_id);
+		var field=$('#'+text_field_id).get(0);
 		field.value+=sel_control.value;
 		sel_control.value="";
 	}
@@ -117,7 +117,7 @@ function QTNew(sentenceid,sourceid)
 	var ntaEdit =
 		$('<textarea/>', {
         id: 'ntase'+sentenceid+'so'+sourceid,
-        style: 'width:100%',
+        style: 'width:100%;;background-color: #fffde5',
         rows: 5,
     });
 	var bSave =
