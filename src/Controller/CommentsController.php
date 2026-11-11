@@ -14,7 +14,6 @@ use App\Repository\TipitakaSentencesRepository;
 use App\Repository\TipitakaTocRepository;
 use App\Security\Roles;
 use App\Entity\TipitakaComments;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CommentsController  extends AbstractController
@@ -140,7 +139,7 @@ class CommentsController  extends AbstractController
         }
         else 
         {
-            $response=new Response('sentence not found', 404); 
+            $response=$this->createNotFoundException('sentence not found');
         }
         
         return $response;
@@ -175,7 +174,7 @@ class CommentsController  extends AbstractController
         }
         else
         {
-            $response=new Response('comment not found', 404); 
+            $response=$this->createNotFoundException();
         }
         
         return $response;
@@ -222,7 +221,7 @@ class CommentsController  extends AbstractController
         }
         else
         {
-            $response=new Response("not found",404);
+            $response=$this->createNotFoundException();
         }        
         
         return $response;
@@ -240,7 +239,7 @@ class CommentsController  extends AbstractController
         TipitakaCommentsRepository $commentsRepository,  TranslatorInterface $translator, TipitakaCollectionsRepository $collectionsRepository)
     {
         $matches=array();
-        if(preg_match("/^(.+)\/s\/(\d+)$/", $request->getRequestUri(),$matches))
+        if(preg_match("/^(.+)\/s\/(\d+)$/", $request->getPathInfo(),$matches))
         {
             $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
             $node=end($nodes);
@@ -250,7 +249,7 @@ class CommentsController  extends AbstractController
             }
             else
             {
-                $response=new Response("not found",404);
+                $response=$this->createNotFoundException();
             }
         }
         
@@ -265,22 +264,22 @@ class CommentsController  extends AbstractController
         
         $node=$sentenceRepository->getNodeIdBySentenceId($sentenceid);
         
-	if($node)
-	{
-	        if($node['urlfull'])
-        	{
-            		$response=$this->redirect($node['urlfull']."/s/$sentenceid");
-        	}
-        	else
-        	{
-            		$response=$this->listBySentence($sentenceid, $sentenceRepository, $commentsRepository, $request, $tocRepository, $translator, $collectionsRepository);
-        	}
-	}
-	else
-	{
-		$response=new Response("not found",404);
+    	if($node)
+    	{
+    	        if($node['urlfull'])
+            	{
+                		$response=$this->redirectToRoute('hier_path_transl',['hierpath'=>$node['urlfull']."/s/$sentenceid"]);
+            	}
+            	else
+            	{
+                		$response=$this->listBySentence($sentenceid, $sentenceRepository, $commentsRepository, $request, $tocRepository, $translator, $collectionsRepository);
+            	}
+    	}
+    	else
+    	{
+    	    $response=$this->createNotFoundException();
         }
-
+    
         return $response;
     }
 }

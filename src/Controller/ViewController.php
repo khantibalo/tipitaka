@@ -127,7 +127,7 @@ class ViewController extends AbstractController
             $node=$paragraph->getNodeid();
             if($node->getUrlfull() && empty($request->getQueryString()))
             {
-                $response=$this->redirect($node->getUrlfull()."/p/$id");
+                $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>$node->getUrlfull()."/p/$id"]);
             }
             else 
             {
@@ -179,7 +179,7 @@ class ViewController extends AbstractController
             
             $translations=$sentencesRepository->listTranslationsByParagraphid($id);
             
-            $ci=new CapitalizeExtension();
+            $ci=new CapitalizeExtension();//TODO: inject
             
             $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request,$urlfull);
             $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
@@ -318,7 +318,7 @@ class ViewController extends AbstractController
         
         if($node && $node->getUrlfull() && empty($request->getQueryString()))
         {
-            $response=$this->redirect($node->getUrlfull()."/table");
+            $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>$node->getUrlfull()."/table"]);
         }
         else 
         {
@@ -656,7 +656,7 @@ class ViewController extends AbstractController
         
         if($node->getUrlfull() && empty($request->getQueryString()))
         {
-            $response=$this->redirect($node->getUrlfull()."/transl");
+            $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>$node->getUrlfull()."/transl"]);
         }
         else
         {
@@ -756,7 +756,7 @@ class ViewController extends AbstractController
             }
         }
                
-        $ci=new CapitalizeExtension();
+        $ci=new CapitalizeExtension(); //TODO: inject
         
         $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request,end($path_nodes)['urlfull']);
         $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
@@ -814,7 +814,7 @@ class ViewController extends AbstractController
             }
         }
         
-        $ci=new CapitalizeExtension();
+        $ci=new CapitalizeExtension(); //TODO: inject
         
         $view_settings=$this->getViewSettings('view_paragraph',$id,$back_id,$next_id,$request);
         $paragraph['text']=$ci->capitalize($paragraph['text'],$paragraph['caps']);
@@ -852,7 +852,7 @@ class ViewController extends AbstractController
     {
         $matches=array();
         $response=null;
-        if(preg_match("/^(.+)\/(table|transl|prologue)$/", $request->getRequestUri(),$matches))
+        if(preg_match("/^(.+)\/(table|transl|prologue)$/", $request->getPathInfo(),$matches))
         {            
             $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
             $node=end($nodes);
@@ -874,11 +874,11 @@ class ViewController extends AbstractController
             }
             else
             {
-                $response=new Response("not found",404);
+                $response=$this->createNotFoundException();
             }
         }
         
-        if(preg_match("/^(.+)\/p\/(\d+)$/", $request->getRequestUri(),$matches))
+        if(preg_match("/^(.+)\/p\/(\d+)$/", $request->getPathInfo(),$matches))
         {
             $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
             $node=end($nodes);
@@ -888,14 +888,14 @@ class ViewController extends AbstractController
             }
             else
             {
-                $response=new Response("not found",404);
+                $response=$this->createNotFoundException();
             }
         }
         
         
         if(!$response)
         {
-            $response=new Response("not found",404);
+            $response=$this->createNotFoundException();
         }
         
         return $response;

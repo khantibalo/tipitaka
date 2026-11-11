@@ -16,7 +16,7 @@
     	{% set route=thisNode.HasTableView ? 'table_view' : 'view_node' %}
     	{% set label=thisNode.HasTableView ? 'table'|trans : 'fragments'|trans %}
     	{% trans %}Prologue{% endtrans %}
-    	&nbsp;<a href="{{ thisNode.urlfull ? thisNode.urlfull ~ '/prologue' : path(route, {id: thisNode.nodeid,prologue: 1}) }}">({{ label }})</a>
+    	&nbsp;<a href="{{ thisNode.urlfull ? path('hier_path_transl',{hierpath: thisNode.urlfull|trim('/') ~ '/prologue'}) : path(route, {id: thisNode.nodeid,prologue: 1}) }}">({{ label }})</a>
     	</div>
 	{% endif %}
 {% endif %}

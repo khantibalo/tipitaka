@@ -19,7 +19,7 @@ use App\Entity\TipitakaNodeNames;
 use App\Enums\TagTypes;
 use App\Repository\TipitakaSourcesRepository;
 use App\Repository\TipitakaTagsRepository;
-use Symfony\Component\HttpFoundation\Response;
+
 
 class TOCController extends AbstractController
 {
@@ -146,7 +146,7 @@ class TOCController extends AbstractController
         }
         else
         {
-            $response=new Response('not found',404);
+            $response=$this->createNotFoundException();
         }
         
         return $response;
@@ -308,7 +308,7 @@ class TOCController extends AbstractController
         }
         else 
         {
-            $response=new Response('not found',404);
+            $response=$this->createNotFoundException();
         }
         
         return $response;
@@ -516,7 +516,8 @@ class TOCController extends AbstractController
     public function fromHierpath(Request $request,TipitakaTocRepository $tocRepository, TranslatorInterface $translator,
         TipitakaTagsRepository $tagsRepository)
     {
-        $nodes=$tocRepository->findBy(["urlfull"=>$request->getRequestUri()]);
+        
+        $nodes=$tocRepository->findBy(["urlfull"=>$request->getPathInfo()]);
         $node=end($nodes);
         if($node)
         {
@@ -524,7 +525,7 @@ class TOCController extends AbstractController
         }
         else
         {
-            $response=new Response("not found",404);
+            $response=$this->createNotFoundException();
         }        
         
         return $response;
@@ -537,7 +538,7 @@ class TOCController extends AbstractController
         
         if($node && $node->getUrlfull() && empty($request->getQueryString()))
         {
-            $response=$this->redirect($node->getUrlfull());
+            $response=$this->redirectToRoute('hier_path_toc',['hier_path_toc'=>$node->getUrlfull()]);
         }
         else
         {

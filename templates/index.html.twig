@@ -20,7 +20,7 @@
     <td>
     {% set route=lastItem.TranslationSourceID ? 'translation_view' : (lastItem.HasTableView ? 'table_view' : 'view_node') %}
     {% set suffix=lastItem.TranslationSourceID ? '/transl' : '/table' %}
-    <a href="{{ lastItem.urlfull ? lastItem.urlfull ~ suffix :  path(route,{id: lastItem.nodeid}) }}">{{ lastItem.trname ?? lastItem.title }}</a>
+    <a href="{{ lastItem.urlfull ? path('hier_path_transl',{hierpath: lastItem.urlfull|trim('/') ~ suffix}) :  path(route,{id: lastItem.nodeid}) }}">{{ lastItem.trname ?? lastItem.title }}</a>
     </td>
     </tr>
     {% endfor %}
@@ -32,7 +32,7 @@
 <h3>{% trans %}New comments{% endtrans %}</h3>
     {% for comment in comments %}
     <div>
-    <a href="{{ comment.urlfull ? (comment.urlfull~ '/s/' ~ comment.sentenceid) : path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.trname ?? comment.title}}</a>
+    <a href="{{ comment.urlfull ? path('hier_path_sentence',{hierpath: comment.urlfull|trim('/') ~ '/s/' ~ comment.sentenceid}) : path('comments',{sentenceid: comment.sentenceid, _fragment: "c#{comment.commentid}"}) }}">{{comment.trname ?? comment.title}}</a>
     <div>{{comment.CommentText|shorten }}</div>
     <div><small>
     {% if comment.DaysAgo==0 %}

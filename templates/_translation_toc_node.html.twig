@@ -1,6 +1,6 @@
 <div style="margin-left:{{ level*20 }}px">
 {% if node.haschildnodes %}
-<a href="{{ node.urlfull ?? path(expandRoute, {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+<a href="{{ node.urlfull ?  path('hier_path_toc',{hierpath: node.urlfull|trim('/')}) : path(expandRoute, {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
 {% else %}
 {{ node.trname ?? node.title }}
 {% endif %}
@@ -10,9 +10,9 @@
             {% set route=node.TranslationSourceID ? 'translation_view' : (node.HasTableView ? 'table_view' : 'view_node') %}
             {% set suffix=node.TranslationSourceID ? '/transl' : '/table' %}
             {% set label=node.TranslationSourceID ? 'translation'|trans : (node.HasTableView ? 'table'|trans : 'fragments'|trans) %}
-            &nbsp;<a href="{{ node.urlfull ? node.urlfull ~ suffix :  path(route, {id: node.nodeid}) }}">({{ label }})</a>
+            &nbsp;<a href="{{ node.urlfull ? path('hier_path_transl',{hierpath: node.urlfull|trim('/') ~ suffix}) :  path(route, {id: node.nodeid}) }}">({{ label }})</a>
         {% else %}
-        	<a href="{{ node.urlfull ?? path('view_node', {id: node.nodeid}) }}">({% trans %}fragments{% endtrans %})</a>
+        	<a href="{{ node.urlfull ? path('hier_path_toc',{hierpath: node.urlfull|trim('/')}) : path('view_node', {id: node.nodeid}) }}">({% trans %}fragments{% endtrans %})</a>
         {% endif %}
     {% endif %}
     {% for tag in tags|filter(t=>t.nodeid==node.nodeid) %}
