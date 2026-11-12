@@ -127,7 +127,7 @@ class ViewController extends AbstractController
             $node=$paragraph->getNodeid();
             if($node->getUrlfull() && empty($request->getQueryString()))
             {
-                $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>$node->getUrlfull()."/p/$id"]);
+                $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>trim($node->getUrlfull(),'/')."/p/$id"]);
             }
             else 
             {
@@ -656,7 +656,7 @@ class ViewController extends AbstractController
         
         if($node->getUrlfull() && empty($request->getQueryString()))
         {
-            $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>$node->getUrlfull()."/transl"]);
+            $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>trim($node->getUrlfull(),'/')."/transl"]);
         }
         else
         {
