@@ -20,7 +20,7 @@ class StatisticsController extends AbstractController
         $url= $request->get("url");
         $is_bot=preg_match('/(bot|crawl|spider)/i',$request->headers->get("user-agent"));
         $has_uid=$request->cookies->get("uid");
-	$printview=str_contains($url,"printview=");
+	    $printview=str_contains($url,"printview=");
 
         if(filter_var($url, FILTER_VALIDATE_URL) && !$is_bot && $has_uid && !$printview)
         {
@@ -125,7 +125,7 @@ class StatisticsController extends AbstractController
         }
         else 
         {
-            $response=new Response('not found',404);
+            $response=new Response("not found",404);
         }
         
         return $response;

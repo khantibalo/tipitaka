@@ -318,7 +318,7 @@ class ViewController extends AbstractController
         
         if($node && $node->getUrlfull() && empty($request->getQueryString()))
         {
-            $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>$node->getUrlfull()."/table"]);
+            $response=$this->redirectToRoute('hier_path_transl',['hierpath'=>trim($node->getUrlfull(),'/')."/table"]);
         }
         else 
         {
@@ -874,7 +874,7 @@ class ViewController extends AbstractController
             }
             else
             {
-                $response=$this->createNotFoundException();
+                $response=new Response("not found",404);
             }
         }
         
@@ -888,14 +888,14 @@ class ViewController extends AbstractController
             }
             else
             {
-                $response=$this->createNotFoundException();
+                $response=new Response("not found",404);
             }
         }
         
         
         if(!$response)
         {
-            $response=$this->createNotFoundException();
+            $response=new Response("not found",404);
         }
         
         return $response;

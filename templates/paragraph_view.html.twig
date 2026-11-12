@@ -88,10 +88,10 @@
 		<td>
 		{% if sentence.commentcount>0 %}
 		    {{ sentence.lastcomment }}<br>
-			<a href="{{ urlfull ? path('hier_path_transl',{hierpath: urlfull|trim('/') ~ '/s/' ~  sentence.sentenceid}) : path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
+			<a href="{{ urlfull ? path('hier_path_sentence',{hierpath: urlfull|trim('/') ~ '/s/' ~  sentence.sentenceid}) : path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}All comments{% endtrans %} ({{ sentence.commentcount }})</a>
 		{% else %}
 		    {% if view_settings.printview is empty and is_granted(userRole) %}
-				<a href="{{ urlfull ? path('hier_path_transl',{hierpath: urlfull|trim('/') ~ '/s/' ~  sentence.sentenceid}) : path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}Add new comment{% endtrans %}</a>
+				<a href="{{ urlfull ? path('hier_path_sentence',{hierpath: urlfull|trim('/') ~ '/s/' ~  sentence.sentenceid}) : path('comments',{sentenceid: sentence.sentenceid }) }}">{% trans %}Add new comment{% endtrans %}</a>
 			{% endif %}
 		{% endif %}
 		</td>          

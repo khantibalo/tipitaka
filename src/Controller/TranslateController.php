@@ -143,7 +143,8 @@ class TranslateController extends AbstractController
     //2. edit existing translation
     //3. add new translation to an existing source
     public function translationEdit(Request $request,TipitakaSentencesRepository $sentenceRepository,
-        UserRepository $userRepository, TranslatorInterface $translator)
+        UserRepository $userRepository, TranslatorInterface $translator,TipitakaTocRepository $tipitakaTocRepository,
+        TipitakaParagraphsRepository $tipitakaParagraphsRepository)
     {        
         $sentenceid=$request->query->get('sentenceid');
         $translationid=$request->query->get('translationid');
@@ -389,7 +390,8 @@ class TranslateController extends AbstractController
             catch(\Exception $ex)
             {
                 $cancelUrl=$this->getCancelUrl($sentenceid,$translationid,$returnNodeid,$showAlign,
-                    $paragraphid,$return,$translation,$sentenceRepository);
+                    $paragraphid,$return,$translation,$sentenceRepository,$tipitakaTocRepository,
+                    $tipitakaParagraphsRepository);
                 
                 $response=$this->render('translation_edit.html.twig', ['form' => $form->createView(),
                     'sentenceText'=>$sentenceText,'sourceObj'=>$sourceObj,'cancelUrl'=>$cancelUrl,
@@ -443,7 +445,8 @@ class TranslateController extends AbstractController
             }
                     
             $cancelUrl=$this->getCancelUrl($sentenceid,$translationid,$returnNodeid,$showAlign,
-                $paragraphid,$return,$translation,$sentenceRepository);
+                $paragraphid,$return,$translation,$sentenceRepository,$tipitakaTocRepository,
+                $tipitakaParagraphsRepository);
             
             $response=$this->render('translation_edit.html.twig', ['form' => $form->createView(),
                 'sentenceText'=>$sentenceText,'sourceObj'=>$sourceObj,'cancelUrl'=>$cancelUrl,
@@ -455,7 +458,8 @@ class TranslateController extends AbstractController
     }     
     
     private function getCancelUrl($sentenceid,$translationid,$returnNodeid,$showAlign,
-        $paragraphid,$return,$translation,TipitakaSentencesRepository $sentenceRepository)
+        $paragraphid,$return,$translation,TipitakaSentencesRepository $sentenceRepository,
+        TipitakaTocRepository $tipitakaTocRepository, TipitakaParagraphsRepository $tipitakaParagraphsRepository)
     {
         //calculate cancel link Url
         if($return)
@@ -473,25 +477,40 @@ class TranslateController extends AbstractController
                 $sentenceid=$translation->getSentenceid()->getSentenceid();
             }
             
-            if($returnNodeid)
-                $params=["id"=>$returnNodeid];
-                else
-                {
-                    $params=["id"=>$node['nodeid']];
-                }
-                
-                if($showAlign)
-                {
-                    $params['showAlign']=$showAlign;
-                }
-                
-                $params['_fragment']="sent$sentenceid";
-                
+            $params=["id"=>$returnNodeid ? $returnNodeid : $node['nodeid']];
+            
+            if($showAlign)
+            {
+                $params['showAlign']=$showAlign;
+            }
+            
+            $params['_fragment']="sent$sentenceid";
+            
+            $node=$tipitakaTocRepository->find($params['id']);
+            if($node->getUrlfull())
+            {
+                unset($params['id']);
+                $params['hierpath']=trim($node->getUrlfull(),'/').'/table';
+                $cancelUrl=$this->generateUrl('hier_path_transl',$params);
+            }
+            else 
+            {
                 $cancelUrl=$this->generateUrl('table_view',$params);
+            }
         }
         else
         {//we came here from the paragraph page
-            $cancelUrl=$this->generateUrl('view_paragraph',['id'=>$paragraphid]);
+            $paragraph=$tipitakaParagraphsRepository->find($paragraphid);
+            $node=$tipitakaTocRepository->find($paragraph->getNodeid());
+            if($node->getUrlfull())
+            {
+                $hierpath=trim($node->getUrlfull(),'/')."/p/$paragraphid";
+                $cancelUrl=$this->generateUrl('hier_path_transl',['hierpath'=>$hierpath]);
+            }
+            else
+            {
+                $cancelUrl=$this->generateUrl('view_paragraph',['id'=>$paragraphid]);
+            }            
         }
         
         return $cancelUrl;

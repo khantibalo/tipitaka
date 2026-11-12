@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use App\Repository\TipitakaParagraphsRepository;
 use App\Security\Roles;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -146,7 +147,7 @@ class TOCController extends AbstractController
         }
         else
         {
-            $response=$this->createNotFoundException();
+            $response=new Response("not found",404);
         }
         
         return $response;
@@ -308,7 +309,7 @@ class TOCController extends AbstractController
         }
         else 
         {
-            $response=$this->createNotFoundException();
+            $response=new Response("not found",404);
         }
         
         return $response;
@@ -525,7 +526,7 @@ class TOCController extends AbstractController
         }
         else
         {
-            $response=$this->createNotFoundException();
+            $response=new Response("not found",404);
         }        
         
         return $response;

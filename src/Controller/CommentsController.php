@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use App\Repository\TipitakaCollectionsRepository;
 use App\Repository\TipitakaCommentsRepository;
@@ -139,7 +140,7 @@ class CommentsController  extends AbstractController
         }
         else 
         {
-            $response=$this->createNotFoundException('sentence not found');
+            $response=new Response('sentence not found',404);
         }
         
         return $response;
@@ -174,7 +175,7 @@ class CommentsController  extends AbstractController
         }
         else
         {
-            $response=$this->createNotFoundException();
+            $response=new Response("not found",404);
         }
         
         return $response;
@@ -221,7 +222,7 @@ class CommentsController  extends AbstractController
         }
         else
         {
-            $response=$this->createNotFoundException();
+            $response=new Response("not found",404);
         }        
         
         return $response;
@@ -249,7 +250,7 @@ class CommentsController  extends AbstractController
             }
             else
             {
-                $response=$this->createNotFoundException();
+                $response=new Response("not found",404);
             }
         }
         
@@ -268,7 +269,7 @@ class CommentsController  extends AbstractController
     	{
     	        if($node['urlfull'])
             	{
-                		$response=$this->redirectToRoute('hier_path_transl',['hierpath'=>$node['urlfull']."/s/$sentenceid"]);
+                		$response=$this->redirectToRoute('hier_path_sentence',['hierpath'=>trim($node['urlfull'],'/')."/s/$sentenceid"]);
             	}
             	else
             	{
@@ -277,7 +278,7 @@ class CommentsController  extends AbstractController
     	}
     	else
     	{
-    	    $response=$this->createNotFoundException();
+    	    $response=new Response("not found",404);
         }
     
         return $response;

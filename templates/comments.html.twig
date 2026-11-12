@@ -23,7 +23,7 @@
         {% if loop.last %}
         	<a href="{{ node.urlfull ? path('hier_path_transl',{hierpath: node.urlfull|trim('/') ~ '/table', _fragment: "sent#{sentenceid}"}) : path('translation_toc_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
         {% else %}
-        	<a href="{{ node.urlfull ? path('hier_path_transl',{hierpath: node.urlfull|trim('/')}): path('translation_toc_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
+        	<a href="{{ node.urlfull ? path('hier_path_toc',{hierpath: node.urlfull|trim('/')}): path('translation_toc_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
         {% endif %}
         {% if not loop.last %}
         &gt;&gt;
@@ -31,12 +31,12 @@
     {% endfor %}
     {% if paragraphid and nodeid is empty %}
     &gt;&gt;
-    <a href="{{ node.urlfull ? (node.urlfull|trim('/') ~ '/p/' ~ paragraphid) : path('view_paragraph',{id: paragraphid}) }}">{% trans %}paragraph{% endtrans %}</a>
+    <a href="{{ node.urlfull ? path('hier_path_transl',{hierpath: node.urlfull|trim('/') ~ '/p/' ~ paragraphid}) : path('view_paragraph',{id: paragraphid}) }}">{% trans %}paragraph{% endtrans %}</a>
     {% endif %}
     {% if nodeid %}
     &gt;&gt;
     <a href="{{ node.urlfull ? path('hier_path_transl',{hierpath: node.urlfull|trim('/') ~ '/table',  _fragment:  "sent#{sentenceid}"}) : path('table_view',{id: nodeid, _fragment: "sent#{sentenceid}"}) }}">{% trans %}Table view{% endtrans %}</a>
-    &nbsp;&nbsp;(<a href="{{ node.urlfull ? path('hier_path_transl',{hierpath: node.urlfull|trim('/') ~ '/p/' ~ paragraphid) : path('view_paragraph',{id: paragraphid}) }}">{% trans %}paragraph{% endtrans %}</a>)
+    &nbsp;&nbsp;(<a href="{{ node.urlfull ? path('hier_path_transl',{hierpath: node.urlfull|trim('/') ~ '/p/' ~ paragraphid}) : path('view_paragraph',{id: paragraphid}) }}">{% trans %}paragraph{% endtrans %}</a>)
     {% endif %}
     </div>
 {% endif %}
