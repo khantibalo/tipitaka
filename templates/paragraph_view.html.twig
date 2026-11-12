@@ -25,7 +25,12 @@
            <a href="{{ node.urlfull ? path('hier_path_toc',{hierpath: node.urlfull|trim('/') }) : path('view_node', {id: node.nodeid}) }}">{{ node.trname ?? node.title }}</a>
         {% endif %}
     {% else %}
-    <a href="{{ node_has_translation ? (path('hier_path_toc',{hierpath: node.urlfull|trim('/') }) ?  path('translation_toc_node', {id: node.nodeid})) : path('full_toc_node', {id: node.nodeid}) }}" >{{ node.trname ?? node.title }}</a>
+    {% if node_has_translation %}
+        {% set node_url=node.urlfull ? path('hier_path_toc',{hierpath: node.urlfull|trim('/') }) : path('translation_toc_node', {id: node.nodeid}) %}
+    {% else %}
+        {% set node_url=path('full_toc_node', {id: node.nodeid}) %}
+    {% endif %}
+    <a href="{{ node_url }}">{{ node.trname ?? node.title }}</a>
     {% endif %} 
     {% if not loop.last %}
     &gt;&gt;
