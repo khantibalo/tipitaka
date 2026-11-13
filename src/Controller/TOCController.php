@@ -539,7 +539,7 @@ class TOCController extends AbstractController
         
         if($node && $node->getUrlfull() && empty($request->getQueryString()))
         {
-            $response=$this->redirectToRoute('hier_path_toc',['hier_path_toc'=>$node->getUrlfull()]);
+            $response=$this->redirectToRoute('hier_path_toc',['hierpath'=>trim($node->getUrlfull(),'/')]);
         }
         else
         {
