@@ -239,7 +239,9 @@ class CommentsController  extends AbstractController
     public function fromHierpath(Request $request,TipitakaTocRepository $tocRepository,TipitakaSentencesRepository $sentencesRepository,
         TipitakaCommentsRepository $commentsRepository,  TranslatorInterface $translator, TipitakaCollectionsRepository $collectionsRepository)
     {
+        $response=new Response("not found",404);
         $matches=array();
+        
         if(preg_match("/^(.+)\/s\/(\d+)$/", $request->getPathInfo(),$matches))
         {
             $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
@@ -247,10 +249,6 @@ class CommentsController  extends AbstractController
             if($node)
             {
                 $response=$this->listBySentence($matches[2], $sentencesRepository,$commentsRepository,$request,$tocRepository,$translator,$collectionsRepository);
-            }
-            else
-            {
-                $response=new Response("not found",404);
             }
         }
         
@@ -261,7 +259,7 @@ class CommentsController  extends AbstractController
         TipitakaCommentsRepository $commentsRepository,Request $request,TipitakaTocRepository $tocRepository,
         TranslatorInterface $translator, TipitakaCollectionsRepository $collectionsRepository)
     {
-        $response=null;
+        $response=new Response("not found",404);
         
         $node=$sentenceRepository->getNodeIdBySentenceId($sentenceid);
         
@@ -276,10 +274,6 @@ class CommentsController  extends AbstractController
                 		$response=$this->listBySentence($sentenceid, $sentenceRepository, $commentsRepository, $request, $tocRepository, $translator, $collectionsRepository);
             	}
     	}
-    	else
-    	{
-    	    $response=new Response("not found",404);
-        }
     
         return $response;
     }
