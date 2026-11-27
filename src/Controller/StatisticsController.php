@@ -33,7 +33,6 @@ class StatisticsController extends AbstractController
             $stat->setPath($url);
 
             $path=str_replace("/tipitaka","",$path);
-            $response=new Response($path);
             $params=$router->match($path);
 
             if(isset($params["_route"]))
@@ -69,7 +68,9 @@ class StatisticsController extends AbstractController
                             $matches=array();
                             if(preg_match("/^(.+)\/s\/(\d+)$/", $params["hierpath"],$matches))
                             {
-                                $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+                                $urlfull="/".$matches[1];
+                                
+                                $nodes=$tocRepository->findBy(["urlfull"=>$urlfull]);
                                 if($nodes)
                                 {
                                     $node=end($nodes);
@@ -83,7 +84,9 @@ class StatisticsController extends AbstractController
                             $matches=array();
                             if(preg_match("/^(.+)\/(table|transl|prologue)$/", $params["hierpath"],$matches))
                             {
-                                $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+                                $urlfull="/".$matches[1];
+                                
+                                $nodes=$tocRepository->findBy(["urlfull"=>$urlfull]);
                                 if($nodes)
                                 {
                                     $node=end($nodes);
@@ -94,7 +97,8 @@ class StatisticsController extends AbstractController
                             {
                                 if(preg_match("/^(.+)\/p\/(\d+)$/", $params["hierpath"],$matches))
                                 {
-                                    $nodes=$tocRepository->findBy(["urlfull"=>$matches[1]]);
+                                    $urlfull="/".$matches[1];
+                                    $nodes=$tocRepository->findBy(["urlfull"=>$urlfull]);
                                     if($nodes)
                                     {
                                         $node=end($nodes);
@@ -107,7 +111,8 @@ class StatisticsController extends AbstractController
                         }
                     case "hier_path_toc":
                         {
-                            $nodes=$tocRepository->findBy(["urlfull"=>$params["hierpath"]]);                            
+                            $hierpath="/".$params["hierpath"];
+                            $nodes=$tocRepository->findBy(["urlfull"=>$hierpath]);                            
                             if($nodes)
                             {
                                 $node=end($nodes);
