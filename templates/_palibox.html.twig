@@ -1,4 +1,14 @@
-<script type="text/javascript" src="{{ asset('scripts.js') }}"></script>
+<script type="text/javascript">
+function palichar_onchange(text_field_id,sel_control)
+{
+	if(sel_control.value!="")
+	{
+		var field=$('#'+text_field_id).get(0);
+		field.value+=sel_control.value;
+		sel_control.value="";
+	}
+}
+</script>
 <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
 <select id="palichar" onchange="palichar_onchange('{{ searchControlId }}',this)">
 <option value=""></option>

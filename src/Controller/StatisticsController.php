@@ -33,7 +33,7 @@ class StatisticsController extends AbstractController
             $stat->setPath($url);
 
             $path=str_replace("/tipitaka","",$path);
-
+            $response=new Response($path);
             $params=$router->match($path);
 
             if(isset($params["_route"]))

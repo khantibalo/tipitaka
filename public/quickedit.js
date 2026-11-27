@@ -4,16 +4,6 @@ $(function() {
 	quickEditConfig = JSON.parse($('#quickEditConfig').get(0).textContent);
 });
 
-function palichar_onchange(text_field_id,sel_control)
-{
-	if(sel_control.value!="")
-	{
-		var field=$('#'+text_field_id).get(0);
-		field.value+=sel_control.value;
-		sel_control.value="";
-	}
-}
-
 function QTEdit(stid)
 {
 	$('#et'+stid).hide();
